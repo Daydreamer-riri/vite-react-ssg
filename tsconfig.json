@@ -1,14 +1,30 @@
 {
   "compilerOptions": {
-    "target": "es2018",
-    "module": "esnext",
-    "lib": ["esnext"],
-    "moduleResolution": "node",
+    "module": "ESNext",
+    "target": "es2020",
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
     "esModuleInterop": true,
     "strict": true,
     "strictNullChecks": true,
+    "moduleResolution": "Node",
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "skipDefaultLibCheck": true
-  }
+    "types": [
+      "vite/client"
+    ],
+    "paths": {
+      "vite-react-ssg": [
+        "./src/index.ts"
+      ],
+    },
+    "jsx": "react"
+  },
+  "exclude": [
+    "**/dist",
+    "**/node_modules",
+    "**/test"
+  ]
 }

@@ -1,24 +1,35 @@
 {
-  "name": "pkg-name",
+  "name": "vite-react-ssg",
   "type": "module",
   "version": "0.0.0",
   "packageManager": "pnpm@8.6.6",
   "description": "",
   "author": "Riri <Daydreamerriri@outlook.com>",
   "license": "MIT",
-  "homepage": "https://github.com/Daydreamer-riri/pkg-name#readme",
+  "homepage": "https://github.com/Daydreamer-riri/vite-react-ssg#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Daydreamer-riri/pkg-name.git"
+    "url": "git+https://github.com/Daydreamer-riri/vite-react-ssg.git"
   },
-  "bugs": "https://github.com/Daydreamer-riri/pkg-name/issues",
-  "keywords": [],
+  "bugs": "https://github.com/Daydreamer-riri/vite-react-ssg/issues",
+  "keywords": [
+    "vite",
+    "vite-plugin",
+    "ssg",
+    "ssr",
+    "react"
+  ],
   "sideEffects": false,
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "require": "./dist/index.cjs",
       "import": "./dist/index.mjs"
+    },
+    "./node": {
+      "types": "./dist/node.d.ts",
+      "require": "./dist/node.cjs",
+      "import": "./dist/node.mjs"
     }
   },
   "main": "./dist/index.mjs",
@@ -26,14 +37,18 @@
   "types": "./dist/index.d.ts",
   "typesVersions": {
     "*": {
-      "*": [
-        "./dist/*",
-        "./dist/index.d.ts"
+      "node": [
+        "./dist/node.d.ts"
       ]
     }
   },
+  "bin": {
+    "vite-react-ssg": "bin/vite-react-ssg.js"
+  },
   "files": [
-    "dist"
+    "dist",
+    "bin",
+    "*.d.ts"
   ],
   "scripts": {
     "build": "unbuild",
@@ -44,21 +59,54 @@
     "start": "esno src/index.ts",
     "typecheck": "tsc --noEmit"
   },
+  "peerDependencies": {
+    "critters": "^0.0.19",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-router-dom": "^6.14.1",
+    "vite": "^2.0.0 || ^3.0.0 || ^4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "critters": {
+      "optional": true
+    },
+    "react-router-dom": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "fs-extra": "^11.1.1",
+    "html-minifier": "^4.0.0",
+    "html5parser": "^2.0.2",
+    "jsdom": "^22.1.0",
+    "kolorist": "^1.8.0",
+    "react-helmet-async": "^1.3.0",
+    "yargs": "^17.7.2"
+  },
   "devDependencies": {
-    "@ririd/eslint-config": "^0.5.0",
+    "@ririd/eslint-config": "0.5.1",
+    "@types/fs-extra": "^11.0.1",
+    "@types/html-minifier": "^4.0.2",
+    "@types/jsdom": "^21.1.1",
     "@types/node": "^18.15.11",
+    "@types/react": "^18.2.14",
+    "@types/react-dom": "^18.2.6",
+    "@types/react-helmet-async": "^1.0.3",
+    "@types/yargs": "^17.0.24",
     "bumpp": "^9.1.0",
+    "critters": "^0.0.19",
     "eslint": "^8.40.0",
     "esno": "^0.16.3",
+    "p-queue": "^7.3.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.14.1",
     "rimraf": "5.0.1",
     "simple-git-hooks": "^2.8.1",
     "typescript": "5.1.6",
-    "unbuild": "^1.2.1"
-  },
-  "simple-git-hooks": {
-    "pre-commit": "pnpm lint-staged"
-  },
-  "lint-staged": {
-    "*": "eslint --fix"
+    "unbuild": "^1.2.1",
+    "vite": "^4.3.9",
+    "vite-plugin-pwa": "^0.16.4",
+    "vitest": "0.33.0"
   }
 }
