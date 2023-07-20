@@ -136,8 +136,6 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
         const { app: innerApp, routes, initialState, triggerOnSSRAppRendered, transformState = serializeState } = appCtx
 
         const transformedIndexHTML = (await onBeforePageRender?.(route, indexHTML, appCtx))
-        if (route === '/')
-          route = ''
 
         const url = new URL(route, 'http://vite-react-ssg.com')
         url.search = ''
