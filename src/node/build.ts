@@ -128,7 +128,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
 
   const queue = new PQueue({ concurrency })
 
-  for (let route of routesPaths) {
+  for (const route of routesPaths) {
     console.log('🚀 ~ file: build.ts:132 ~ build ~ routesPaths:', routesPaths)
     queue.add(async () => {
       try {
