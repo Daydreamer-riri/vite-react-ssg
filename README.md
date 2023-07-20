@@ -1,4 +1,4 @@
-# pkg
+# Vite React SSG
 
 Static-site generation for React on Vite.
 
@@ -29,7 +29,7 @@ Static-site generation for React on Vite.
 ```ts
 // src/main.ts
 import { ViteReactSSG } from 'vite-react-ssg'
-import routes from './App.vue'
+import routes from './App.tsx'
 
 export const createApp = ViteReactSSG(
   // react-router-dom data routes
