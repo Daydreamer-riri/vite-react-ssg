@@ -17,7 +17,7 @@ import { renderPreloadLinks } from './preload-links'
 
 export type Manifest = Record<string, string[]>
 
-export type CreateAppFactory = (client: boolean, routePath?: string) => Promise<ViteReactSSGContext<true> | ViteReactSSGContext<false>>
+export type CreateRootFactory = (client: boolean, routePath?: string) => Promise<ViteReactSSGContext<true> | ViteReactSSGContext<false>>
 
 function DefaultIncludedRoutes(paths: string[], _routes: Readonly<RouteRecord[]>) {
   // ignore dynamic routes
@@ -104,11 +104,11 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
 
   const _require = createRequire(import.meta.url)
 
-  const { createApp, includedRoutes: serverEntryIncludedRoutes }: { createApp: CreateAppFactory; includedRoutes: ViteReactSSGOptions['includedRoutes'] } = format === 'esm'
+  const { createRoot, includedRoutes: serverEntryIncludedRoutes }: { createRoot: CreateRootFactory; includedRoutes: ViteReactSSGOptions['includedRoutes'] } = format === 'esm'
     ? await import(serverEntry)
     : _require(serverEntry)
   const includedRoutes = serverEntryIncludedRoutes || configIncludedRoutes
-  const { routes } = await createApp(false)
+  const { routes } = await createRoot(false)
 
   let routesPaths = includeAllRoutes
     ? routesToPaths(routes)
@@ -132,7 +132,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
     console.log('🚀 ~ file: build.ts:132 ~ build ~ routesPaths:', routesPaths)
     queue.add(async () => {
       try {
-        const appCtx = await createApp(false, route) as ViteReactSSGContext<true>
+        const appCtx = await createRoot(false, route) as ViteReactSSGContext<true>
         const { app: innerApp, routes, initialState, triggerOnSSRAppRendered, transformState = serializeState } = appCtx
 
         const transformedIndexHTML = (await onBeforePageRender?.(route, indexHTML, appCtx))

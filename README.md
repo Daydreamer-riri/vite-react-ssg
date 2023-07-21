@@ -31,7 +31,7 @@ Static-site generation for React on Vite.
 import { ViteReactSSG } from 'vite-react-ssg'
 import routes from './App.tsx'
 
-export const createApp = ViteReactSSG(
+export const createRoot = ViteReactSSG(
   // react-router-dom data routes
   { routes },
   // function to have custom setups

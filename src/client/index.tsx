@@ -20,7 +20,7 @@ export function ViteReactSSG(
 
   const isClient = typeof window !== 'undefined'
 
-  async function createApp(client = false, routePath?: string) {
+  async function createRoot(client = false, routePath?: string) {
     const browserRouter = client ? createBrowserRouter(routerOptions.routes) : undefined
 
     const appRenderCallbacks: Function[] = []
@@ -69,7 +69,7 @@ export function ViteReactSSG(
       const container = typeof rootContainer === 'string'
         ? document.querySelector(rootContainer)!
         : rootContainer
-      const { router } = await createApp(true)
+      const { router } = await createRoot(true)
       hydrateRoot(container, (
         <HelmetProvider>
           <SiteMetadataDefaults />
@@ -79,7 +79,7 @@ export function ViteReactSSG(
     })()
   }
 
-  return createApp
+  return createRoot
 }
 
 export { default as Head } from './components/Head'
