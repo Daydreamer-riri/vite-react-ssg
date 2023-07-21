@@ -1,42 +1,31 @@
 import React from 'react'
 import { Layout } from './Layout'
 import './App.css'
-import Index from './pages'
 
-// import A from './pages/a'
+const pages = import.meta.glob<any>('./pages/**/*.tsx')
+console.log('🚀 ~ file: App.tsx:7 ~ pages:', pages)
 
-// export const routes = [
-//   {
-//     path: '/',
-//     element: React.lazy(() => import('./pages/index')),
-//     children: [
-//       {
-//         path: '/a',
-//         element: React.lazy(() => import('./pages/a')),
-//       },
-//     ],
-//   },
+const children = Object.entries(pages).map(([filepath, component]) => {
+  let path = filepath.split('/pages')[1]
+  path = path.split('.')[0].replace('index', '')
 
-// ]
-// const sleep = (n = 500) => new Promise(r => setTimeout(r, n))
+  if (path.endsWith('/')) {
+    return {
+      index: true,
+      Component: React.lazy(component),
+    }
+  }
+  return {
+    path,
+    Component: React.lazy(component),
+  }
+})
 
 export const routes = [
   {
     path: '/',
     element: <Layout />,
-    children: [
-      {
-        index: true,
-        element: <Index />,
-      },
-      {
-        path: 'a',
-        Component: React.lazy(async () => {
-          // await sleep(3000)
-          return import('./pages/a')
-        }),
-      },
-    ],
+    children,
   },
 ]
 

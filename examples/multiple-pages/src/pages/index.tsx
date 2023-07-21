@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { startTransition, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 export default function Index() {
@@ -14,7 +14,7 @@ export default function Index() {
         <button onClick={() => setCount(count => count + 1)}>
           count is {count}
         </button>
-        <button onClick={() => navigate('/a')}>
+        <button onClick={() => startTransition(() => navigate('/a'))}>
           to A
         </button>
         <Link to={'/a'}>TO A</Link>

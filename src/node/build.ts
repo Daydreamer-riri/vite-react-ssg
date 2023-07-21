@@ -129,7 +129,6 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
   const queue = new PQueue({ concurrency })
 
   for (const route of routesPaths) {
-    console.log('🚀 ~ file: build.ts:132 ~ build ~ routesPaths:', routesPaths)
     queue.add(async () => {
       try {
         const appCtx = await createRoot(false, route) as ViteReactSSGContext<true>
