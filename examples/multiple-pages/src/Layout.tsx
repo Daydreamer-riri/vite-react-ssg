@@ -1,7 +1,8 @@
 import { Suspense } from 'react'
 import { Outlet } from 'react-router-dom'
+import './layout.css'
 
-export function Layout() {
+export default function Layout() {
   return (
     <>
       {/* <Head>
@@ -11,7 +12,7 @@ export function Layout() {
         <title>head test</title>
       </Head> */}
       <main>
-        <h1>Layout</h1>
+        <h1 className="layout">Layout</h1>
         <Suspense>
           <Outlet />
         </Suspense>

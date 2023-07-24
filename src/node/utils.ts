@@ -11,8 +11,18 @@ export function getSize(str: string) {
 }
 
 export function routesToPaths(routes?: Readonly<RouteRecord[]>) {
+  const pathToEntry: Record<string, Set<string>> = {}
+  function addEntry(path: string, entry: string | undefined) {
+    if (!entry)
+      return
+    if (pathToEntry[path])
+      pathToEntry[path].add(entry)
+    else
+      pathToEntry[path] = new Set([entry])
+  }
+
   if (!routes)
-    return ['/']
+    return { paths: ['/'] }
 
   const paths: Set<string> = new Set()
 
@@ -29,14 +39,17 @@ export function routesToPaths(routes?: Readonly<RouteRecord[]>) {
           : route.path
 
         paths.add(path)
+        addEntry(path, route.entry)
       }
+      if (route.index)
+        addEntry(prefix, route.entry)
       if (Array.isArray(route.children))
         getPaths(route.children, path)
     }
   }
 
   getPaths(routes)
-  return Array.from(paths)
+  return { paths: Array.from(paths), pathToEntry }
 }
 
 export function createFetchRequest(req: any): Request {

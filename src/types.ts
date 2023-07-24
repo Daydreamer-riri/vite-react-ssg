@@ -1,6 +1,5 @@
 import type { Options as CrittersOptions } from 'critters'
-import type { ReactNode } from 'react'
-import type { RouteObject, createBrowserRouter } from 'react-router-dom'
+import type { IndexRouteObject, NonIndexRouteObject, createBrowserRouter } from 'react-router-dom'
 
 type Router = ReturnType<typeof createBrowserRouter>
 
@@ -108,7 +107,6 @@ export interface ViteReactSSGOptions {
 type PartialKeys<T, Keys extends keyof T> = Omit<T, Keys> & Partial<Pick<T, Keys>>
 
 export interface ViteReactSSGContext<HasRouter extends boolean = true> {
-  app?: ReactNode
   router?: HasRouter extends true ? Router : undefined
   routes: HasRouter extends true ? Readonly<RouteRecord[]> : undefined
   routerOptions: RouterOptions
@@ -135,13 +133,23 @@ export interface ViteReactSSGClientOptions {
   rootContainer?: string | Element
 }
 
-export type RouteRecord = RouteObject & {}
+export type NonIndexRouteRecord = Omit<NonIndexRouteObject, 'children'> & {
+  entry?: string
+  children?: RouteRecord[]
+}
+
+export type IndexRouteRecord = IndexRouteObject & {
+  entry?: string
+}
+
+export type RouteRecord = NonIndexRouteRecord | IndexRouteRecord
 
 export interface RouterOptions {
   routes: RouteRecord[]
   createFetchRequest?: <T>(req: T) => Request
 }
 
+// extend vite.config.ts
 declare module 'vite' {
   interface UserConfig {
     ssgOptions?: ViteReactSSGOptions

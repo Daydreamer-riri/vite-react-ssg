@@ -15,7 +15,16 @@ import { getCritters } from './critial'
 import { render } from './server'
 import { renderPreloadLinks } from './preload-links'
 
-export type Manifest = Record<string, string[]>
+export type SSRManifest = Record<string, string[]>
+export interface ManifestItem {
+  css?: string[]
+  file: string
+  dynamicImports?: string[]
+  src: string
+  assets?: string[]
+}
+
+export type Manifest = Record<string, ManifestItem>
 
 export type CreateRootFactory = (client: boolean, routePath?: string) => Promise<ViteReactSSGContext<true> | ViteReactSSGContext<false>>
 
@@ -57,6 +66,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
   buildLog('Build for client...')
   await viteBuild(mergeConfig(viteConfig, {
     build: {
+      manifest: true,
       ssrManifest: true,
       rollupOptions: {
         input: {
@@ -110,9 +120,11 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
   const includedRoutes = serverEntryIncludedRoutes || configIncludedRoutes
   const { routes } = await createRoot(false)
 
+  const { paths, pathToEntry } = routesToPaths(routes)
+
   let routesPaths = includeAllRoutes
-    ? routesToPaths(routes)
-    : await includedRoutes(routesToPaths(routes), routes || [])
+    ? paths
+    : await includedRoutes(paths, routes || [])
 
   routesPaths = Array.from(new Set(routesPaths))
 
@@ -122,7 +134,8 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
   if (critters)
     console.log(`${gray('[vite-react-ssg]')} ${blue('Critical CSS generation enabled via `critters`')}`)
 
-  const ssrManifest: Manifest = JSON.parse(await fs.readFile(join(out, 'ssr-manifest.json'), 'utf-8'))
+  const ssrManifest: SSRManifest = JSON.parse(await fs.readFile(join(out, 'ssr-manifest.json'), 'utf-8'))
+  const manifest: Manifest = JSON.parse(await fs.readFile(join(out, 'manifest.json'), 'utf-8'))
   let indexHTML = await fs.readFile(join(out, 'index.html'), 'utf-8')
   indexHTML = rewriteScripts(indexHTML, script)
 
@@ -132,7 +145,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
     queue.add(async () => {
       try {
         const appCtx = await createRoot(false, route) as ViteReactSSGContext<true>
-        const { app: innerApp, routes, initialState, triggerOnSSRAppRendered, transformState = serializeState } = appCtx
+        const { routes, initialState, triggerOnSSRAppRendered, transformState = serializeState } = appCtx
 
         const transformedIndexHTML = (await onBeforePageRender?.(route, indexHTML, appCtx))
 
@@ -155,7 +168,9 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
 
         const jsdom = new JSDOM(renderedHTML)
 
-        renderPreloadLinks(jsdom.window.document, new Set<string>(), ssrManifest)
+        const modules = collectModulesForEntrys(manifest, pathToEntry?.[route])
+
+        renderPreloadLinks(jsdom.window.document, modules, ssrManifest)
 
         const html = jsdom.serialize()
         let transformed = (await onPageRendered?.(route, html, appCtx)) || html
@@ -292,10 +307,35 @@ async function formatHtml(html: string, formatting: ViteReactSSGOptions['formatt
     })
   }
   else if (formatting === 'prettify') {
-    // const prettier = (await import('prettier/esm/standalone.mjs')).default
-    // const parserHTML = (await import('prettier/esm/parser-html.mjs')).default
+    // @ts-expect-error dynamic import
+    const prettier = (await import('prettier/esm/standalone.mjs')).default
+    // @ts-expect-error dynamic import
+    const parserHTML = (await import('prettier/esm/parser-html.mjs')).default
 
-    // return prettier.format(html, { semi: false, parser: 'html', plugins: [parserHTML] })
+    return prettier.format(html, { semi: false, parser: 'html', plugins: [parserHTML] })
   }
   return html
+}
+
+function collectModulesForEntrys(manifest: Manifest, entrys: Set<string> | undefined) {
+  const mods = new Set<string>()
+  if (!entrys)
+    return mods
+
+  for (const entry of entrys)
+    collectModules(manifest, entry, mods)
+
+  return mods
+}
+
+function collectModules(manifest: Manifest, entry: string | undefined, mods = new Set<string>()) {
+  if (!entry)
+    return mods
+
+  mods.add(entry)
+  manifest[entry]?.dynamicImports?.forEach((item) => {
+    collectModules(manifest, item, mods)
+  })
+
+  return mods
 }

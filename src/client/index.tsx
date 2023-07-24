@@ -7,6 +7,8 @@ import { documentReady } from '../utils/document-ready'
 import { deserializeState } from '../utils/state'
 import SiteMetadataDefaults from './components/SiteMetadataDefaults'
 
+export * from '../types'
+
 export function ViteReactSSG(
   // App: ReactNode,
   routerOptions: RouterOptions,

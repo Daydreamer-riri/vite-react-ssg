@@ -1,6 +1,6 @@
-import type { Manifest } from './build'
+import type { SSRManifest } from './build'
 
-export function renderPreloadLinks(document: Document, modules: Set<string>, ssrManifest: Manifest) {
+export function renderPreloadLinks(document: Document, modules: Set<string>, ssrManifest: SSRManifest) {
   const seen = new Set()
 
   const preloadLinks: string[] = []
