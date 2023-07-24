@@ -1,5 +1,6 @@
 import { startTransition, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import reactLogo from '../assets/react.svg'
 
 export default function Index() {
   const [count, setCount] = useState(0)
@@ -8,6 +9,7 @@ export default function Index() {
   return (
     <>
       <div>
+        <img src={reactLogo} />
       </div>
       <h1>Vite + React</h1>
       <div className="card">

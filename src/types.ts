@@ -31,6 +31,8 @@ export interface ViteReactSSGOptions {
   /**
    * Apply formatter to the generated index file.
    *
+   * **It will cause Hydration Failed.**
+   *
    * @default 'none'
    */
   formatting?: 'minify' | 'prettify' | 'none'
