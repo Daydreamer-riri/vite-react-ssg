@@ -81,6 +81,73 @@ export const routes: RouteRecord[] = [
 ]
 ```
 
+## Document head
+
+You can use `<Head/>` to manage all of your changes to the document head. It takes plain HTML tags and outputs plain HTML tags. It is a wrapper around [React Helmet](https://github.com/nfl/react-helmet).
+
+```tsx
+import { Head } from 'vite-react-ssg'
+
+const MyHead = () => (
+  <Head>
+    <meta property="og:description" content="My custom description" />
+    <meta charSet="utf-8" />
+    <title>My Title</title>
+    <link rel="canonical" href="http://mysite.com/example" />
+  </Head>
+)
+```
+
+Nested or latter components will override duplicate usages:
+
+```tsx
+import { Head } from 'vite-react-ssg'
+
+const MyHead = () => (
+  <parent>
+    <Head>
+      <title>My Title</title>
+      <meta name="description" content="Helmet application" />
+    </Head>
+    <child>
+      <Head>
+        <title>Nested Title</title>
+        <meta name="description" content="Nested component" />
+      </Head>
+    </child>
+  </parent>
+)
+```
+
+Outputs:
+```html
+<head>
+  <title>Nested Title</title>
+  <meta name="description" content="Nested component" />
+</head>
+```
+
+### Reactive head
+
+```tsx
+import { useState } from 'react'
+import { Head } from 'vite-react-ssg'
+
+export default function MyHead() {
+  const [state, setState] = useState(false)
+
+  return (
+    <Head>
+      <meta charSet="UTF-8" />
+      <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+      <title>head test {state ? 'A' : 'B'}</title>
+      {/* You can also set the 'body' attributes here */}
+      <body className={`body-class-in-head-${state ? 'a' : 'b'}`} />
+    </Head>
+  )
+}
+```
+
 ## Critical CSS
 
 Vite SSG has built-in support for generating [Critical CSS](https://web.dev/extract-critical-css/) inlined in the HTML via the [`critters`](https://github.com/GoogleChromeLabs/critters) package.
@@ -162,9 +229,9 @@ export default {
 ## Roadmap
 
 - [x] Preload assets
+- [x] Document head
 - [ ] SSR under dev
 - [ ] Initial State
-- [ ] Document head
 - [ ] More Client components, such as `<ClientOnly />`
 
 ## License
