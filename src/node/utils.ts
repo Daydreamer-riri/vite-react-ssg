@@ -22,12 +22,13 @@ export function routesToPaths(routes?: Readonly<RouteRecord[]>) {
   }
 
   if (!routes)
-    return { paths: ['/'] }
+    return { paths: ['/'], pathToEntry }
 
   const paths: Set<string> = new Set()
 
   const getPaths = (routes: Readonly<RouteRecord[]>, prefix = '') => {
     // remove trailing slash
+    const parentPath = prefix
     prefix = prefix.replace(/\/$/g, '')
     for (const route of routes) {
       let path = route.path
@@ -40,9 +41,16 @@ export function routesToPaths(routes?: Readonly<RouteRecord[]>) {
 
         paths.add(path)
         addEntry(path, route.entry)
+
+        if (pathToEntry[parentPath]) {
+          const pathCopy = path
+          pathToEntry[parentPath].forEach(entry => addEntry(pathCopy, entry))
+        }
       }
+
       if (route.index)
         addEntry(prefix, route.entry)
+
       if (Array.isArray(route.children))
         getPaths(route.children, path)
     }
