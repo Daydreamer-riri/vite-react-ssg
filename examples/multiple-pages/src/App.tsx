@@ -1,14 +1,12 @@
 import React from 'react'
+import type { RouteRecord } from 'vite-react-ssg'
 import './App.css'
-
-// import { Layout } from './Layout'
 
 const Layout = React.lazy(() => import('./Layout'))
 
 const pages = import.meta.glob<any>('./pages/**/*.tsx')
-console.log('🚀 ~ file: App.tsx:7 ~ pages:', pages)
 
-const children = Object.entries(pages).map(([filepath, component]) => {
+const children: RouteRecord[] = Object.entries(pages).map(([filepath, component]) => {
   let path = filepath.split('/pages')[1]
   path = path.split('.')[0].replace('index', '')
   const entry = `src${filepath.slice(1)}`
@@ -27,7 +25,7 @@ const children = Object.entries(pages).map(([filepath, component]) => {
   }
 })
 
-export const routes = [
+export const routes: RouteRecord[] = [
   {
     path: '/',
     element: <Layout />,
@@ -35,5 +33,3 @@ export const routes = [
     entry: 'src/Layout.tsx',
   },
 ]
-
-// export const router = createBrowserRouter(routes)

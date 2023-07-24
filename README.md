@@ -41,6 +41,46 @@ export const createRoot = ViteReactSSG(
 )
 ```
 
+```tsx
+// src/App.tsx
+import React from 'react'
+import type { RouteRecord } from 'vite-react-ssg'
+import './App.css'
+
+const pages = import.meta.glob<any>('./pages/**/*.tsx')
+
+const children: RouteRecord[] = Object.entries(pages).map(([filepath, component]) => {
+  let path = filepath.split('/pages')[1]
+  path = path.split('.')[0].replace('index', '')
+  const entry = `src${filepath.slice(1)}`
+
+  if (path.endsWith('/')) {
+    return {
+      index: true,
+      Component: React.lazy(component),
+      entry,
+    }
+  }
+  return {
+    path,
+    Component: React.lazy(component),
+    // Used to obtain static resources through manifest
+    entry,
+  }
+})
+
+const Layout = React.lazy(() => import('./Layout'))
+export const routes: RouteRecord[] = [
+  {
+    path: '/',
+    element: <Layout />,
+    children,
+    // Used to obtain static resources through manifest
+    entry: 'src/Layout.tsx',
+  },
+]
+```
+
 ## Critical CSS
 
 Vite SSG has built-in support for generating [Critical CSS](https://web.dev/extract-critical-css/) inlined in the HTML via the [`critters`](https://github.com/GoogleChromeLabs/critters) package.
@@ -121,8 +161,8 @@ export default {
 
 ## Roadmap
 
+- [x] Preload assets
 - [ ] SSR under dev
-- [ ] Preload assets
 - [ ] Initial State
 - [ ] Document head
 - [ ] More Client components, such as `<ClientOnly />`

@@ -133,14 +133,20 @@ export interface ViteReactSSGClientOptions {
   rootContainer?: string | Element
 }
 
-export type NonIndexRouteRecord = Omit<NonIndexRouteObject, 'children'> & {
+interface CommonRouteOptions {
+  /**
+   * Used to obtain static resources through manifest
+   *
+   * @example `src/pages/home.tsx
+   */
   entry?: string
-  children?: RouteRecord[]
 }
 
-export type IndexRouteRecord = IndexRouteObject & {
-  entry?: string
-}
+export type NonIndexRouteRecord = Omit<NonIndexRouteObject, 'children'> & {
+  children?: RouteRecord[]
+} & CommonRouteOptions
+
+export type IndexRouteRecord = IndexRouteObject & CommonRouteOptions
 
 export type RouteRecord = NonIndexRouteRecord | IndexRouteRecord
 
