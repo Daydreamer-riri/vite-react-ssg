@@ -5,6 +5,6 @@ import react from '@vitejs/plugin-react-swc'
 export default defineConfig({
   plugins: [react()],
   ssgOptions: {
-    formatting: 'minify',
+    formatting: 'prettify',
   },
 })
