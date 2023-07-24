@@ -156,13 +156,16 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
 
         const request = new Request(url.href)
 
-        const appHTML = await render([...routes], request)
+        const { appHTML, bodyAttributes, htmlAttributes, metaAttributes } = await render([...routes], request)
         await triggerOnSSRAppRendered?.(route, appHTML, appCtx)
 
         const renderedHTML = await renderHTML({
           rootContainerId,
           appHTML,
           indexHTML,
+          metaAttributes,
+          bodyAttributes,
+          htmlAttributes,
           initialState: null,
         })
 
@@ -249,17 +252,37 @@ async function renderHTML({
   rootContainerId,
   indexHTML,
   appHTML,
+  metaAttributes,
+  bodyAttributes,
+  htmlAttributes,
   initialState,
 }: {
   rootContainerId: string
   indexHTML: string
   appHTML: string
+  metaAttributes: string[]
+  bodyAttributes: string
+  htmlAttributes: string
   initialState: any
 },
 ) {
   const stateScript = initialState
     ? `\n<script>window.__INITIAL_STATE__=${initialState}</script>`
     : ''
+
+  // add head
+  const headStartTag = '<head>'
+  const metaTags = metaAttributes.join('')
+  indexHTML = indexHTML.replace(headStartTag, headStartTag + metaTags)
+
+  // add body attributes
+  const bodyStartTag = '<body'
+  indexHTML = indexHTML.replace(bodyStartTag, `${bodyStartTag} ${bodyAttributes}`)
+
+  // add html attributes
+  const htmlStartTag = '<html'
+  indexHTML = indexHTML.replace(htmlStartTag, `${htmlStartTag} ${htmlAttributes}`)
+
   const container = `<div id="${rootContainerId}"></div>`
   if (indexHTML.includes(container)) {
     return indexHTML

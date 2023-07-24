@@ -24,7 +24,7 @@ export async function render(routes: RouteRecord[], request: Request) {
     </HelmetProvider>
   )
 
-  const appHtml = await renderStaticApp(app)
+  const appHTML = await renderStaticApp(app)
 
   const { helmet } = helmetContext as FilledContext
   const htmlAttributes = helmet.htmlAttributes.toString()
@@ -37,5 +37,5 @@ export async function render(routes: RouteRecord[], request: Request) {
   ]
   const metaAttributes = metaStrings.filter(Boolean)
 
-  return appHtml
+  return { appHTML, htmlAttributes, bodyAttributes, metaAttributes }
 }
