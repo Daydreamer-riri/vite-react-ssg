@@ -81,6 +81,27 @@ export const routes: RouteRecord[] = [
 ]
 ```
 
+## `<ClientOnly/>`
+
+If you need to render some component in browser only, you can wrap your component with `<ClientOnly>`.
+
+```tsx
+import { ClientOnly } from 'vite-react-ssg'
+
+function MyComponent() {
+  return (
+    <ClientOnly>
+      {() => {
+        return <div>{window.location.href}</div>
+      }}
+    </ClientOnly>
+  )
+}
+```
+
+> It's important that the children of <ClientOnly> is not a JSX element, but a function that returns an element.
+> Because React will try to render children, and may use the client's API on the server.
+
 ## Document head
 
 You can use `<Head/>` to manage all of your changes to the document head. It takes plain HTML tags and outputs plain HTML tags. It is a wrapper around [React Helmet](https://github.com/nfl/react-helmet).

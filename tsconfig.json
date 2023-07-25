@@ -20,7 +20,7 @@
         "./src/index.ts"
       ]
     },
-    "jsx": "react-jsx"
+    "jsx": "react"
   },
   "exclude": [
     "**/dist",
