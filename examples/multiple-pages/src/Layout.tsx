@@ -10,7 +10,7 @@ export default function Layout() {
     <>
       <Head>
         <meta charSet="UTF-8" />
-        <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+        <link rel="icon" type="image/svg+xml" href="/react.svg" />
         <title>head test {state ? 'A' : 'B'}</title>
         <body className={`body-class-in-head-${state ? 'a' : 'b'}`} />
       </Head>
