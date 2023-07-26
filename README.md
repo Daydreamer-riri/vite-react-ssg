@@ -16,8 +16,9 @@ Static-site generation for React on Vite.
 // package.json
 {
   "scripts": {
-    "dev": "vite",
+-   "dev": "vite",
 -   "build": "vite build"
++   "dev": "vite-react-ssg dev",
 +   "build": "vite-react-ssg build"
 
     // OR if you want to use another vite config file
@@ -247,11 +248,43 @@ export default {
 }
 ```
 
+## Use CSR in development environment
+
+If you want to use CSR during development, just:
+```ts
+// src/main.ts
+import { ViteReactSSG } from 'vite-react-ssg'
+import routes from './App.tsx'
+
+export const createRoot = ViteReactSSG(
+  { routes },
+  ({ router, routes, isClient, initialState }) => {
+    // do something.
+  },
+  {
+    // Default value is `true`
+    ssrWhenDev: false
+  }
+)
+```
+
+```diff
+// package.json
+{
+  "scripts": {
+-   "dev": "vite-react-ssg dev",
++   "dev": "vite",
+    "build": "vite-react-ssg build"
+  }
+}
+```
+Then, you can start the application with CSR in the development environment.
+
 ## Roadmap
 
 - [x] Preload assets
 - [x] Document head
-- [ ] SSR under dev
+- [x] SSR in dev environment
 - [ ] Initial State
 - [ ] More Client components, such as `<ClientOnly />`
 
