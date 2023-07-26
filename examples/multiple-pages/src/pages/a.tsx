@@ -1,16 +1,16 @@
 import { lazy } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { ClientOnly } from 'vite-react-ssg'
+import { ClientOnly, Link } from 'vite-react-ssg'
+import { Link as RRLink } from 'react-router-dom'
 import './a.css'
 
 const ACount = lazy(() => import('../components/a-count'))
 
 export default function A() {
-  const navigate = useNavigate()
   return (
     <>
       <h1 className="a">Page A</h1>
-      <button onClick={() => navigate('/')}>to index</button>
+      <Link to={'/'}>to index</Link>
+      <RRLink to={'/'}>to index by RRLink</RRLink>
       <ACount />
       <ClientOnly>
         {() => {

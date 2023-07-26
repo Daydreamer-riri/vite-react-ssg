@@ -97,3 +97,4 @@ export function ViteReactSSG(
 
 export { default as Head } from './components/Head'
 export { default as ClientOnly } from './components/ClientOnly'
+export { Link, NavLink } from './components/Link'

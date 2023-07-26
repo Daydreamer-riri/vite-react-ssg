@@ -1,10 +1,12 @@
 import { startTransition, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'vite-react-ssg'
 import reactLogo from '../assets/react.svg'
+
+// import { Link, useNavigate } from 'react-router-dom'
 
 export default function Index() {
   const [count, setCount] = useState(0)
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
 
   return (
     <>
@@ -16,7 +18,7 @@ export default function Index() {
         <button onClick={() => setCount(count => count + 1)}>
           count is {count}
         </button>
-        <button onClick={() => startTransition(() => navigate('/a'))}>
+        <button onClick={() => startTransition(() => void 0)}>
           to A
         </button>
         <Link to={'/a'}>TO A</Link>
