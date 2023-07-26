@@ -133,6 +133,14 @@ export interface ViteReactSSGClientOptions {
    * @default `#root`
    */
   rootContainer?: string | Element
+  /**
+   * Use SSR during development.
+   *
+   * If false, the 'dev' script in 'package.json' needs to be set to `"vite"`.
+   *
+   * @default true
+   */
+  ssrWhenDev?: boolean
 }
 
 interface CommonRouteOptions {

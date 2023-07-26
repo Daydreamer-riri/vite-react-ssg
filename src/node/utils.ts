@@ -1,4 +1,7 @@
+import { join } from 'node:path'
+import { readFileSync } from 'node:fs'
 import { blue, gray, yellow } from 'kolorist'
+import type { ResolvedConfig } from 'vite'
 import type { RouteRecord } from '../types'
 
 export function buildLog(text: string, count?: number) {
@@ -93,3 +96,13 @@ export function createFetchRequest(req: any): Request {
 
   return new Request(url.href, init)
 }
+
+export async function resolveAlias(config: ResolvedConfig, entry: string) {
+  const resolver = config.createResolver()
+  const result = await resolver(entry, config.root)
+  return result || join(config.root, entry)
+}
+
+export const { version } = JSON.parse(
+  readFileSync(new URL('../../package.json', import.meta.url)).toString(),
+)

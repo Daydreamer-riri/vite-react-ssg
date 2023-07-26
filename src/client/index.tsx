@@ -1,5 +1,5 @@
 import React from 'react'
-import { hydrateRoot } from 'react-dom/client'
+import { createRoot as ReactDOMCreateRoot, hydrateRoot } from 'react-dom/client'
 import { HelmetProvider } from 'react-helmet-async'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import type { RouterOptions, ViteReactSSGClientOptions, ViteReactSSGContext } from '../types'
@@ -10,7 +10,6 @@ import SiteMetadataDefaults from './components/SiteMetadataDefaults'
 export * from '../types'
 
 export function ViteReactSSG(
-  // App: ReactNode,
   routerOptions: RouterOptions,
   fn?: (context: ViteReactSSGContext<true>) => Promise<void> | void,
   options: ViteReactSSGClientOptions = {},
@@ -18,6 +17,7 @@ export function ViteReactSSG(
   const {
     transformState,
     rootContainer = '#root',
+    ssrWhenDev = true,
   } = options
 
   const isClient = typeof window !== 'undefined'
@@ -72,12 +72,23 @@ export function ViteReactSSG(
         ? document.querySelector(rootContainer)!
         : rootContainer
       const { router } = await createRoot(true)
-      hydrateRoot(container, (
+      const app = (
         <HelmetProvider>
           <SiteMetadataDefaults />
           <RouterProvider router={router!} />
         </HelmetProvider>
-      ))
+      )
+      if (!ssrWhenDev && import.meta.env.DEV) {
+        const root = ReactDOMCreateRoot(container)
+        React.startTransition(() => {
+          root.render(app)
+        })
+      }
+      else {
+        React.startTransition(() => {
+          hydrateRoot(container, app)
+        })
+      }
     })()
   }
 

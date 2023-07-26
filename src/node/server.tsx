@@ -8,9 +8,7 @@ import { renderStaticApp } from './serverRenderer'
 
 export async function render(routes: RouteRecord[], request: Request) {
   const { dataRoutes, query } = createStaticHandler(routes)
-  // const remixRequest = createFetchRequest(request)
   const context = await query(request)
-  // const routerContext = {}
   const helmetContext = {}
 
   if (context instanceof Response)

@@ -3,9 +3,10 @@ import { bold, gray, red, reset, underline } from 'kolorist'
 import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
 import { build } from './build'
+import { dev } from './dev'
 
 yargs(hideBin(process.argv))
-  .scriptName('vite-ssg')
+  .scriptName('vite-react-ssg')
   .usage('$0 [args]')
   .command(
     'build',
@@ -35,9 +36,37 @@ yargs(hideBin(process.argv))
       await build(ssgOptions, { configFile })
     },
   )
+  .command(
+    'dev',
+    'Dev SSG',
+    args => args
+      .option('script', {
+        choices: ['sync', 'async', 'defer', 'async defer'] as const,
+        describe: 'Rewrites script loading timing',
+      })
+      .option('mock', {
+        type: 'boolean',
+        describe: 'Mock browser globals (window, document, etc.) for SSG',
+      })
+      .option('config', {
+        alias: 'c',
+        type: 'string',
+        describe: 'The vite config file to use',
+      })
+      .option('base', {
+        alias: 'b',
+        type: 'string',
+        describe: 'The base path to render',
+      }),
+    async (args) => {
+      const { config: configFile = undefined, ...ssgOptions } = args
+
+      await dev(ssgOptions, { configFile })
+    },
+  )
   .fail((msg, err, yargs) => {
-    console.error(`\n${gray('[vite-ssg]')} ${bold(red('An internal error occurred.'))}`)
-    console.error(`${gray('[vite-ssg]')} ${reset(`Please report an issue, if none already exists: ${underline('https://github.com/antfu/vite-ssg/issues')}`)}`)
+    console.error(`\n${gray('[vite-react-ssg]')} ${bold(red('An internal error occurred.'))}`)
+    console.error(`${gray('[vite-react-ssg]')} ${reset(`Please report an issue, if none already exists: ${underline('https://github.com/daydreamer-riri/vite-react-ssg/issues')}`)}`)
     yargs.exit(1, err)
   })
   .showHelpOnFail(false)
