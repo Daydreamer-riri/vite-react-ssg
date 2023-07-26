@@ -100,7 +100,7 @@ function MyComponent() {
 }
 ```
 
-> It's important that the children of <ClientOnly> is not a JSX element, but a function that returns an element.
+> It's important that the children of `<ClientOnly>` is not a JSX element, but a function that returns an element.
 > Because React will try to render children, and may use the client's API on the server.
 
 ## Document head
