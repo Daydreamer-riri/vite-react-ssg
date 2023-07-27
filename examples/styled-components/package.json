@@ -1,0 +1,24 @@
+{
+  "name": "styled-components",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite-react-ssg dev",
+    "build": "vite-react-ssg build",
+    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "6.14.1",
+    "styled-components": "6.0.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react-swc": "^3.3.2",
+    "vite": "^4.4.0",
+    "vite-plugin-pages": "^0.31.0",
+    "vite-react-ssg": "workspace:*"
+  }
+}
