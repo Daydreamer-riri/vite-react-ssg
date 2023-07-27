@@ -1,4 +1,5 @@
 import type { Options as CrittersOptions } from 'critters'
+import type { ReactElement } from 'react'
 import type { IndexRouteObject, NonIndexRouteObject, createBrowserRouter } from 'react-router-dom'
 
 type Router = ReturnType<typeof createBrowserRouter>
@@ -122,6 +123,7 @@ export interface ViteReactSSGContext<HasRouter extends boolean = true> {
    * Current router path on SSG, `undefined` on client side.
    */
   routePath?: string
+  getStyleCollector: (() => StyleCollector | Promise<StyleCollector>) | null
 }
 
 export interface ViteReactSSGClientOptions {
@@ -141,6 +143,7 @@ export interface ViteReactSSGClientOptions {
    * @default true
    */
   ssrWhenDev?: boolean
+  getStyleCollector?: (() => StyleCollector | Promise<StyleCollector>) | null
 }
 
 interface CommonRouteOptions {
@@ -163,6 +166,12 @@ export type RouteRecord = NonIndexRouteRecord | IndexRouteRecord
 export interface RouterOptions {
   routes: RouteRecord[]
   createFetchRequest?: <T>(req: T) => Request
+}
+
+export interface StyleCollector {
+  collect: (app: ReactElement) => ReactElement
+  toString: (html: string) => string
+  cleanup?: () => void
 }
 
 // extend vite.config.ts

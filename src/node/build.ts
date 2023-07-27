@@ -146,7 +146,9 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
     queue.add(async () => {
       try {
         const appCtx = await createRoot(false, route) as ViteReactSSGContext<true>
-        const { routes, initialState, triggerOnSSRAppRendered, transformState = serializeState } = appCtx
+        const { routes, initialState, triggerOnSSRAppRendered, transformState = serializeState, getStyleCollector } = appCtx
+
+        const styleCollector = getStyleCollector ? await getStyleCollector() : null
 
         const transformedIndexHTML = (await onBeforePageRender?.(route, indexHTML, appCtx)) || indexHTML
 
@@ -157,7 +159,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
 
         const request = new Request(url.href)
 
-        const { appHTML, bodyAttributes, htmlAttributes, metaAttributes } = await render([...routes], request)
+        const { appHTML, bodyAttributes, htmlAttributes, metaAttributes } = await render([...routes], request, styleCollector)
         await triggerOnSSRAppRendered?.(route, appHTML, appCtx)
 
         const renderedHTML = await renderHTML({

@@ -30,6 +30,11 @@
       "types": "./dist/node.d.ts",
       "require": "./dist/node.cjs",
       "import": "./dist/node.mjs"
+    },
+    "./style-collectors": {
+      "types": "./dist/style-collectors.d.ts",
+      "require": "./dist/style-collectors.cjs",
+      "import": "./dist/style-collectors.mjs"
     }
   },
   "main": "./dist/index.mjs",
@@ -39,6 +44,9 @@
     "*": {
       "node": [
         "./dist/node.d.ts"
+      ],
+      "style-collectors": [
+        "./dist/style-collectors.d.ts"
       ]
     }
   },
@@ -64,6 +72,7 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.14.1",
+    "styled-components": "^6.0.0",
     "vite": "^2.0.0 || ^3.0.0 || ^4.0.0"
   },
   "peerDependenciesMeta": {
@@ -71,6 +80,9 @@
       "optional": true
     },
     "react-router-dom": {
+      "optional": true
+    },
+    "styled-components": {
       "optional": true
     }
   },
@@ -106,6 +118,7 @@
     "react-router-dom": "^6.14.1",
     "rimraf": "5.0.1",
     "simple-git-hooks": "^2.8.1",
+    "styled-components": "6.0.5",
     "typescript": "5.1.6",
     "unbuild": "^1.2.1",
     "vite": "^4.4.0",

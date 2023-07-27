@@ -18,6 +18,7 @@ export function ViteReactSSG(
     transformState,
     rootContainer = '#root',
     ssrWhenDev = true,
+    getStyleCollector = null,
   } = options
 
   const isClient = typeof window !== 'undefined'
@@ -33,7 +34,6 @@ export function ViteReactSSG(
       return Promise.all(appRenderCallbacks.map(cb => cb()))
     }
     const context: ViteReactSSGContext<true> = {
-      // app: App,
       isClient,
       routes: routerOptions.routes,
       router: browserRouter,
@@ -43,6 +43,7 @@ export function ViteReactSSG(
       initialState: {},
       transformState,
       routePath,
+      getStyleCollector,
     }
 
     if (client) {

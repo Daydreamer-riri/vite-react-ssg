@@ -59,10 +59,12 @@ export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteCon
 
         const createRoot: CreateRootFactory = await viteServer.ssrLoadModule(ssrEntry).then(m => m.createRoot)
         const appCtx = await createRoot(false, url) as ViteReactSSGContext<true>
-        const { routes } = appCtx
+        const { routes, getStyleCollector } = appCtx
         const transformedIndexHTML = (await onBeforePageRender?.(url, indexHTML, appCtx)) || indexHTML
 
-        const { appHTML, bodyAttributes, htmlAttributes, metaAttributes } = await render([...routes], createFetchRequest(req))
+        const styleCollector = getStyleCollector ? await getStyleCollector() : null
+
+        const { appHTML, bodyAttributes, htmlAttributes, metaAttributes } = await render([...routes], createFetchRequest(req), styleCollector)
 
         const mod = (await viteServer.moduleGraph.getModuleByUrl(entry)) as ModuleNode
 
