@@ -37,8 +37,7 @@ export async function render(routes: RouteRecord[], request: Request, styleColle
     helmet.script.toString(),
   ]
   const styleTag = styleCollector?.toString?.(appHTML) ?? ''
-  metaStrings.push(styleTag)
   const metaAttributes = metaStrings.filter(Boolean)
 
-  return { appHTML, htmlAttributes, bodyAttributes, metaAttributes }
+  return { appHTML, htmlAttributes, bodyAttributes, metaAttributes, styleTag }
 }

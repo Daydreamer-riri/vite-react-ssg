@@ -64,7 +64,8 @@ export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteCon
 
         const styleCollector = getStyleCollector ? await getStyleCollector() : null
 
-        const { appHTML, bodyAttributes, htmlAttributes, metaAttributes } = await render([...routes], createFetchRequest(req), styleCollector)
+        const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag } = await render([...routes], createFetchRequest(req), styleCollector)
+        metaAttributes.push(styleTag)
 
         const mod = (await viteServer.moduleGraph.getModuleByUrl(entry)) as ModuleNode
 

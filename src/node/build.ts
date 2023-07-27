@@ -159,7 +159,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
 
         const request = new Request(url.href)
 
-        const { appHTML, bodyAttributes, htmlAttributes, metaAttributes } = await render([...routes], request, styleCollector)
+        const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag } = await render([...routes], request, styleCollector)
         await triggerOnSSRAppRendered?.(route, appHTML, appCtx)
 
         const renderedHTML = await renderHTML({
@@ -182,6 +182,9 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
         let transformed = (await onPageRendered?.(route, html, appCtx)) || html
         if (critters)
           transformed = await critters.process(transformed)
+
+        if (styleTag)
+          transformed = transformed.replace('<head>', `<head>${styleTag}`)
 
         const formatted = await formatHtml(transformed, formatting)
 
