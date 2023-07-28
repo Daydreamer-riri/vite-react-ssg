@@ -31,10 +31,10 @@
       "require": "./dist/node.cjs",
       "import": "./dist/node.mjs"
     },
-    "./style-collectors": {
-      "types": "./dist/style-collectors.d.ts",
-      "require": "./dist/style-collectors.cjs",
-      "import": "./dist/style-collectors.mjs"
+    "./style-collectors/styled-components": {
+      "types": "./dist/style-collectors/styled-components.d.ts",
+      "require": "./dist/style-collectors/styled-components.cjs",
+      "import": "./dist/style-collectors/styled-components.mjs"
     }
   },
   "main": "./dist/index.mjs",
@@ -45,8 +45,8 @@
       "node": [
         "./dist/node.d.ts"
       ],
-      "style-collectors": [
-        "./dist/style-collectors.d.ts"
+      "style-collectors/styled-components": [
+        "./dist/style-collectors/styled-components.d.ts"
       ]
     }
   },
@@ -87,6 +87,7 @@
     }
   },
   "dependencies": {
+    "@remix-run/web-fetch": "^4.3.5",
     "express": "^4.18.2",
     "fs-extra": "^11.1.1",
     "html-minifier": "^4.0.0",

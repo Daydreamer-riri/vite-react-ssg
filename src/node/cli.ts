@@ -2,8 +2,11 @@
 import { bold, gray, red, reset, underline } from 'kolorist'
 import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
+import { installGlobals } from '../pollfill'
 import { build } from './build'
 import { dev } from './dev'
+
+installGlobals()
 
 yargs(hideBin(process.argv))
   .scriptName('vite-react-ssg')

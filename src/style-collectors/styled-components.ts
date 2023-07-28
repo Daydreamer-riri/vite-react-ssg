@@ -1,8 +1,7 @@
 import type { ReactElement } from 'react'
+import { ServerStyleSheet } from 'styled-components'
 
 async function ssrCollector() {
-  const { ServerStyleSheet } = await import('styled-components')
-
   const sheet = new ServerStyleSheet()
 
   return {
@@ -18,4 +17,4 @@ async function ssrCollector() {
   }
 }
 
-export default import.meta.env.SSR ? ssrCollector : null
+export default ssrCollector

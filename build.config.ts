@@ -5,7 +5,7 @@ export default defineBuildConfig({
     { input: 'src/index', name: 'index' },
     { input: 'src/node/cli', name: 'node/cli' },
     { input: 'src/node', name: 'node' },
-    { input: 'src/style-collectors/index', name: 'style-collectors' },
+    { input: 'src/style-collectors/styled-components', name: 'style-collectors/styled-components' },
   ],
   declaration: true,
   clean: true,
