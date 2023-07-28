@@ -6,8 +6,6 @@ Static-site generation for React on Vite.
 
 ## Install
 
-> **This library requires Node.js version >= 17**
-> or `Request` is available
 <pre>
 <b>npm i -D vite-react-ssg</b> <em>react-router-dom</em>
 </pre>
@@ -176,11 +174,14 @@ Use the `getStyleCollector` option to specify an SSR/SSG style collector. Curren
 
 ```tsx
 import { ViteReactSSG } from 'vite-react-ssg'
-import { getStyledComponentsCollector } from 'vite-react-ssg/style-collectors'
+import getStyledComponentsCollector from 'vite-react-ssg/style-collectors/styled-components'
 import { routes } from './App.js'
 import './index.css'
 
-export const createRoot = ViteReactSSG({ routes }, () => {}, { getStyleCollector: getStyledComponentsCollector })
+export const createRoot = ViteReactSSG(
+  { routes },
+  () => { },
+  { getStyleCollector: getStyledComponentsCollector })
 ```
 
 You can provide your own by looking at the [implementation](./src/style-collectors/) of any of the existing collectors.
