@@ -1,10 +1,18 @@
 import { useState } from 'react'
 import './a-count.css'
 
-export default function ACount() {
+export default function ACount({ onClick }: { onClick: (value: number) => void }) {
   const [count, setCount] = useState(0)
 
   return (
-    <button className="a-count" onClick={() => setCount(prev => ++prev)}>{count}</button>
+    <button
+      className="a-count"
+      onClick={() => {
+        setCount(prev => ++prev)
+        onClick?.(count + 1)
+      }}
+
+    >{count}
+    </button>
   )
 }

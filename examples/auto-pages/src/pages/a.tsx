@@ -1,16 +1,18 @@
-import { lazy } from 'react'
+import { lazy, useState } from 'react'
 import { ClientOnly, Link } from 'vite-react-ssg'
 import './a.css'
 
 const ACount = lazy(() => import('../components/a-count'))
 
 export default function A() {
+  const [count, setCount] = useState(0)
+
   return (
     <>
       <h1 className="a">Page A</h1>
       <Link to={'/'}>to index</Link>{' '}
-      <Link to={'/nest'}>to nest</Link>
-      <ACount />
+      <Link to={`/nest/${count}`}>to nest/{count}</Link>
+      <ACount onClick={value => setCount(value)} />
       <ClientOnly>
         {() => {
           return <div>{window.location.href}</div>
