@@ -227,6 +227,110 @@ export default {
 }
 ```
 
+```ts
+interface ViteReactSSGOptions {
+  /**
+   * Set the scripts' loading mode. Only works for `type="module"`.
+   *
+   * @default 'sync'
+   */
+  script?: 'sync' | 'async' | 'defer' | 'async defer'
+  /**
+   * Build format.
+   *
+   * @default 'esm'
+   */
+  format?: 'esm' | 'cjs'
+  /**
+   * The path of the main entry file (relative to the project root).
+   *
+   * @default 'src/main.ts'
+   */
+  entry?: string
+  /**
+   * Mock browser global variables (window, document, etc...) from SSG.
+   *
+   * @default false
+   */
+  mock?: boolean
+  /**
+   * Apply formatter to the generated index file.
+   *
+   * **It will cause Hydration Failed.**
+   *
+   * @default 'none'
+   */
+  formatting?: 'minify' | 'prettify' | 'none'
+  /**
+   * Vite environmeng mode.
+   */
+  mode?: string
+  /**
+   * Directory style of the output directory.
+   *
+   * flat: `/foo` -> `/foo.html`
+   * nested: `/foo` -> `/foo/index.html`
+   *
+   * @default 'flat'
+   */
+  dirStyle?: 'flat' | 'nested'
+  /**
+   * Generate for all routes, including dynamic routes.
+   * If enabled, you will need to configGure your serve
+   * manually to handle dynamic routes properly.
+   *
+   * @default false
+   */
+  includeAllRoutes?: boolean
+  /**
+   * Options for the critters packages.
+   *
+   * @see https://github.com/GoogleChromeLabs/critters
+   */
+  crittersOptions?: CrittersOptions | false
+  /**
+   * Custom function to modify the routes to do the SSG.
+   *
+   * Works only when `includeAllRoutes` is set to false.
+   *
+   * Defaults to a handler that filters out all the dynamic routes.
+   * When passing your custom handler, you should also take care of the dynamic routes yourself.
+   */
+  includedRoutes?: (paths: string[], routes: Readonly<RouteRecord[]>) => Promise<string[]> | string[]
+  /**
+   * Callback to be called before every page render.
+   *
+   * It can be used to transform the project's `index.html` file before passing it to the renderer.
+   *
+   * To do so, you can change the 'index.html' file contents (passed in through the `indexHTML` parameter), and return it.
+   * The returned value will then be passed to renderer.
+   */
+  onBeforePageRender?: (route: string, indexHTML: string, appCtx: ViteReactSSGContext<true>) => Promise<string | null | undefined> | string | null | undefined
+  /**
+   * Callback to be called on every rendered page.
+   *
+   * It can be used to transform the current route's rendered HTML.
+   *
+   * To do so, you can transform the route's rendered HTML (passed in through the `renderedHTML` parameter), and return it.
+   * The returned value will be used as the HTML of the route.
+   */
+  onPageRendered?: (route: string, renderedHTML: string, appCtx: ViteReactSSGContext<true>) => Promise<string | null | undefined> | string | null | undefined
+
+  onFinished?: () => Promise<void> | void
+  /**
+   * The application's root container `id`.
+   *
+   * @default `root`
+   */
+  rootContainerId?: string
+  /**
+   * The size of the SSG processing queue.
+   *
+   * @default 20
+   */
+  concurrency?: number
+}
+```
 See [src/types.ts](./src/types.ts). for more options available.
 
 ### Custom Routes to Render
@@ -301,8 +405,12 @@ Then, you can start the application with CSR in the development environment.
 - [x] Preload assets
 - [x] Document head
 - [x] SSR in dev environment
+- [x] More Client components, such as `<ClientOnly />`
+- [ ] `getStaticPaths` for dynamic routes
 - [ ] Initial State
-- [ ] More Client components, such as `<ClientOnly />`
+
+## Credits
+This project inspired by [vite-ssg](https://github.com/antfu/vite-ssg), thanks to [@antfu](https://github.com/antfu) for his awesome work.
 
 ## License
 

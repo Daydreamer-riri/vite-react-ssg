@@ -94,7 +94,7 @@ export interface ViteReactSSGOptions {
 
   onFinished?: () => Promise<void> | void
   /**
-   * The application's root container `class`.
+   * The application's root container `id`.
    *
    * @default `root`
    */
@@ -106,8 +106,6 @@ export interface ViteReactSSGOptions {
    */
   concurrency?: number
 }
-
-type PartialKeys<T, Keys extends keyof T> = Omit<T, Keys> & Partial<Pick<T, Keys>>
 
 export interface ViteReactSSGContext<HasRouter extends boolean = true> {
   router?: HasRouter extends true ? Router : undefined
