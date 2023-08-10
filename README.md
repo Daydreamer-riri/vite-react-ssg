@@ -46,36 +46,33 @@ import React from 'react'
 import type { RouteRecord } from 'vite-react-ssg'
 import './App.css'
 
-const pages = import.meta.glob<any>('./pages/**/*.tsx')
-
-const children: RouteRecord[] = Object.entries(pages).map(([filepath, component]) => {
-  let path = filepath.split('/pages')[1]
-  path = path.split('.')[0].replace('index', '')
-  const entry = `src${filepath.slice(1)}`
-
-  if (path.endsWith('/')) {
-    return {
-      index: true,
-      Component: React.lazy(component),
-      entry,
-    }
-  }
-  return {
-    path,
-    Component: React.lazy(component),
-    // Used to obtain static resources through manifest
-    entry,
-  }
-})
-
 const Layout = React.lazy(() => import('./Layout'))
+
 export const routes: RouteRecord[] = [
   {
     path: '/',
     element: <Layout />,
-    children,
-    // Used to obtain static resources through manifest
     entry: 'src/Layout.tsx',
+    children: [
+      {
+        path: 'a',
+        Component: React.lazy(() => import('./pages/a')),
+        entry: 'src/pages/a.tsx',
+      },
+      {
+        index: true,
+        Component: React.lazy(() => import('./pages/index')),
+        // Used to obtain static resources through manifest
+        entry: 'src/pages/index.tsx',
+      },
+      {
+        path: 'nest/:b',
+        Component: React.lazy(() => import('./pages/nest/[b]')),
+        entry: 'src/pages/nest/[b].tsx',
+        // To determine which paths will be pre-rendered
+        getStaticPaths: () => ['nest/b1', 'nest/b2'],
+      },
+    ],
   },
 ]
 ```

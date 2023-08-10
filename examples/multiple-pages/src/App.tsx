@@ -4,40 +4,28 @@ import './App.css'
 
 const Layout = React.lazy(() => import('./Layout'))
 
-const pages = import.meta.glob<any>('./pages/**/*.tsx')
-
-const children: RouteRecord[] = Object.entries(pages).map(([filepath, component]) => {
-  let path = filepath.split('/pages')[1]
-  path = path.split('.')[0].replace('index', '')
-  const entry = `src${filepath.slice(1)}`
-
-  if (filepath.endsWith('[b].tsx')) {
-    return {
-      path: 'nest/:b',
-      Component: React.lazy(component),
-      getStaticPaths: () => ['nest/b1', 'nest/b2'],
-    } as RouteRecord
-  }
-
-  if (path.endsWith('/')) {
-    return {
-      index: true,
-      Component: React.lazy(component),
-      entry,
-    }
-  }
-  return {
-    path,
-    Component: React.lazy(component),
-    entry,
-  }
-})
-
 export const routes: RouteRecord[] = [
   {
     path: '/',
     element: <Layout />,
-    children,
+    children: [
+      {
+        path: 'a',
+        Component: React.lazy(() => import('./pages/a')),
+        entry: 'src/pages/a.tsx',
+      },
+      {
+        index: true,
+        Component: React.lazy(() => import('./pages/index')),
+        entry: 'src/pages/index.tsx',
+      },
+      {
+        path: 'nest/:b',
+        Component: React.lazy(() => import('./pages/nest/[b]')),
+        entry: 'src/pages/nest/[b].tsx',
+        getStaticPaths: () => ['nest/b1', 'nest/b2'],
+      },
+    ],
     entry: 'src/Layout.tsx',
   },
 ]
