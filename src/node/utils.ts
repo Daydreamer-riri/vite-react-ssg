@@ -31,23 +31,17 @@ export function routesToPaths(routes?: Readonly<RouteRecord[]>) {
 
   const getPaths = (routes: Readonly<RouteRecord[]>, prefix = '') => {
     // remove trailing slash
-    const parentPath = prefix
     prefix = prefix.replace(/\/$/g, '')
     for (const route of routes) {
       let path = route.path
+      path = handlePath(path, prefix, route.entry)
 
-      // check for leading slash
-      if (route.path != null) {
-        path = (prefix && !route.path.startsWith('/'))
-          ? `${prefix}${route.path ? `/${route.path}` : ''}`
-          : route.path
-
-        paths.add(path)
-        addEntry(path, route.entry)
-
-        if (pathToEntry[parentPath]) {
-          const pathCopy = path
-          pathToEntry[parentPath].forEach(entry => addEntry(pathCopy, entry))
+      if (route.getStaticPaths) {
+        const staticPaths = route.getStaticPaths()
+        for (let staticPath of staticPaths) {
+          staticPath = handlePath(staticPath, prefix, route.entry) as string
+          if (Array.isArray(route.children))
+            getPaths(route.children, staticPath)
         }
       }
 
@@ -61,6 +55,25 @@ export function routesToPaths(routes?: Readonly<RouteRecord[]>) {
 
   getPaths(routes)
   return { paths: Array.from(paths), pathToEntry }
+
+  function handlePath(path: string | undefined, prefix: string, entry: string | undefined) {
+    // check for leading slash
+    if (path != null) {
+      path = (prefix && !path.startsWith('/'))
+        ? `${prefix}${path ? `/${path}` : ''}`
+        : path
+
+      paths.add(path)
+      addEntry(path, entry)
+
+      if (pathToEntry[prefix]) {
+        const pathCopy = path
+        pathToEntry[prefix].forEach(entry => addEntry(pathCopy, entry))
+      }
+    }
+
+    return path
+  }
 }
 
 export function createFetchRequest(req: any): Request {

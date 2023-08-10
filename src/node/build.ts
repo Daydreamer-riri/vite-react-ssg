@@ -127,6 +127,8 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
     ? paths
     : await includedRoutes(paths, routes || [])
 
+  routesPaths = DefaultIncludedRoutes(routesPaths, routes || [])
+
   routesPaths = Array.from(new Set(routesPaths))
 
   buildLog('Rendering Pages...', routesPaths.length)

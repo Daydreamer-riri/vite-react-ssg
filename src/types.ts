@@ -148,9 +148,18 @@ interface CommonRouteOptions {
   /**
    * Used to obtain static resources through manifest
    *
-   * @example `src/pages/home.tsx
+   * @example `src/pages/home.tsx`
    */
   entry?: string
+  /**
+   * The getStaticPaths() function should return an array of path
+   * to determine which paths will be pre-rendered by vite-react-ssg.
+   *
+   * This function is only valid for dynamic route.
+   *
+   * @example () => ['path1', 'path2']
+   */
+  getStaticPaths?: () => string[]
 }
 
 export type NonIndexRouteRecord = Omit<NonIndexRouteObject, 'children'> & {
