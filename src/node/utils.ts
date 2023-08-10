@@ -18,6 +18,8 @@ export function routesToPaths(routes?: Readonly<RouteRecord[]>) {
   function addEntry(path: string, entry: string | undefined) {
     if (!entry)
       return
+    if (entry[0] === '/')
+      entry = entry.slice(1) // allow to start with a slash
     if (pathToEntry[path])
       pathToEntry[path].add(entry)
     else
