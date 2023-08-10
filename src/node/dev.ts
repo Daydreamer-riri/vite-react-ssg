@@ -4,7 +4,7 @@ import { createServer as createViteServer, resolveConfig, version as viteVersion
 import { bgLightCyan, bold, cyan, dim, green, reset } from 'kolorist'
 import express from 'express'
 import fs from 'fs-extra'
-import type { ViteReactSSGContext, ViteReactSSGOptions } from '../types'
+import type { RouteRecord, ViteReactSSGContext, ViteReactSSGOptions } from '../types'
 import { createLink, detectEntry, renderHTML } from './html'
 import { createFetchRequest, resolveAlias, version } from './utils'
 import { render } from './server'
@@ -64,15 +64,23 @@ export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteCon
 
         const styleCollector = getStyleCollector ? await getStyleCollector() : null
 
-        const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag } = await render([...routes], createFetchRequest(req), styleCollector)
+        const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag, routerContext }
+          = await render([...routes], createFetchRequest(req), styleCollector)
+
         metaAttributes.push(styleTag)
 
-        const mod = (await viteServer.moduleGraph.getModuleByUrl(entry)) as ModuleNode
+        const matchesEntries = routerContext.matches
+          .map(match => (match.route as RouteRecord).entry as string)
+          .filter(entry => !!entry)
+          .map(entry => entry[0] === '/' ? entry : `/${entry}`)
+        const mods = await Promise.all(
+          [entry, ...matchesEntries].map(async entry => await viteServer.moduleGraph.getModuleByUrl(entry)),
+        )
 
         const assetsUrls = new Set<string>()
 
-        const collectAssets = async (mod: ModuleNode) => {
-          if (!mod?.ssrTransformResult)
+        const collectAssets = async (mod: ModuleNode | undefined) => {
+          if (!mod || !mod?.ssrTransformResult)
             return
 
           const { deps = [], dynamicDeps = [] } = mod?.ssrTransformResult
@@ -88,7 +96,7 @@ export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteCon
             }
           }
         }
-        await collectAssets(mod)
+        await Promise.all(mods.map(async mod => collectAssets(mod)))
         const preloadLink = [...assetsUrls].map(item => createLink(item))
         metaAttributes.push(...preloadLink)
 

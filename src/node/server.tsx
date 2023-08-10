@@ -39,5 +39,5 @@ export async function render(routes: RouteRecord[], request: Request, styleColle
   const styleTag = styleCollector?.toString?.(appHTML) ?? ''
   const metaAttributes = metaStrings.filter(Boolean)
 
-  return { appHTML, htmlAttributes, bodyAttributes, metaAttributes, styleTag }
+  return { appHTML, htmlAttributes, bodyAttributes, metaAttributes, styleTag, routerContext: context }
 }
