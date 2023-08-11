@@ -29,7 +29,8 @@ export function routesToPaths(routes?: Readonly<RouteRecord[]>) {
   if (!routes)
     return { paths: ['/'], pathToEntry }
 
-  const paths: Set<string> = new Set()
+  const paths = new Set<string>()
+  const lazyPaths = new Set<string>()
 
   const getPaths = (routes: Readonly<RouteRecord[]>, prefix = '') => {
     // remove trailing slash
@@ -38,7 +39,7 @@ export function routesToPaths(routes?: Readonly<RouteRecord[]>) {
       let path = route.path
       path = handlePath(path, prefix, route.entry)
 
-      if (route.getStaticPaths) {
+      if (route.getStaticPaths && path?.includes(':')) {
         const staticPaths = route.getStaticPaths()
         for (let staticPath of staticPaths) {
           staticPath = handlePath(staticPath, prefix, route.entry) as string
@@ -46,6 +47,9 @@ export function routesToPaths(routes?: Readonly<RouteRecord[]>) {
             getPaths(route.children, staticPath)
         }
       }
+
+      if (route.lazy)
+        lazyPaths.add(route.index ? prefix : path ?? '')
 
       if (route.index)
         addEntry(prefix, route.entry)
@@ -56,7 +60,7 @@ export function routesToPaths(routes?: Readonly<RouteRecord[]>) {
   }
 
   getPaths(routes)
-  return { paths: Array.from(paths), pathToEntry }
+  return { paths: Array.from(paths), pathToEntry, lazyPaths: Array.from(lazyPaths) }
 
   function handlePath(path: string | undefined, prefix: string, entry: string | undefined) {
     // check for leading slash
@@ -121,3 +125,12 @@ export async function resolveAlias(config: ResolvedConfig, entry: string) {
 export const { version } = JSON.parse(
   readFileSync(new URL('../../package.json', import.meta.url)).toString(),
 )
+
+export function createRequest(path: string) {
+  const url = new URL(path, 'http://vite-react-ssg.com')
+  url.search = ''
+  url.hash = ''
+  url.pathname = path
+
+  return new Request(url.href)
+}

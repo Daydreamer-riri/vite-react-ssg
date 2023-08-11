@@ -10,9 +10,9 @@ import type { VitePluginPWAAPI } from 'vite-plugin-pwa'
 import { JSDOM } from 'jsdom'
 import type { RouteRecord, ViteReactSSGContext, ViteReactSSGOptions } from '../types'
 import { serializeState } from '../utils/state'
-import { buildLog, getSize, resolveAlias, routesToPaths } from './utils'
+import { buildLog, createRequest, getSize, resolveAlias, routesToPaths } from './utils'
 import { getCritters } from './critial'
-import { render } from './server'
+import { preLoad, render } from './server'
 import { renderPreloadLinks } from './preload-links'
 import { detectEntry, renderHTML } from './html'
 
@@ -121,7 +121,11 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
   const includedRoutes = serverEntryIncludedRoutes || configIncludedRoutes
   const { routes } = await createRoot(false)
 
-  const { paths, pathToEntry } = routesToPaths(routes)
+  // load lazy route
+  const { lazyPaths } = routesToPaths(routes)
+  const dataRoutes = await preLoad([...routes!], lazyPaths)
+
+  const { paths, pathToEntry } = routesToPaths(dataRoutes)
 
   let routesPaths = includeAllRoutes
     ? paths
@@ -144,25 +148,20 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
 
   const queue = new PQueue({ concurrency })
 
-  for (const route of routesPaths) {
+  for (const path of routesPaths) {
     queue.add(async () => {
       try {
-        const appCtx = await createRoot(false, route) as ViteReactSSGContext<true>
-        const { routes, initialState, triggerOnSSRAppRendered, transformState = serializeState, getStyleCollector } = appCtx
+        const appCtx = await createRoot(false, path) as ViteReactSSGContext<true>
+        const { initialState, triggerOnSSRAppRendered, transformState = serializeState, getStyleCollector } = appCtx
 
         const styleCollector = getStyleCollector ? await getStyleCollector() : null
 
-        const transformedIndexHTML = (await onBeforePageRender?.(route, indexHTML, appCtx)) || indexHTML
+        const transformedIndexHTML = (await onBeforePageRender?.(path, indexHTML, appCtx)) || indexHTML
 
-        const url = new URL(route, 'http://vite-react-ssg.com')
-        url.search = ''
-        url.hash = ''
-        url.pathname = route
+        const request = createRequest(path)
 
-        const request = new Request(url.href)
-
-        const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag } = await render([...routes], request, styleCollector)
-        await triggerOnSSRAppRendered?.(route, appHTML, appCtx)
+        const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag } = await render(dataRoutes, request, styleCollector)
+        await triggerOnSSRAppRendered?.(path, appHTML, appCtx)
 
         const renderedHTML = await renderHTML({
           rootContainerId,
@@ -176,12 +175,12 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
 
         const jsdom = new JSDOM(renderedHTML)
 
-        const modules = collectModulesForEntrys(manifest, pathToEntry?.[route])
+        const modules = collectModulesForEntrys(manifest, pathToEntry?.[path])
 
         renderPreloadLinks(jsdom.window.document, modules, ssrManifest)
 
         const html = jsdom.serialize()
-        let transformed = (await onPageRendered?.(route, html, appCtx)) || html
+        let transformed = (await onPageRendered?.(path, html, appCtx)) || html
         if (critters)
           transformed = await critters.process(transformed)
 
@@ -190,12 +189,12 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
 
         const formatted = await formatHtml(transformed, formatting)
 
-        const relativeRouteFile = `${(route.endsWith('/')
-          ? `${route}index`
-          : route).replace(/^\//g, '')}.html`
+        const relativeRouteFile = `${(path.endsWith('/')
+          ? `${path}index`
+          : path).replace(/^\//g, '')}.html`
 
         const filename = dirStyle === 'nested'
-          ? join(route.replace(/^\//g, ''), 'index.html')
+          ? join(path.replace(/^\//g, ''), 'index.html')
           : relativeRouteFile
 
         await fs.ensureDir(join(out, dirname(filename)))
@@ -205,7 +204,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
         )
       }
       catch (err: any) {
-        throw new Error(`${gray('[vite-react-ssg]')} ${red(`Error on page: ${cyan(route)}`)}\n${err.stack}`)
+        throw new Error(`${gray('[vite-react-ssg]')} ${red(`Error on page: ${cyan(path)}`)}\n${err.stack}`)
       }
     })
   }

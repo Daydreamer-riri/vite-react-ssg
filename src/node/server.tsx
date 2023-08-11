@@ -5,6 +5,7 @@ import { StaticRouterProvider, createStaticHandler, createStaticRouter } from 'r
 import SiteMetadataDefaults from '../client/components/SiteMetadataDefaults'
 import type { RouteRecord, StyleCollector } from '../types'
 import { renderStaticApp } from './serverRenderer'
+import { createRequest } from './utils'
 
 export async function render(routes: RouteRecord[], request: Request, styleCollector: StyleCollector | null) {
   const { dataRoutes, query } = createStaticHandler(routes)
@@ -40,4 +41,16 @@ export async function render(routes: RouteRecord[], request: Request, styleColle
   const metaAttributes = metaStrings.filter(Boolean)
 
   return { appHTML, htmlAttributes, bodyAttributes, metaAttributes, styleTag, routerContext: context }
+}
+
+export async function preLoad(routes: RouteRecord[], paths: string[] | undefined) {
+  if (!paths || paths.length === 0)
+    return routes
+
+  const { dataRoutes, query } = createStaticHandler(routes)
+  await Promise.all(paths.map(async (path) => {
+    const request = createRequest(path)
+    return query(request)
+  }))
+  return dataRoutes as RouteRecord[]
 }

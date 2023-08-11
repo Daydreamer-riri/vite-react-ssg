@@ -140,6 +140,31 @@ importers:
         specifier: workspace:*
         version: link:../..
 
+  examples/lazy-pages:
+    dependencies:
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.2.0(react@18.2.0)
+      react-router-dom:
+        specifier: 6.14.1
+        version: 6.14.1(react-dom@18.2.0)(react@18.2.0)
+    devDependencies:
+      '@vitejs/plugin-react-swc':
+        specifier: ^3.3.2
+        version: 3.3.2(vite@4.4.0)
+      vite:
+        specifier: ^4.4.0
+        version: 4.4.0(@types/node@18.15.11)
+      vite-plugin-pages:
+        specifier: ^0.31.0
+        version: 0.31.0(vite@4.4.0)
+      vite-react-ssg:
+        specifier: workspace:*
+        version: link:../..
+
   examples/multiple-pages:
     dependencies:
       react:
