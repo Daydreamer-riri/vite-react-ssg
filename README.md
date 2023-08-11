@@ -4,6 +4,23 @@ Static-site generation for React on Vite.
 
 [![NPM version](https://img.shields.io/npm/v/vite-react-ssg?color=a1b858&label=)](https://www.npmjs.com/package/vite-react-ssg)
 
+# Table of contents
+* [Usage](#Usage)
+* [Extra route options](#Extrarouteoptions)
+	* [`entry`](#entry)
+	* [`getStaticPaths`](#getStaticPaths)
+* [lazy](#lazy)
+* [`<ClientOnly/>`](#ClientOnly)
+* [Document head](#Documenthead)
+	* [Reactive head](#Reactivehead)
+* [CSS in JS](#CSSinJS)
+* [Critical CSS](#CriticalCSS)
+* [Configuration](#Configuration)
+	* [Custom Routes to Render](#CustomRoutestoRender)
+* [Use CSR in development environment](#UseCSRindevelopmentenvironment)
+* [Roadmap](#Roadmap)
+* [Credits](#Credits)
+
 ## Usage
 
 <pre>
