@@ -4,7 +4,7 @@ Static-site generation for React on Vite.
 
 [![NPM version](https://img.shields.io/npm/v/vite-react-ssg?color=a1b858&label=)](https://www.npmjs.com/package/vite-react-ssg)
 
-## Install
+## Usage
 
 <pre>
 <b>npm i -D vite-react-ssg</b> <em>react-router-dom</em>
@@ -76,6 +76,60 @@ export const routes: RouteRecord[] = [
   },
 ]
 ```
+
+## Extra route options
+
+The RouteObject of vite-react-ssg is based on react-router, and vite-react-ssg receives some additional properties.
+
+#### `entry`
+Used to obtain static resources.If you introduce static resources (such as css files) in that route and use lazy loading (such as React.lazy or route.lazy), you should set the entry field. It should be the path from root to the target file.
+
+eg: `src/pages/page1.tsx`
+
+#### `getStaticPaths`
+The `getStaticPaths()` function should return an array of path
+to determine which paths will be pre-rendered by vite-react-ssg.
+
+This function is only valid for dynamic route.
+
+```ts
+const route = {
+  path: 'nest/:b',
+  Component: React.lazy(() => import('./pages/nest/[b]')),
+  entry: 'src/pages/nest/[b].tsx',
+  // To determine which paths will be pre-rendered
+  getStaticPaths: () => ['nest/b1', 'nest/b2'],
+},
+```
+
+## lazy
+These options work well with the `lazy` field.
+
+```tsx
+// src/pages/[page].tsx
+export function Component() {
+  return (
+    <div>{/* your component */}</div>
+  )
+}
+
+export function getStaticPaths() {
+  return ['page1', 'page2']
+}
+
+export const entry = 'src/pages/[page].tsx'
+```
+```ts
+// src/routes.ts
+const routes = [
+  {
+    path: '/:page',
+    lazy: () => import('./pages/[page]')
+  }
+]
+```
+
+See [example](./examples/lazy-pages/src/App.tsx).
 
 ## `<ClientOnly/>`
 
@@ -403,7 +457,7 @@ Then, you can start the application with CSR in the development environment.
 - [x] Document head
 - [x] SSR in dev environment
 - [x] More Client components, such as `<ClientOnly />`
-- [ ] `getStaticPaths` for dynamic routes
+- [x] `getStaticPaths` for dynamic routes
 - [ ] Initial State
 
 ## Credits
