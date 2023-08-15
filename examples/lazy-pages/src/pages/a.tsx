@@ -22,3 +22,7 @@ export default function A() {
 }
 
 export const Component = A
+
+console.log(import.meta.url)
+
+export const entry = import.meta.url

@@ -12,18 +12,24 @@ export const routes: RouteRecord[] = [
       {
         path: 'a',
         lazy: () => import('./pages/a'),
-        entry: 'src/pages/a.tsx',
+        // Component: React.lazy(() => import('./pages/a')),
       },
       {
         index: true,
-        lazy: () => import('./pages/index'),
+        lazy: () => defaultToComponent(import('./pages/index')),
         entry: 'src/pages/index.tsx',
       },
       {
         path: 'nest/:b',
-        lazy: () => import('./pages/nest/[b]'),
+        lazy: () => defaultToComponent(import('./pages/nest/[b]')),
       },
     ],
     entry: 'src/Layout.tsx',
   },
 ]
+
+async function defaultToComponent(routePromise: Promise<RouteRecord & { default: any }>) {
+  const routeModule = await routePromise
+
+  return { ...routeModule, Component: routeModule.default }
+}

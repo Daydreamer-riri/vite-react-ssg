@@ -6,8 +6,6 @@ export function B() {
 
 export default B
 
-export const Component = B
-
 export function getStaticPaths() {
   return ['nest/b1', 'nest/b2']
 }
