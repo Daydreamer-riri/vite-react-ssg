@@ -110,7 +110,7 @@
     "@types/react-dom": "^18.2.6",
     "@types/yargs": "^17.0.24",
     "bumpp": "^9.1.0",
-    "critters": "^0.0.19",
+    "critters": "^0.0.20",
     "eslint": "^8.45.0",
     "esno": "^0.17.0",
     "p-queue": "^7.3.4",
