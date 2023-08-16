@@ -62,6 +62,7 @@
     "build": "unbuild",
     "dev": "unbuild --stub",
     "lint": "eslint .",
+    "test": "pnpm -r --filter=./examples/* build && vitest run",
     "prepublishOnly": "nr build",
     "release": "bumpp && npm publish",
     "start": "esno src/index.ts",
@@ -113,6 +114,7 @@
     "critters": "^0.0.20",
     "eslint": "^8.45.0",
     "esno": "^0.17.0",
+    "fast-glob": "3.3.1",
     "p-queue": "^7.3.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -123,6 +125,6 @@
     "unbuild": "^1.2.1",
     "vite": "^4.4.0",
     "vite-plugin-pwa": "^0.16.4",
-    "vitest": "0.33.0"
+    "vitest": "0.34.1"
   }
 }
