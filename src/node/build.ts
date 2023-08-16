@@ -147,12 +147,13 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
   indexHTML = rewriteScripts(indexHTML, script)
 
   const queue = new PQueue({ concurrency })
+  const crittersQueue = new PQueue({ concurrency: 1 })
 
   for (const path of routesPaths) {
     queue.add(async () => {
       try {
         const appCtx = await createRoot(false, path) as ViteReactSSGContext<true>
-        const { initialState, triggerOnSSRAppRendered, transformState = serializeState, getStyleCollector } = appCtx
+        const { initialState, routes, triggerOnSSRAppRendered, transformState = serializeState, getStyleCollector } = appCtx
 
         const styleCollector = getStyleCollector ? await getStyleCollector() : null
 
@@ -160,7 +161,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
 
         const request = createRequest(path)
 
-        const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag } = await render(dataRoutes, request, styleCollector)
+        const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag } = await render([...routes], request, styleCollector)
         await triggerOnSSRAppRendered?.(path, appHTML, appCtx)
 
         const renderedHTML = await renderHTML({
@@ -182,7 +183,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
         const html = jsdom.serialize()
         let transformed = (await onPageRendered?.(path, html, appCtx)) || html
         if (critters)
-          transformed = await critters.process(transformed)
+          transformed = (await crittersQueue.add(() => critters.process(transformed)))!
 
         if (styleTag)
           transformed = transformed.replace('<head>', `<head>${styleTag}`)
