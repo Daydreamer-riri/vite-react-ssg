@@ -3,6 +3,7 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "postinstall": "pnpm -w run build",
     "build": "vite-react-ssg build",
     "dev": "vite-react-ssg dev",
     "start": "serve -l 5173 dist"
