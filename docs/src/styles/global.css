@@ -1,0 +1,42 @@
+pre.shiki {
+  background-color: rgb(248, 248, 248) !important;
+}
+html.dark pre.shiki {
+  background-color: rgb(225, 225, 225) !important;
+  filter: invert(98%) hue-rotate(180deg);
+}
+
+:root {
+  --c-scrollbar: rgb(238, 238, 238);
+  --c-scrollbar-bg: rgb(255, 255, 255);
+  --c-scrollbar-hover: rgb(187, 187, 187);
+}
+
+.dark {
+  --c-scrollbar: rgb(38, 38, 38);
+  --c-scrollbar-bg: rgb(18, 18, 18);
+  --c-scrollbar-hover: rgb(57, 57, 57);
+}
+
+* {
+  scrollbar-color: var(--c-scrollbar) var(--c-scrollbar-bg);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar:horizontal {
+  height: 6px;
+}
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background: var(--c-scrollbar-bg);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--c-scrollbar);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--c-scrollbar-hover);
+}

@@ -10,5 +10,6 @@
     "markdown",
     "css",
     "json"
-  ]
+  ],
+  "unocss.root": "docs"
 }
