@@ -176,9 +176,6 @@ importers:
       '@vitejs/plugin-react-swc':
         specifier: ^3.3.2
         version: 3.3.2(vite@4.4.0)
-      vite:
-        specifier: ^4.4.0
-        version: 4.4.0(@types/node@18.15.11)
       vite-plugin-pages:
         specifier: ^0.31.0
         version: 0.31.0(vite@4.4.0)
@@ -201,9 +198,6 @@ importers:
       '@vitejs/plugin-react-swc':
         specifier: ^3.3.2
         version: 3.3.2(vite@4.4.0)
-      vite:
-        specifier: ^4.4.0
-        version: 4.4.0(@types/node@18.15.11)
       vite-plugin-pages:
         specifier: ^0.31.0
         version: 0.31.0(vite@4.4.0)
@@ -226,9 +220,6 @@ importers:
       '@vitejs/plugin-react-swc':
         specifier: ^3.3.2
         version: 3.3.2(vite@4.4.0)
-      vite:
-        specifier: ^4.4.0
-        version: 4.4.0(@types/node@18.15.11)
       vite-plugin-pages:
         specifier: ^0.31.0
         version: 0.31.0(vite@4.4.0)
@@ -254,9 +245,6 @@ importers:
       '@vitejs/plugin-react-swc':
         specifier: ^3.3.2
         version: 3.3.2(vite@4.4.0)
-      vite:
-        specifier: ^4.4.0
-        version: 4.4.0(@types/node@18.15.11)
       vite-plugin-pages:
         specifier: ^0.31.0
         version: 0.31.0(vite@4.4.0)
