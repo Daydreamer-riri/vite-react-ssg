@@ -7,13 +7,7 @@ import rehypeShiki from '@leafac/rehype-shiki'
 
 export default defineConfig({
   plugins: [
-    {
-      enforce: 'pre',
-      ...mdx(
-        {
-          rehypePlugins: [[rehypeShiki, { highlighter: await shiki.getHighlighter({ theme: 'vitesse-light' }) }]],
-        }),
-    },
+    mdx({ rehypePlugins: [[rehypeShiki, { highlighter: await shiki.getHighlighter({ theme: 'vitesse-light' }) }]] }),
     UnoCSS(),
     react(),
   ],

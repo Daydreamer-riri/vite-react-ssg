@@ -19,7 +19,7 @@ export default function Home() {
               READ THE DOCS
             </Link>
           </div>
-          <div className="grid grid-cols-3 gap-16 py-2 my-2 px-4 md:mt-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-16 py-2 my-2 px-4 md:mt-16">
             <div className="border-b-bluegray border-b p-b-4">
               <h2 className="font-600 text-2xl">Fast by default</h2>
               <p>Make sites very fast with <strong>static site generation</strong></p>
