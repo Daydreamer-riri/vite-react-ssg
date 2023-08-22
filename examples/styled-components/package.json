@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react-swc": "^3.3.2",
+    "vite": "4.4.9",
     "vite-plugin-pages": "^0.31.0",
     "vite-react-ssg": "workspace:*"
   }

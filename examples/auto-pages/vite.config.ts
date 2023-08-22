@@ -4,7 +4,8 @@ import pages from 'vite-plugin-pages'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(),
+  plugins: [
+    react(),
     pages({
       extendRoute(route) {
         route.entry = route?.element?.slice?.(1)
@@ -12,5 +13,6 @@ export default defineConfig({
       },
       importMode: 'async',
       routeStyle: 'remix',
-    })],
+    }),
+  ],
 })
