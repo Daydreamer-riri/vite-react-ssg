@@ -264,6 +264,34 @@ importers:
         specifier: workspace:*
         version: link:../..
 
+  examples/with-loader:
+    dependencies:
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.2.0(react@18.2.0)
+      react-router-dom:
+        specifier: 6.14.1
+        version: 6.14.1(react-dom@18.2.0)(react@18.2.0)
+    devDependencies:
+      '@mdx-js/rollup':
+        specifier: 2.3.0
+        version: 2.3.0(rollup@3.28.0)
+      '@types/mdx':
+        specifier: 2.0.6
+        version: 2.0.6
+      '@vitejs/plugin-react-swc':
+        specifier: ^3.3.2
+        version: 3.3.2(vite@4.4.9)
+      vite:
+        specifier: 4.4.9
+        version: 4.4.9(@types/node@18.15.11)
+      vite-react-ssg:
+        specifier: workspace:*
+        version: link:../..
+
 packages:
 
   /@aashutoshrathi/word-wrap@1.2.6:
