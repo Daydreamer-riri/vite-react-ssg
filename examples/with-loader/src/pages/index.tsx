@@ -1,13 +1,9 @@
-import { useState } from 'react'
 import { Link } from 'vite-react-ssg'
 import reactLogo from '../assets/react.svg'
 
 // import { Link, useNavigate } from 'react-router-dom'
 
 export default function Index() {
-  const [count, setCount] = useState(0)
-  // const navigate = useNavigate()
-
   return (
     <>
       <div>

@@ -3,7 +3,7 @@ import { ViteReactSSG } from 'vite-react-ssg'
 import Layout from './Layout'
 import Index from './pages'
 import './index.css'
-import * as Docs from './pages/[docs].tsx'
+import * as Docs from './pages/[docs]'
 
 const routes: RouteRecord[] = [
   {
