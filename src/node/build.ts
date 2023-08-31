@@ -122,10 +122,10 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
   const { routes } = await createRoot(false)
 
   // load lazy route
-  const { lazyPaths } = routesToPaths(routes)
+  const { lazyPaths } = await routesToPaths(routes)
   const dataRoutes = await preLoad([...routes!], lazyPaths)
 
-  const { paths, pathToEntry } = routesToPaths(dataRoutes)
+  const { paths, pathToEntry } = await routesToPaths(dataRoutes)
 
   let routesPaths = includeAllRoutes
     ? paths

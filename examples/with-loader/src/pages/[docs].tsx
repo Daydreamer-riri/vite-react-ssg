@@ -22,5 +22,6 @@ export const loader = async ({ params }: { params: Params<string> }) => {
 }
 
 export const getStaticPaths = () => {
-  return ['docs/a', 'docs/b']
+  const docs = import.meta.glob('../docs/*.md')
+  return Object.keys(docs).map(path => path.match(/\.(\/docs\/.*)\.md$/)?.[1] ?? '')
 }

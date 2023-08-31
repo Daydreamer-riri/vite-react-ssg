@@ -159,7 +159,7 @@ interface CommonRouteOptions {
    *
    * @example () => ['path1', 'path2']
    */
-  getStaticPaths?: () => string[]
+  getStaticPaths?: () => string[] | Promise<string[]>
 }
 
 export type NonIndexRouteRecord = Omit<NonIndexRouteObject, 'children'> & {

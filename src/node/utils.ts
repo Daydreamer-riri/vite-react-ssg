@@ -13,7 +13,7 @@ export function getSize(str: string) {
   return `${(str.length / 1024).toFixed(2)} KiB`
 }
 
-export function routesToPaths(routes?: Readonly<RouteRecord[]>) {
+export async function routesToPaths(routes?: Readonly<RouteRecord[]>) {
   const pathToEntry: Record<string, Set<string>> = {}
   function addEntry(path: string, entry: string | undefined) {
     if (!entry)
@@ -32,7 +32,7 @@ export function routesToPaths(routes?: Readonly<RouteRecord[]>) {
   const paths = new Set<string>()
   const lazyPaths = new Set<string>()
 
-  const getPaths = (routes: Readonly<RouteRecord[]>, prefix = '') => {
+  const getPaths = async (routes: Readonly<RouteRecord[]>, prefix = '') => {
     // remove trailing slash
     prefix = prefix.replace(/\/$/g, '')
     for (const route of routes) {
@@ -40,11 +40,11 @@ export function routesToPaths(routes?: Readonly<RouteRecord[]>) {
       path = handlePath(path, prefix, route.entry)
 
       if (route.getStaticPaths && path?.includes(':')) {
-        const staticPaths = route.getStaticPaths()
+        const staticPaths = await route.getStaticPaths()
         for (let staticPath of staticPaths) {
           staticPath = handlePath(staticPath, prefix, route.entry) as string
           if (Array.isArray(route.children))
-            getPaths(route.children, staticPath)
+            await getPaths(route.children, staticPath)
         }
       }
 
@@ -55,11 +55,11 @@ export function routesToPaths(routes?: Readonly<RouteRecord[]>) {
         addEntry(prefix, route.entry)
 
       if (Array.isArray(route.children))
-        getPaths(route.children, path)
+        await getPaths(route.children, path)
     }
   }
 
-  getPaths(routes)
+  await getPaths(routes)
   return { paths: Array.from(paths), pathToEntry, lazyPaths: Array.from(lazyPaths) }
 
   function handlePath(path: string | undefined, prefix: string, entry: string | undefined) {
