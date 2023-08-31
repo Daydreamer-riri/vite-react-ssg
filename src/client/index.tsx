@@ -72,6 +72,22 @@ export function ViteReactSSG(
       const container = typeof rootContainer === 'string'
         ? document.querySelector(rootContainer)!
         : rootContainer
+
+      const lazeMatches = matchRoutes(routerOptions.routes, window.location)?.filter(
+        m => m.route.lazy,
+      )
+
+      // Load the lazy matches and update the routes before creating your router
+      // so we can hydrate the SSR-rendered content synchronously
+      if (lazeMatches && lazeMatches?.length > 0) {
+        await Promise.all(
+          lazeMatches.map(async (m) => {
+            const routeModule = await m.route.lazy!()
+            Object.assign(m.route, { ...routeModule, lazy: undefined })
+          }),
+        )
+      }
+
       const { router } = await createRoot(true)
       const app = (
         <HelmetProvider>
@@ -86,20 +102,6 @@ export function ViteReactSSG(
         })
       }
       else {
-        const lazeMatches = matchRoutes(routerOptions.routes, window.location)?.filter(
-          m => m.route.lazy,
-        )
-
-        // Load the lazy matches and update the routes before creating your router
-        // so we can hydrate the SSR-rendered content synchronously
-        if (lazeMatches && lazeMatches?.length > 0) {
-          await Promise.all(
-            lazeMatches.map(async (m) => {
-              const routeModule = await m.route.lazy!()
-              Object.assign(m.route, { ...routeModule, lazy: undefined })
-            }),
-          )
-        }
         React.startTransition(() => {
           hydrateRoot(container, app)
         })

@@ -1,22 +1,17 @@
 import type { RouteRecord } from 'vite-react-ssg'
 import { ViteReactSSG } from 'vite-react-ssg'
 import Layout from './Layout'
-import Index from './pages'
 import './index.css'
-import * as Docs from './pages/[docs]'
 
 const routes: RouteRecord[] = [
   {
     index: true,
-    Component: Index,
+    lazy: () => import('./pages'),
     entry: 'src/pages/index.tsx',
   },
   {
     path: '/docs/:docs',
-    Component: Docs.Component,
-    entry: Docs.entry,
-    loader: Docs.loader,
-    getStaticPaths: Docs.getStaticPaths,
+    lazy: () => import('./pages/[docs]'),
   },
 ]
 

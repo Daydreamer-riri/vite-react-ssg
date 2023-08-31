@@ -18,3 +18,5 @@ export default function Index() {
     </>
   )
 }
+
+export const Component = Index
