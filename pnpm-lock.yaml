@@ -91,8 +91,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router-dom:
-        specifier: ^6.14.1
-        version: 6.14.1(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^6.15.0
+        version: 6.15.0(react-dom@18.2.0)(react@18.2.0)
       rimraf:
         specifier: 5.0.1
         version: 5.0.1
@@ -166,9 +166,6 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
-      react-router-dom:
-        specifier: 6.14.1
-        version: 6.14.1(react-dom@18.2.0)(react@18.2.0)
     devDependencies:
       '@vitejs/plugin-react-swc':
         specifier: ^3.3.2
@@ -191,9 +188,6 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
-      react-router-dom:
-        specifier: 6.14.1
-        version: 6.14.1(react-dom@18.2.0)(react@18.2.0)
     devDependencies:
       '@vitejs/plugin-react-swc':
         specifier: ^3.3.2
@@ -216,9 +210,6 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
-      react-router-dom:
-        specifier: 6.14.1
-        version: 6.14.1(react-dom@18.2.0)(react@18.2.0)
     devDependencies:
       '@vitejs/plugin-react-swc':
         specifier: ^3.3.2
@@ -241,9 +232,6 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
-      react-router-dom:
-        specifier: 6.14.1
-        version: 6.14.1(react-dom@18.2.0)(react@18.2.0)
       styled-components:
         specifier: 6.0.5
         version: 6.0.5(react-dom@18.2.0)(react@18.2.0)
@@ -269,9 +257,6 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
-      react-router-dom:
-        specifier: 6.14.1
-        version: 6.14.1(react-dom@18.2.0)(react@18.2.0)
     devDependencies:
       '@mdx-js/rollup':
         specifier: 2.3.0
@@ -3894,9 +3879,10 @@ packages:
     resolution: {integrity: sha512-a5Sab1C4/icpTZVzZc5Ghpz88yQtGOyNqYXcZgOssB2uuAr+wF/MvN6bgtW32q7HHrvBki+BsZ0OuNv6EV3K9g==}
     dev: true
 
-  /@remix-run/router@1.7.1:
-    resolution: {integrity: sha512-bgVQM4ZJ2u2CM8k1ey70o1ePFXsEzYVZoWghh6WjM8p59jQ7HxzbHW4SbnWFG7V9ig9chLawQxDTZ3xzOF8MkQ==}
-    engines: {node: '>=14'}
+  /@remix-run/router@1.8.0:
+    resolution: {integrity: sha512-mrfKqIHnSZRyIzBcanNJmVQELTnX+qagEDlcKO90RgRBVOZGSGvZKeDihTRfWcqoDn5N/NkUcwWTccnpN18Tfg==}
+    engines: {node: '>=14.0.0'}
+    dev: true
 
   /@remix-run/web-blob@3.0.5:
     resolution: {integrity: sha512-Mungj3erqCrq0+5zU/34NkeC2g+U7K6Uwa8uNiZgANvw0Wc64wKglk4MPQJZA0Y2tgPYXyrRn7uw4q75j6Hhww==}
@@ -9401,26 +9387,28 @@ packages:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
     dev: true
 
-  /react-router-dom@6.14.1(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-ssF6M5UkQjHK70fgukCJyjlda0Dgono2QGwqGvuk7D+EDGHdacEN3Yke2LTMjkrpHuFwBfDFsEjGVXBDmL+bWw==}
-    engines: {node: '>=14'}
+  /react-router-dom@6.15.0(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-aR42t0fs7brintwBGAv2+mGlCtgtFQeOzK0BM1/OiqEzRejOZtpMZepvgkscpMUnKb8YO84G7s3LsHnnDNonbQ==}
+    engines: {node: '>=14.0.0'}
     peerDependencies:
       react: '>=16.8'
       react-dom: '>=16.8'
     dependencies:
-      '@remix-run/router': 1.7.1
+      '@remix-run/router': 1.8.0
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      react-router: 6.14.1(react@18.2.0)
+      react-router: 6.15.0(react@18.2.0)
+    dev: true
 
-  /react-router@6.14.1(react@18.2.0):
-    resolution: {integrity: sha512-U4PfgvG55LdvbQjg5Y9QRWyVxIdO1LlpYT7x+tMAxd9/vmiPuJhIwdxZuIQLN/9e3O4KFDHYfR9gzGeYMasW8g==}
-    engines: {node: '>=14'}
+  /react-router@6.15.0(react@18.2.0):
+    resolution: {integrity: sha512-NIytlzvzLwJkCQj2HLefmeakxxWHWAP+02EGqWEZy+DgfHHKQMUoBBjUQLOtFInBMhWtb3hiUy6MfFgwLjXhqg==}
+    engines: {node: '>=14.0.0'}
     peerDependencies:
       react: '>=16.8'
     dependencies:
-      '@remix-run/router': 1.7.1
+      '@remix-run/router': 1.8.0
       react: 18.2.0
+    dev: true
 
   /react@18.2.0:
     resolution: {integrity: sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==}
