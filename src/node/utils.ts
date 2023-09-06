@@ -123,7 +123,7 @@ export async function resolveAlias(config: ResolvedConfig, entry: string) {
 }
 
 export const { version } = JSON.parse(
-  readFileSync(new URL('../../package.json', import.meta.url)).toString(),
+  readFileSync(new URL('../package.json', import.meta.url)).toString(),
 )
 
 export function createRequest(path: string) {

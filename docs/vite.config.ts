@@ -7,6 +7,7 @@ import rehypeShiki from '@leafac/rehype-shiki'
 
 export default defineConfig({
   plugins: [
+    // @ts-expect-error rollup version
     mdx({ rehypePlugins: [[rehypeShiki, { highlighter: await shiki.getHighlighter({ theme: 'vitesse-light' }) }]] }),
     UnoCSS(),
     react(),
