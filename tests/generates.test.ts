@@ -22,3 +22,24 @@ describe('multiple-pages', () => {
     expect(file).toContain('Page A')
   })
 })
+
+describe('lazy-pages', () => {
+  it('generates', async () => {
+    const files = await fg('**/*.html', {
+      cwd: 'examples/lazy-pages/dist',
+    })
+    expect(files).toMatchInlineSnapshot(`
+      [
+        "a.html",
+        "index.html",
+        "nest/b1.html",
+        "nest/b2.html",
+      ]
+    `)
+  })
+
+  it('lazy-content', async () => {
+    const file = await fs.readFile('examples/lazy-pages/dist/nest/b1.html', 'utf-8')
+    expect(file).toContain('<div>B</div>')
+  })
+})
