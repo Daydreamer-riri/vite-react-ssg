@@ -4,6 +4,7 @@ import { createServer as createViteServer, resolveConfig, version as viteVersion
 import { bgLightCyan, bold, cyan, dim, green, reset } from 'kolorist'
 import express from 'express'
 import fs from 'fs-extra'
+import devcert from 'devcert'
 import type { RouteRecord, ViteReactSSGContext, ViteReactSSGOptions } from '../types'
 import { createLink, detectEntry, renderHTML } from './html'
 import { createFetchRequest, resolveAlias, version } from './utils'
@@ -44,9 +45,11 @@ export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteCon
     process.env.__DEV_MODE_SSR = 'true'
 
     const app = express()
+
+    const httpsOptions = await devcert.certificateFor(['localhost'])
     viteServer = await createViteServer({
       // ...options,
-      server: { middlewareMode: true },
+      server: { middlewareMode: true, https: httpsOptions },
       appType: 'custom',
     })
 
