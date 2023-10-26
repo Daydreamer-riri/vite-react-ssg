@@ -12,4 +12,7 @@ export default defineConfig({
     UnoCSS(),
     react(),
   ],
+  ssgOptions: {
+    https: true,
+  },
 })

@@ -1,10 +1,11 @@
 import { join } from 'node:path'
+import https from 'node:https'
 import type { InlineConfig, Logger, ModuleNode, ViteDevServer } from 'vite'
 import { createServer as createViteServer, resolveConfig, version as viteVersion } from 'vite'
 import { bgLightCyan, bold, cyan, dim, green, reset } from 'kolorist'
 import express from 'express'
 import fs from 'fs-extra'
-import devcert from 'devcert'
+import devcert from '@childrentime/devcert'
 import type { RouteRecord, ViteReactSSGContext, ViteReactSSGOptions } from '../types'
 import { createLink, detectEntry, renderHTML } from './html'
 import { createFetchRequest, resolveAlias, version } from './utils'
@@ -23,6 +24,7 @@ export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteCon
     onBeforePageRender,
     onPageRendered,
     rootContainerId = 'root',
+    https: enableHttps = false,
   }: ViteReactSSGOptions = Object.assign({}, config.ssgOptions || {}, ssgOptions)
 
   const ssrEntry = await resolveAlias(config, entry)
@@ -32,13 +34,24 @@ export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteCon
   // @ts-expect-error global var
   globalThis.__ssr_start_time = performance.now()
 
-  createServer().then((app) => {
+  createServer().then(async (app) => {
     const port = viteServer.config.server.port || 5173
 
-    const server = app.listen(port, () => {
-      printServerInfo(viteServer)
-      bindShortcuts(viteServer, server)
-    })
+    if (enableHttps) {
+      const httpsOptions = await devcert.certificateFor(['localhost'])
+      const server = https.createServer(httpsOptions, app)
+
+      server.listen(port, () => {
+        printServerInfo(viteServer, false, true)
+        bindShortcuts(viteServer, server)
+      })
+    }
+    else {
+      const server = app.listen(port, () => {
+        printServerInfo(viteServer)
+        bindShortcuts(viteServer, server)
+      })
+    }
   })
 
   async function createServer() {
@@ -46,10 +59,9 @@ export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteCon
 
     const app = express()
 
-    const httpsOptions = await devcert.certificateFor(['localhost'])
     viteServer = await createViteServer({
       // ...options,
-      server: { middlewareMode: true, https: httpsOptions },
+      server: { middlewareMode: true },
       appType: 'custom',
     })
 
@@ -127,10 +139,11 @@ export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteCon
   }
 }
 
-export async function printServerInfo(server: ViteDevServer, onlyUrl = false) {
+export async function printServerInfo(server: ViteDevServer, onlyUrl = false, https = false) {
   const info = server.config.logger.info
   const port = server.config.server.port || 5173
-  const url = `http://localhost:${port}/`
+  const protocol = https ? 'https' : 'http'
+  const url = `${protocol}://localhost:${port}/`
 
   if (!onlyUrl) {
     let ssrReadyMessage = ' -- SSR'
