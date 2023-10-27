@@ -18,13 +18,13 @@ export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteCon
   const config = await resolveConfig(viteConfig, 'serve', mode, mode)
   const cwd = process.cwd()
   const root = config.root || cwd
+  const httpsOptions = config.server.https
 
   const {
     entry = await detectEntry(root),
     onBeforePageRender,
     onPageRendered,
     rootContainerId = 'root',
-    https: enableHttps = false,
   }: ViteReactSSGOptions = Object.assign({}, config.ssgOptions || {}, ssgOptions)
 
   const ssrEntry = await resolveAlias(config, entry)
@@ -37,9 +37,12 @@ export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteCon
   createServer().then(async (app) => {
     const port = viteServer.config.server.port || 5173
 
-    if (enableHttps) {
-      const httpsOptions = await certificateFor(['localhost'])
-      const server = https.createServer(httpsOptions, app)
+    if (httpsOptions) {
+      const localHttpsOptions
+        = typeof httpsOptions === 'boolean'
+          ? await certificateFor(['localhost'])
+          : httpsOptions
+      const server = https.createServer(localHttpsOptions, app)
 
       server.listen(port, () => {
         printServerInfo(viteServer, false, true)

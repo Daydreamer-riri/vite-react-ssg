@@ -105,11 +105,6 @@ export interface ViteReactSSGOptions {
    * @default 20
    */
   concurrency?: number
-  /**
-   * @description Enable local HTTPS
-   * @default false
-   */
-  https?: boolean
 }
 
 export interface ViteReactSSGContext<HasRouter extends boolean = true> {
