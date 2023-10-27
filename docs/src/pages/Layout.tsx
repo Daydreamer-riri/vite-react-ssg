@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import clsx from 'clsx'
-import { Link, NavLink } from 'vite-react-ssg'
-import { Outlet } from 'react-router-dom'
+import { Head, Link, NavLink } from 'vite-react-ssg'
+import { Outlet, useLocation } from 'react-router-dom'
 
 export default function Layout() {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -9,6 +9,8 @@ export default function Layout() {
     setMenuOpen(false)
   }
 
+  const { pathname } = useLocation()
+  const title = `Vite React SSG${pathname === '/' ? '' : ` - ${pathname.split('/').pop()}`}`
   // const state = React.useMemo<'idle' | 'loading'>(
   //   () => {
   //     const states = [
@@ -24,6 +26,9 @@ export default function Layout() {
 
   return (
     <div className="dark:bg-gray-800 font-mono bg-white relative overflow-y-scroll h-screen dark:text-white text-gray-800">
+      <Head>
+        <title>{title}</title>
+      </Head>
       <header className="h-24 sm:h-32 flex items-center z-20 w-full">
         <div className="container mx-auto px-6 flex items-center justify-between">
           <div className="uppercase text-gray-800 dark:text-white font-black text-3xl flex items-center">
