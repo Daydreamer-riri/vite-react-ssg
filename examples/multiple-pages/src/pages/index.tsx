@@ -1,4 +1,4 @@
-import { startTransition, useState } from 'react'
+import { useState } from 'react'
 import { Link } from 'vite-react-ssg'
 import reactLogo from '../assets/react.svg'
 
@@ -17,9 +17,6 @@ export default function Index() {
       <div className="card">
         <button onClick={() => setCount(count => count + 1)}>
           count is {count}
-        </button>
-        <button onClick={() => startTransition(() => void 0)}>
-          to A
         </button>
         <Link to={'/a'}>TO A</Link>
         <p>

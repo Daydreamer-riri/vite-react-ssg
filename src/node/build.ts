@@ -5,7 +5,7 @@ import { blue, cyan, dim, gray, green, red, yellow } from 'kolorist'
 import PQueue from 'p-queue'
 import fs from 'fs-extra'
 import type { InlineConfig } from 'vite'
-import { mergeConfig, resolveConfig, build as viteBuild } from 'vite'
+import { mergeConfig, resolveConfig, build as viteBuild, version as viteVersion } from 'vite'
 import type { VitePluginPWAAPI } from 'vite-plugin-pwa'
 import { JSDOM } from 'jsdom'
 import type { RouteRecord, ViteReactSSGContext, ViteReactSSGOptions } from '../types'
@@ -72,6 +72,12 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
       rollupOptions: {
         input: {
           app: join(root, './index.html'),
+        },
+        // @ts-expect-error rollup type
+        onLog(level, log, handler) {
+          if (log.message.includes('react-helmet-async'))
+            return
+          handler(level, log)
         },
       },
     },
@@ -141,8 +147,9 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
   if (critters)
     console.log(`${gray('[vite-react-ssg]')} ${blue('Critical CSS generation enabled via `critters`')}`)
 
-  const ssrManifest: SSRManifest = JSON.parse(await fs.readFile(join(out, 'ssr-manifest.json'), 'utf-8'))
-  const manifest: Manifest = JSON.parse(await fs.readFile(join(out, 'manifest.json'), 'utf-8'))
+  const dotVitedir = Number.parseInt(viteVersion) >= 5 ? ['.vite'] : []
+  const ssrManifest: SSRManifest = JSON.parse(await fs.readFile(join(out, ...dotVitedir, 'ssr-manifest.json'), 'utf-8'))
+  const manifest: Manifest = JSON.parse(await fs.readFile(join(out, ...dotVitedir, 'manifest.json'), 'utf-8'))
   let indexHTML = await fs.readFile(join(out, 'index.html'), 'utf-8')
   indexHTML = rewriteScripts(indexHTML, script)
 

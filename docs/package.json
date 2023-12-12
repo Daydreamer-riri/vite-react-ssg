@@ -9,20 +9,20 @@
     "start": "serve -l 5173 dist"
   },
   "dependencies": {
-    "@unocss/reset": "^0.55.1",
+    "@unocss/reset": "^0.58.0",
     "clsx": "^2.0.0"
   },
   "devDependencies": {
     "@leafac/rehype-shiki": "^2.2.1",
-    "@mdx-js/rollup": "2.3.0",
+    "@mdx-js/rollup": "3.0.0",
     "@types/mdx": "2.0.6",
-    "@vitejs/plugin-react-swc": "^3.3.2",
-    "rehype-highlight": "^6.0.0",
+    "@vitejs/plugin-react-swc": "^3.5.0",
+    "rehype-highlight": "^7.0.0",
     "rehype-shiki": "^0.0.9",
     "serve": "^14.2.0",
     "shiki": "^0.14.3",
-    "unocss": "^0.55.1",
-    "vite-plugin-pages": "^0.31.0",
+    "unocss": "^0.58.0",
+    "vite-plugin-pages": "^0.32.0",
     "vite-react-ssg": "*"
   }
 }
