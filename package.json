@@ -54,9 +54,9 @@
     "vite-react-ssg": "bin/vite-react-ssg.js"
   },
   "files": [
-    "dist",
+    "*.d.ts",
     "bin",
-    "*.d.ts"
+    "dist"
   ],
   "scripts": {
     "build": "unbuild",
@@ -101,7 +101,7 @@
   },
   "devDependencies": {
     "@childrentime/devcert": "^1.2.5",
-    "@ririd/eslint-config": "0.7.0",
+    "@ririd/eslint-config": "^1.0.0",
     "@types/express": "^4.17.17",
     "@types/fs-extra": "^11.0.1",
     "@types/html-minifier": "^4.0.2",
@@ -112,7 +112,7 @@
     "@types/yargs": "^17.0.24",
     "bumpp": "^9.1.0",
     "critters": "^0.0.20",
-    "eslint": "^8.45.0",
+    "eslint": "^8.56.0",
     "esno": "^4.0.0",
     "fast-glob": "3.3.1",
     "p-queue": "^8.0.0",

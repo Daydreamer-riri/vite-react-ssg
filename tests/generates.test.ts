@@ -17,7 +17,7 @@ describe('multiple-pages', () => {
     `)
   })
 
-  it('generates', async () => {
+  it('generates a.html', async () => {
     const file = await fs.readFile('examples/multiple-pages/dist/a.html', 'utf-8')
     expect(file).toContain('Page A')
   })

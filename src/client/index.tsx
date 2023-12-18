@@ -81,7 +81,7 @@ export function ViteReactSSG(
       // so we can hydrate the SSR-rendered content synchronously
       if (lazeMatches && lazeMatches?.length > 0) {
         await Promise.all(
-          lazeMatches.map(async (m) => {
+          lazeMatches.map(async m => {
             const routeModule = await m.route.lazy!()
             Object.assign(m.route, { ...routeModule, lazy: undefined })
           }),

@@ -121,7 +121,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
 
   const _require = createRequire(import.meta.url)
 
-  const { createRoot, includedRoutes: serverEntryIncludedRoutes }: { createRoot: CreateRootFactory; includedRoutes: ViteReactSSGOptions['includedRoutes'] } = format === 'esm'
+  const { createRoot, includedRoutes: serverEntryIncludedRoutes }: { createRoot: CreateRootFactory, includedRoutes: ViteReactSSGOptions['includedRoutes'] } = format === 'esm'
     ? await import(serverEntry)
     : _require(serverEntry)
   const includedRoutes = serverEntryIncludedRoutes || configIncludedRoutes
@@ -283,7 +283,7 @@ function collectModules(manifest: Manifest, entry: string | undefined, mods = ne
     return mods
 
   mods.add(entry)
-  manifest[entry]?.dynamicImports?.forEach((item) => {
+  manifest[entry]?.dynamicImports?.forEach(item => {
     collectModules(manifest, item, mods)
   })
 

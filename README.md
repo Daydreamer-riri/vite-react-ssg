@@ -9,16 +9,16 @@ See demo(also document): [docs](https://vite-react-ssg.netlify.app/)
 # Table of contents
 * [Usage](#usage)
 * [Extra route options](#extra-route-options)
-	* [`entry`](#entry)
-	* [`getStaticPaths`](#getstaticpaths)
+  * [`entry`](#entry)
+  * [`getStaticPaths`](#getstaticpaths)
 * [lazy](#lazy)
 * [`<ClientOnly/>`](#clientonly)
 * [Document head](#document-head)
-	* [Reactive head](#reactive-head)
+  * [Reactive head](#reactive-head)
 * [CSS in JS](#css-in-js)
 * [Critical CSS](#critical-css)
 * [Configuration](#configuration)
-	* [Custom Routes to Render](#custom-routes-to-render)
+  * [Custom Routes to Render](#custom-routes-to-render)
   * [Https](#https)
 * [Use CSR in development environment](#use-csr-in-development-environment)
 * [Roadmap](#roadmap)
@@ -179,14 +179,16 @@ You can use `<Head/>` to manage all of your changes to the document head. It tak
 ```tsx
 import { Head } from 'vite-react-ssg'
 
-const MyHead = () => (
-  <Head>
-    <meta property="og:description" content="My custom description" />
-    <meta charSet="utf-8" />
-    <title>My Title</title>
-    <link rel="canonical" href="http://mysite.com/example" />
-  </Head>
-)
+function MyHead() {
+  return (
+    <Head>
+      <meta property="og:description" content="My custom description" />
+      <meta charSet="utf-8" />
+      <title>My Title</title>
+      <link rel="canonical" href="http://mysite.com/example" />
+    </Head>
+  )
+}
 ```
 
 Nested or latter components will override duplicate usages:
@@ -194,20 +196,22 @@ Nested or latter components will override duplicate usages:
 ```tsx
 import { Head } from 'vite-react-ssg'
 
-const MyHead = () => (
-  <parent>
-    <Head>
-      <title>My Title</title>
-      <meta name="description" content="Helmet application" />
-    </Head>
-    <child>
+function MyHead() {
+  return (
+    <parent>
       <Head>
-        <title>Nested Title</title>
-        <meta name="description" content="Nested component" />
+        <title>My Title</title>
+        <meta name="description" content="Helmet application" />
       </Head>
-    </child>
-  </parent>
-)
+      <child>
+        <Head>
+          <title>Nested Title</title>
+          <meta name="description" content="Nested component" />
+        </Head>
+      </child>
+    </parent>
+  )
+}
 ```
 
 Outputs:
@@ -252,7 +256,8 @@ import './index.css'
 export const createRoot = ViteReactSSG(
   { routes },
   () => { },
-  { getStyleCollector: getStyledComponentsCollector })
+  { getStyleCollector: getStyledComponentsCollector }
+)
 ```
 
 You can provide your own by looking at the [implementation](./src/style-collectors/) of any of the existing collectors.
@@ -429,7 +434,7 @@ export default {
   ssgOptions: {
     includedRoutes(paths, routes) {
       // use original route records
-      return routes.flatMap((route) => {
+      return routes.flatMap(route => {
         return route.name === 'Blog'
           ? myBlogSlugs.map(slug => `/blog/${slug}`)
           : route.path

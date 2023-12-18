@@ -13,7 +13,8 @@ import './index.css'
 export const createRoot = ViteReactSSG(
   { routes },
   () => { },
-  { getStyleCollector: getStyledComponentsCollector })
+  { getStyleCollector: getStyledComponentsCollector }
+)
 ```
 
 You can provide your own by looking at the [implementation](./src/style-collectors/) of any of the existing collectors.

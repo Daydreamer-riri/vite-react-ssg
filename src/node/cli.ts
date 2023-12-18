@@ -33,7 +33,7 @@ yargs(hideBin(process.argv))
         type: 'string',
         describe: 'The base path to render',
       }),
-    async (args) => {
+    async args => {
       const { config: configFile = undefined, ...ssgOptions } = args
 
       await build(ssgOptions, { configFile })
@@ -61,7 +61,7 @@ yargs(hideBin(process.argv))
         type: 'string',
         describe: 'The base path to render',
       }),
-    async (args) => {
+    async args => {
       const { config: configFile = undefined, ...ssgOptions } = args
 
       await dev(ssgOptions, { configFile })

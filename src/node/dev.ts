@@ -34,7 +34,7 @@ export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteCon
   // @ts-expect-error global var
   globalThis.__ssr_start_time = performance.now()
 
-  createServer().then(async (app) => {
+  createServer().then(async app => {
     const port = viteServer.config.server.port || 5173
 
     if (httpsOptions) {

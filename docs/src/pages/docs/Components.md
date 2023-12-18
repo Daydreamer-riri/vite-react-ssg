@@ -28,14 +28,16 @@ You can use `<Head/>` to manage all of your changes to the document head. It tak
 ```tsx
 import { Head } from 'vite-react-ssg'
 
-const MyHead = () => (
-  <Head>
-    <meta property="og:description" content="My custom description" />
-    <meta charSet="utf-8" />
-    <title>My Title</title>
-    <link rel="canonical" href="http://mysite.com/example" />
-  </Head>
-)
+function MyHead() {
+  return (
+    <Head>
+      <meta property="og:description" content="My custom description" />
+      <meta charSet="utf-8" />
+      <title>My Title</title>
+      <link rel="canonical" href="http://mysite.com/example" />
+    </Head>
+  )
+}
 ```
 
 Nested or latter components will override duplicate usages:
@@ -43,20 +45,22 @@ Nested or latter components will override duplicate usages:
 ```tsx
 import { Head } from 'vite-react-ssg'
 
-const MyHead = () => (
-  <parent>
-    <Head>
-      <title>My Title</title>
-      <meta name="description" content="Helmet application" />
-    </Head>
-    <child>
+function MyHead() {
+  return (
+    <parent>
       <Head>
-        <title>Nested Title</title>
-        <meta name="description" content="Nested component" />
+        <title>My Title</title>
+        <meta name="description" content="Helmet application" />
       </Head>
-    </child>
-  </parent>
-)
+      <child>
+        <Head>
+          <title>Nested Title</title>
+          <meta name="description" content="Nested component" />
+        </Head>
+      </child>
+    </parent>
+  )
+}
 ```
 
 Outputs:

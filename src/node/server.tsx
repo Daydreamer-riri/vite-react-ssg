@@ -48,7 +48,7 @@ export async function preLoad(routes: RouteRecord[], paths: string[] | undefined
     return routes
 
   const { dataRoutes, query } = createStaticHandler(routes)
-  await Promise.all(paths.map(async (path) => {
+  await Promise.all(paths.map(async path => {
     const request = createRequest(path)
     return query(request)
   }))

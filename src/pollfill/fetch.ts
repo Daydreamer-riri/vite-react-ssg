@@ -20,8 +20,8 @@ type NodeRequestInit = Omit<
   'body'
 > & {
   body?:
-  | NonNullable<ConstructorParameters<typeof WebRequest>[1]>['body']
-  | Readable
+    | NonNullable<ConstructorParameters<typeof WebRequest>[1]>['body']
+    | Readable
 }
 
 export type {

@@ -9,8 +9,8 @@ export default function A() {
   return (
     <>
       <h1 className="a">Page A</h1>
-      <Link to={'/'}>to index</Link>
-      <RRLink to={'/'}>to index by RRLink</RRLink>
+      <Link to="/">to index</Link>
+      <RRLink to="/">to index by RRLink</RRLink>
       <ACount />
       <ClientOnly>
         {() => {

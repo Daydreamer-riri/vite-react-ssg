@@ -14,8 +14,8 @@ export default function A() {
   return (
     <>
       <H1>Page A</H1>
-      <Link to={'/'}>to index</Link>
-      <RRLink to={'/'}>to index by RRLink</RRLink>
+      <Link to="/">to index</Link>
+      <RRLink to="/">to index by RRLink</RRLink>
       <ACount />
       <ClientOnly>
         {() => {

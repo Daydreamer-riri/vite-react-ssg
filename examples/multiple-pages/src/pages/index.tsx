@@ -18,7 +18,7 @@ export default function Index() {
         <button onClick={() => setCount(count => count + 1)}>
           count is {count}
         </button>
-        <Link to={'/a'}>TO A</Link>
+        <Link to="/a">TO A</Link>
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>

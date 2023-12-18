@@ -6,4 +6,5 @@ import './index.css'
 export const createRoot = ViteReactSSG(
   { routes },
   () => { },
-  { getStyleCollector: getStyledComponentsCollector })
+  { getStyleCollector: getStyledComponentsCollector },
+)

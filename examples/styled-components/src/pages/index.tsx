@@ -21,7 +21,7 @@ export default function Index() {
         <button onClick={() => startTransition(() => void 0)}>
           to A
         </button>
-        <Link to={'/a'}>TO A</Link>
+        <Link to="/a">TO A</Link>
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>

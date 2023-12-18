@@ -32,7 +32,7 @@ export default function Layout() {
       <header className="h-24 sm:h-32 flex items-center z-20 w-full">
         <div className="container mx-auto px-6 flex items-center justify-between">
           <div className="uppercase text-gray-800 dark:text-white font-black text-3xl flex items-center">
-            <Link to={'/'}>
+            <Link to="/">
               <h1>Vite React SSG</h1>
             </Link>
           </div>

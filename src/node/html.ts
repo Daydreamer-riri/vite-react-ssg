@@ -50,12 +50,12 @@ export async function renderHTML({
   let renderedOutput: string | undefined
 
   html5Parser.walk(ast, {
-    enter: (node) => {
+    enter: node => {
       if (!renderedOutput
-          && node?.type === html5Parser.SyntaxKind.Tag
-          && Array.isArray(node.attributes)
-          && node.attributes.length > 0
-          && node.attributes.some(attr => attr.name.value === 'id' && attr.value?.value === rootContainerId)
+        && node?.type === html5Parser.SyntaxKind.Tag
+        && Array.isArray(node.attributes)
+        && node.attributes.length > 0
+        && node.attributes.some(attr => attr.name.value === 'id' && attr.value?.value === rootContainerId)
       ) {
         const attributesStringified = [...node.attributes.map(({ name: { value: name }, value }) => `${name}="${value!.value}"`)].join(' ')
         const indexHTMLBefore = indexHTML.slice(0, node.start)
@@ -76,7 +76,7 @@ export async function detectEntry(root: string) {
   const scriptSrcReg = /<script(?:.*?)src=["'](.+?)["'](?!<)(?:.*)\>(?:[\n\r\s]*?)(?:<\/script>)/img
   const html = await fs.readFile(join(root, 'index.html'), 'utf-8')
   const scripts = [...html.matchAll(scriptSrcReg)] || []
-  const [, entry] = scripts.find((matchResult) => {
+  const [, entry] = scripts.find(matchResult => {
     const [script] = matchResult
     const [, scriptType] = script.match(/.*\stype=(?:'|")?([^>'"\s]+)/i) || []
     return scriptType === 'module'

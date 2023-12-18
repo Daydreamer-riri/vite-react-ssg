@@ -40,6 +40,8 @@ export const Link = forwardRef((props: LinkProps, ref: Ref<HTMLAnchorElement>) =
   )
 })
 
+Link.displayName = 'Link'
+
 export const NavLink = forwardRef((props: NavLinkProps, ref: Ref<HTMLAnchorElement>) => {
   const {
     replace,
@@ -76,3 +78,5 @@ export const NavLink = forwardRef((props: NavLinkProps, ref: Ref<HTMLAnchorEleme
     <RRNavLink {...props} ref={ref} onClick={handleClick} />
   )
 })
+
+NavLink.displayName = 'NavLink'

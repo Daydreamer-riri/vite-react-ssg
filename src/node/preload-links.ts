@@ -6,16 +6,16 @@ export function renderPreloadLinks(document: Document, modules: Set<string>, ssr
   const preloadLinks: string[] = []
 
   // preload modules
-  Array.from(modules).forEach((id) => {
+  Array.from(modules).forEach(id => {
     const files = ssrManifest[id] || []
-    files.forEach((file) => {
+    files.forEach(file => {
       if (!preloadLinks.includes(file))
         preloadLinks.push(file)
     })
   })
 
   if (preloadLinks) {
-    preloadLinks.forEach((file) => {
+    preloadLinks.forEach(file => {
       if (!seen.has(file)) {
         seen.add(file)
         renderPreloadLink(document, file)

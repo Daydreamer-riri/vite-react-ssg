@@ -13,7 +13,7 @@ export const Component = Docs
 
 export const entry = 'src/pages/[docs].tsx'
 
-export const loader = async ({ params }: { params: Params<string> }) => {
+export async function loader({ params }: { params: Params<string> }) {
   const doc = await import(`../docs/${params.docs}.md`)
   const { renderToString } = await import('react-dom/server')
   const html = renderToString(<doc.default />)
@@ -21,7 +21,7 @@ export const loader = async ({ params }: { params: Params<string> }) => {
   return html
 }
 
-export const getStaticPaths = () => {
+export function getStaticPaths() {
   const docs = import.meta.glob('../docs/*.md')
   return Object.keys(docs).map(path => path.match(/\.(\/docs\/.*)\.md$/)?.[1] ?? '')
 }

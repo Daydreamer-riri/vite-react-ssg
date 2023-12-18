@@ -43,9 +43,9 @@ export function bindShortcuts(
 
   viteServer.config.logger.info(
     dim(green('  ➜'))
-        + dim('  press ')
-        + bold('h')
-        + dim(' to show help'),
+    + dim('  press ')
+    + bold('h')
+    + dim(' to show help'),
   )
 
   const shortcuts = SHORTCUTS
