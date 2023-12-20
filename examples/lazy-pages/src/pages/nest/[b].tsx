@@ -1,6 +1,9 @@
+import { useParams } from 'react-router-dom'
+
 export function B() {
+  const { b } = useParams()
   return (
-    <div>B</div>
+    <div>{b}</div>
   )
 }
 

@@ -39,7 +39,9 @@ describe('lazy-pages', () => {
   })
 
   it('lazy-content', async () => {
-    const file = await fs.readFile('examples/lazy-pages/dist/nest/b1.html', 'utf-8')
-    expect(file).toContain('<div>B</div>')
+    const fileB1 = await fs.readFile('examples/lazy-pages/dist/nest/b1.html', 'utf-8')
+    expect(fileB1).toContain('<div>b1</div>')
+    const fileB2 = await fs.readFile('examples/lazy-pages/dist/nest/b2.html', 'utf-8')
+    expect(fileB2).toContain('<div>b2</div>')
   })
 })
