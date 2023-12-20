@@ -12,7 +12,7 @@
 
     "types": [
       "vite/client",
-      "vite-plugin-pages/client"
+      "vite-plugin-pages/client-react"
     ],
     "allowImportingTsExtensions": true,
     /* Linting */
