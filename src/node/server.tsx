@@ -7,8 +7,8 @@ import type { RouteRecord, StyleCollector } from '../types'
 import { renderStaticApp } from './serverRenderer'
 import { createRequest } from './utils'
 
-export async function render(routes: RouteRecord[], request: Request, styleCollector: StyleCollector | null) {
-  const { dataRoutes, query } = createStaticHandler(routes)
+export async function render(routes: RouteRecord[], request: Request, styleCollector: StyleCollector | null, basename?: string) {
+  const { dataRoutes, query } = createStaticHandler(routes, { basename })
   const context = await query(request)
   const helmetContext = {}
 

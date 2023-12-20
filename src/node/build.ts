@@ -48,7 +48,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
     mock = false,
     entry = await detectEntry(root),
     formatting = 'none',
-    crittersOptions = {},
+    crittersOptions = false,
     includedRoutes: configIncludedRoutes = DefaultIncludedRoutes,
     onBeforePageRender,
     onPageRendered,
@@ -160,15 +160,16 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
     queue.add(async () => {
       try {
         const appCtx = await createRoot(false, path) as ViteReactSSGContext<true>
-        const { initialState, routes, triggerOnSSRAppRendered, transformState = serializeState, getStyleCollector } = appCtx
+        const { initialState, base, routes, triggerOnSSRAppRendered, transformState = serializeState, getStyleCollector } = appCtx
 
         const styleCollector = getStyleCollector ? await getStyleCollector() : null
 
         const transformedIndexHTML = (await onBeforePageRender?.(path, indexHTML, appCtx)) || indexHTML
 
-        const request = createRequest(path)
+        const fetchUrl = `${base.replace(/\/+$/, '')}/${path.replace(/^\/+/, '')}`
+        const request = createRequest(fetchUrl)
 
-        const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag } = await render([...routes], request, styleCollector)
+        const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag } = await render([...routes], request, styleCollector, base)
         await triggerOnSSRAppRendered?.(path, appHTML, appCtx)
 
         const renderedHTML = await renderHTML({

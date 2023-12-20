@@ -19,6 +19,8 @@ export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteCon
   const cwd = process.cwd()
   const root = config.root || cwd
   const httpsOptions = config.server.https
+  // @ts-expect-error internal var
+  setBase(config.rawBase)
 
   const {
     entry = await detectEntry(root),
@@ -77,13 +79,13 @@ export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteCon
 
         const createRoot: CreateRootFactory = await viteServer.ssrLoadModule(ssrEntry).then(m => m.createRoot)
         const appCtx = await createRoot(false, url) as ViteReactSSGContext<true>
-        const { routes, getStyleCollector } = appCtx
+        const { routes, getStyleCollector, base } = appCtx
         const transformedIndexHTML = (await onBeforePageRender?.(url, indexHTML, appCtx)) || indexHTML
 
         const styleCollector = getStyleCollector ? await getStyleCollector() : null
 
         const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag, routerContext }
-          = await render([...routes], createFetchRequest(req), styleCollector)
+          = await render([...routes], createFetchRequest(req), styleCollector, base)
 
         metaAttributes.push(styleTag)
 
@@ -146,7 +148,7 @@ export async function printServerInfo(server: ViteDevServer, onlyUrl = false, ht
   const info = server.config.logger.info
   const port = server.config.server.port || 5173
   const protocol = https ? 'https' : 'http'
-  const url = `${protocol}://localhost:${port}/`
+  const url = `${protocol}://localhost:${port}/${getBase().replace(/^\//, '')}`
 
   if (!onlyUrl) {
     let ssrReadyMessage = ' -- SSR'
@@ -179,4 +181,12 @@ export async function printServerInfo(server: ViteDevServer, onlyUrl = false, ht
 function printUrls(url: string, info: Logger['info']) {
   const colorUrl = (url: string) => cyan(url.replace(/:(\d+)\//, (_, port) => `:${bold(port)}/`))
   info(`  ${green('➜')}  ${bold('Local')}:   ${colorUrl(url)}`)
+}
+
+let base = ''
+function getBase() {
+  return base
+}
+function setBase(newBase: string) {
+  base = newBase
 }

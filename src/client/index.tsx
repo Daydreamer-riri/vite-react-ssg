@@ -23,8 +23,10 @@ export function ViteReactSSG(
 
   const isClient = typeof window !== 'undefined'
 
+  const BASE_URL = import.meta.env.BASE_URL
+
   async function createRoot(client = false, routePath?: string) {
-    const browserRouter = client ? createBrowserRouter(routerOptions.routes) : undefined
+    const browserRouter = client ? createBrowserRouter(routerOptions.routes, { basename: BASE_URL }) : undefined
 
     const appRenderCallbacks: Function[] = []
     const onSSRAppRendered = client
@@ -43,6 +45,7 @@ export function ViteReactSSG(
       initialState: {},
       transformState,
       routePath,
+      base: BASE_URL,
       getStyleCollector,
     }
 
@@ -73,7 +76,7 @@ export function ViteReactSSG(
         ? document.querySelector(rootContainer)!
         : rootContainer
 
-      const lazeMatches = matchRoutes(routerOptions.routes, window.location)?.filter(
+      const lazeMatches = matchRoutes(routerOptions.routes, window.location, BASE_URL)?.filter(
         m => m.route.lazy,
       )
 

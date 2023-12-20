@@ -121,6 +121,7 @@ export interface ViteReactSSGContext<HasRouter extends boolean = true> {
    * Current router path on SSG, `undefined` on client side.
    */
   routePath?: string
+  base: string
   getStyleCollector: (() => StyleCollector | Promise<StyleCollector>) | null
 }
 
