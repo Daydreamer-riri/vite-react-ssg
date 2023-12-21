@@ -1,7 +1,7 @@
 {
   "name": "vite-react-ssg",
   "type": "module",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "packageManager": "pnpm@8.6.6",
   "description": "",
   "author": "Riri <Daydreamerriri@outlook.com>",
