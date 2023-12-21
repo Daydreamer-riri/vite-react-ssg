@@ -1,5 +1,47 @@
 # Configuration
 
+## Public Base Path
+
+Just set `base` in vite.config.ts like:
+
+```ts
+// vite.config.ts
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react-swc'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  base: '/base-path',
+})
+```
+
+And pass it to `routerOptions`:
+
+```ts {9-10}
+// main.ts
+import { ViteReactSSG } from 'vite-react-ssg'
+import { routes } from './App'
+import './index.css'
+
+export const createRoot = ViteReactSSG(
+  {
+    routes,
+    // pass your BASE_URL
+    basename: import.meta.env.BASE_URL,
+  },
+)
+```
+
+Vite React SSG will give it to the react-router's `basename`.
+
+See:
+
+> - [react-router's create-browser-router](https://reactrouter.com/en/main/routers/create-browser-router#basename)
+> - [vite config base](https://cn.vitejs.dev/config/shared-options.html#base)
+
+[Example](https://github.com/Daydreamer-riri/vite-react-ssg/blob/main/examples/lazy-pages/vite.config.ts)
+
 ## `ssgOptions`
 
 You can pass options to Vite SSG in the `ssgOptions` field of your `vite.config.js`
@@ -195,31 +237,6 @@ The size of the SSG processing queue.
 ## Extend Vite
 
 We have inherited some configuration options from Vite.
-
-### base
-
-Just set `base` in vite.config.ts like:
-
-```ts
-// vite.config.ts
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react-swc'
-
-// https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [react()],
-  base: '/base-path',
-})
-```
-
-Vite React SSG will give it to the react-router's `basename`.
-
-See:
-
-> - [react-router's create-browser-router](https://reactrouter.com/en/main/routers/create-browser-router#basename)
-> - [vite config base](https://cn.vitejs.dev/config/shared-options.html#base)
-
-[Example](https://github.com/Daydreamer-riri/vite-react-ssg/blob/main/examples/lazy-pages/vite.config.ts)
 
 ### Https
 

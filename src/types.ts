@@ -174,6 +174,7 @@ export type RouteRecord = NonIndexRouteRecord | IndexRouteRecord
 export interface RouterOptions {
   routes: RouteRecord[]
   createFetchRequest?: <T>(req: T) => Request
+  basename?: string
 }
 
 export interface StyleCollector {

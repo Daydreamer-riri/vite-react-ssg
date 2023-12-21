@@ -23,7 +23,7 @@ export function ViteReactSSG(
 
   const isClient = typeof window !== 'undefined'
 
-  const BASE_URL = import.meta.env.BASE_URL
+  const BASE_URL = routerOptions.basename ?? '/'
 
   async function createRoot(client = false, routePath?: string) {
     const browserRouter = client ? createBrowserRouter(routerOptions.routes, { basename: BASE_URL }) : undefined
@@ -98,7 +98,7 @@ export function ViteReactSSG(
           <RouterProvider router={router!} />
         </HelmetProvider>
       )
-      if (!ssrWhenDev && import.meta.env.DEV) {
+      if (!ssrWhenDev && process.env.NODE_ENV === 'development') {
         const root = ReactDOMCreateRoot(container)
         React.startTransition(() => {
           root.render(app)

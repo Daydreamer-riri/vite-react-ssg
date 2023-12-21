@@ -267,6 +267,21 @@ export default defineConfig({
 })
 ```
 
+```ts
+// main.ts
+import { ViteReactSSG } from 'vite-react-ssg'
+import { routes } from './App'
+import './index.css'
+
+export const createRoot = ViteReactSSG(
+  {
+    routes,
+    // pass your BASE_URL
+    basename: import.meta.env.BASE_URL,
+  },
+)
+```
+
 Vite React SSG will give it to the react-router's `basename`.
 
 See: [react-router's create-browser-router](https://reactrouter.com/en/main/routers/create-browser-router#basename)
