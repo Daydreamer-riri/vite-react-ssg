@@ -70,7 +70,9 @@ export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteCon
       appType: 'custom',
     })
 
-    app.use(viteServer.middlewares)
+    app.use((req, res, next) => {
+      viteServer.middlewares.handle(req, res, next)
+    })
 
     app.use('*', async (req, res) => {
       try {
