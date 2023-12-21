@@ -15,6 +15,7 @@ See demo(also document): [docs](https://vite-react-ssg.netlify.app/)
 * [`<ClientOnly/>`](#clientonly)
 * [Document head](#document-head)
   * [Reactive head](#reactive-head)
+* [Public Base Path](#public-base-path)
 * [CSS in JS](#css-in-js)
 * [Critical CSS](#critical-css)
 * [Configuration](#configuration)
@@ -34,10 +35,11 @@ See demo(also document): [docs](https://vite-react-ssg.netlify.app/)
 // package.json
 {
   "scripts": {
--   "dev": "vite",
 -   "build": "vite build"
-+   "dev": "vite-react-ssg dev",
 +   "build": "vite-react-ssg build"
+    // If you need ssr when dev
+-   "dev": "vite",
++   "dev": "vite-react-ssg dev",
 
     // OR if you want to use another vite config file
 +   "build": "vite-react-ssg build -c another-vite.config.ts"
@@ -243,6 +245,25 @@ export default function MyHead() {
 }
 ```
 
+## Public Base Path
+
+Just set `base` in vite.config.ts like:
+```ts
+// vite.config.ts
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react-swc'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  base: '/base-path',
+})
+```
+
+Vite React SSG will give it to the react-router's `basename`.
+See: [react-router's create-browser-router](https://reactrouter.com/en/main/routers/create-browser-router#basename)
+[Example](./examples/lazy-pages/vite.config.ts)
+
 ## CSS in JS
 
 Use the `getStyleCollector` option to specify an SSR/SSG style collector. Currently only supports `styled-components`.
@@ -264,7 +285,7 @@ You can provide your own by looking at the [implementation](./src/style-collecto
 
 ## Critical CSS
 
-Vite SSG has built-in support for generating [Critical CSS](https://web.dev/extract-critical-css/) inlined in the HTML via the [`critters`](https://github.com/GoogleChromeLabs/critters) package.
+Vite React SSG has built-in support for generating [Critical CSS](https://web.dev/extract-critical-css/) inlined in the HTML via the [`critters`](https://github.com/GoogleChromeLabs/critters) package.
 Install it with:
 
 ```bash
