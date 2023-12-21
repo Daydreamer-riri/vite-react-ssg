@@ -64,6 +64,7 @@ function MyHead() {
 ```
 
 Outputs:
+
 ```html
 <head>
   <title>Nested Title</title>

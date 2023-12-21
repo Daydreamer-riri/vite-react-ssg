@@ -5,6 +5,7 @@
 The RouteObject of vite-react-ssg is based on react-router, and vite-react-ssg receives some additional properties.
 
 ### `entry`
+
 Used to obtain static resources.If you introduce static resources (such as css files) in that route and use lazy loading (such as React.lazy or route.lazy), you should set the entry field. It should be the path from root to the target file.
 
 eg: `src/pages/page1.tsx`
@@ -44,6 +45,7 @@ export function getStaticPaths() {
 
 export const entry = 'src/pages/[page].tsx'
 ```
+
 ```ts
 // src/routes.ts
 const routes = [
