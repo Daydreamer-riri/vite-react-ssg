@@ -48,7 +48,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
     mock = false,
     entry = await detectEntry(root),
     formatting = 'none',
-    crittersOptions = false,
+    crittersOptions = {},
     includedRoutes: configIncludedRoutes = DefaultIncludedRoutes,
     onBeforePageRender,
     onPageRendered,
@@ -125,7 +125,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
     ? await import(serverEntry)
     : _require(serverEntry)
   const includedRoutes = serverEntryIncludedRoutes || configIncludedRoutes
-  const { routes } = await createRoot(false)
+  const { routes, base } = await createRoot(false)
 
   // load lazy route
   const { lazyPaths } = await routesToPaths(routes)
@@ -143,7 +143,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
 
   buildLog('Rendering Pages...', routesPaths.length)
 
-  const critters = crittersOptions !== false ? await getCritters(outDir, crittersOptions) : undefined
+  const critters = crittersOptions !== false ? await getCritters(outDir, { publicPath: base, ...crittersOptions }) : undefined
   if (critters)
     console.log(`${gray('[vite-react-ssg]')} ${blue('Critical CSS generation enabled via `critters`')}`)
 
