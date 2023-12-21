@@ -12,10 +12,11 @@ npm i -D vite-react-ssg react-router-dom
 // package.json
 {
   "scripts": {
--   "dev": "vite",
 -   "build": "vite build"
-+   "dev": "vite-react-ssg dev",
 +   "build": "vite-react-ssg build"
+    // If you need ssr when dev
+-   "dev": "vite",
++   "dev": "vite-react-ssg dev",
 
     // OR if you want to use another vite config file
 +   "build": "vite-react-ssg build -c another-vite.config.ts"

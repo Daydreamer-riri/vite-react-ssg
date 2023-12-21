@@ -25,13 +25,13 @@ export default function Layout() {
   // )
 
   return (
-    <div className="dark:bg-gray-800 font-mono bg-white relative overflow-y-scroll h-screen dark:text-white text-gray-800">
+    <div className="dark:bg-d-bg font-mono bg-l-bg relative overflow-y-scroll h-screen dark:text-d-fg text-l-fg">
       <Head>
         <title>{title}</title>
       </Head>
       <header className="h-24 sm:h-32 flex items-center z-20 w-full">
         <div className="container mx-auto px-6 flex items-center justify-between">
-          <div className="uppercase text-gray-800 dark:text-white font-black text-3xl flex items-center">
+          <div className="uppercase text-l-fgDeep dark:text-d-fgDeep font-black text-3xl flex items-center">
             <Link to="/">
               <h1>Vite React SSG</h1>
             </Link>
@@ -39,8 +39,8 @@ export default function Layout() {
           <div className="flex items-center relative">
             <nav
               className={clsx(
-                'font-sen text-gray-900 dark:text-white uppercase text-lg sm:flex items-center',
-                'absolute sm:relative top-full right-0 dark:bg-gray-800 bg-white z-30',
+                'font-sen text-l-fgDeeper dark:text-d-fgDeeper uppercase text-lg sm:flex items-center',
+                'absolute sm:relative top-full right-0 dark:bg-gray-800 bg-gray-100 z-30',
                 !menuOpen && 'hidden',
               )}
             >
@@ -67,6 +67,9 @@ export default function Layout() {
               >
                 Repo
               </a>
+              <button title="Toggle Color Scheme" className="py-2 px-6 pl-2 op-60 hover:op-100" onClick={() => toggleTheme()}>
+                <div className="i-ri-sun-line dark:i-ri-moon-line"></div>
+              </button>
             </nav>
             <button
               title="Menu"

@@ -7,23 +7,24 @@ See demo(also document): [docs](https://vite-react-ssg.netlify.app/)
 [![NPM version](https://img.shields.io/npm/v/vite-react-ssg?color=a1b858&label=)](https://www.npmjs.com/package/vite-react-ssg)
 
 # Table of contents
-* [Usage](#usage)
-* [Extra route options](#extra-route-options)
-  * [`entry`](#entry)
-  * [`getStaticPaths`](#getstaticpaths)
-* [lazy](#lazy)
-* [`<ClientOnly/>`](#clientonly)
-* [Document head](#document-head)
-  * [Reactive head](#reactive-head)
-* [Public Base Path](#public-base-path)
-* [CSS in JS](#css-in-js)
-* [Critical CSS](#critical-css)
-* [Configuration](#configuration)
-  * [Custom Routes to Render](#custom-routes-to-render)
-  * [Https](#https)
-* [Use CSR in development environment](#use-csr-in-development-environment)
-* [Roadmap](#roadmap)
-* [Credits](#credits)
+
+- [Usage](#usage)
+- [Extra route options](#extra-route-options)
+  - [`entry`](#entry)
+  - [`getStaticPaths`](#getstaticpaths)
+- [lazy](#lazy)
+- [`<ClientOnly/>`](#clientonly)
+- [Document head](#document-head)
+  - [Reactive head](#reactive-head)
+- [Public Base Path](#public-base-path)
+- [CSS in JS](#css-in-js)
+- [Critical CSS](#critical-css)
+- [Configuration](#configuration)
+  - [Custom Routes to Render](#custom-routes-to-render)
+  - [Https](#https)
+- [Use CSR in development environment](#use-csr-in-development-environment)
+- [Roadmap](#roadmap)
+- [Credits](#credits)
 
 ## Usage
 
@@ -104,11 +105,13 @@ export const routes: RouteRecord[] = [
 The RouteObject of vite-react-ssg is based on react-router, and vite-react-ssg receives some additional properties.
 
 #### `entry`
+
 Used to obtain static resources.If you introduce static resources (such as css files) in that route and use lazy loading (such as React.lazy or route.lazy), you should set the entry field. It should be the path from root to the target file.
 
 eg: `src/pages/page1.tsx`
 
 #### `getStaticPaths`
+
 The `getStaticPaths()` function should return an array of path
 to determine which paths will be pre-rendered by vite-react-ssg.
 
@@ -125,6 +128,7 @@ const route = {
 ```
 
 ## lazy
+
 These options work well with the `lazy` field.
 
 ```tsx
@@ -141,6 +145,7 @@ export function getStaticPaths() {
 
 export const entry = 'src/pages/[page].tsx'
 ```
+
 ```ts
 // src/routes.ts
 const routes = [
@@ -217,6 +222,7 @@ function MyHead() {
 ```
 
 Outputs:
+
 ```html
 <head>
   <title>Nested Title</title>
@@ -248,6 +254,7 @@ export default function MyHead() {
 ## Public Base Path
 
 Just set `base` in vite.config.ts like:
+
 ```ts
 // vite.config.ts
 import { defineConfig } from 'vite'
@@ -261,7 +268,9 @@ export default defineConfig({
 ```
 
 Vite React SSG will give it to the react-router's `basename`.
+
 See: [react-router's create-browser-router](https://reactrouter.com/en/main/routers/create-browser-router#basename)
+
 [Example](./examples/lazy-pages/vite.config.ts)
 
 ## CSS in JS
@@ -428,6 +437,7 @@ interface ViteReactSSGOptions {
   concurrency?: number
 }
 ```
+
 See [src/types.ts](./src/types.ts). for more options available.
 
 ### Custom Routes to Render
@@ -447,6 +457,7 @@ export default {
   },
 }
 ```
+
 ```js
 // vite.config.js
 
@@ -480,6 +491,7 @@ export default defineConfig({
 ## Use CSR in development environment
 
 If you want to use CSR during development, just:
+
 ```ts
 // src/main.ts
 import { ViteReactSSG } from 'vite-react-ssg'
@@ -507,6 +519,7 @@ export const createRoot = ViteReactSSG(
   }
 }
 ```
+
 Then, you can start the application with CSR in the development environment.
 
 ## Roadmap
@@ -519,6 +532,7 @@ Then, you can start the application with CSR in the development environment.
 - [ ] Initial State
 
 ## Credits
+
 This project inspired by [vite-ssg](https://github.com/antfu/vite-ssg), thanks to [@antfu](https://github.com/antfu) for his awesome work.
 
 ## License

@@ -5,10 +5,10 @@ export default function Home() {
     <div className="flex relative items-center">
       <div className="container mx-auto px-6 flex flex-col justify-between items-center relative py-4">
         <div className="flex flex-col">
-          <h1 className="text-6xl my-6 text-center dark:text-white underline underline-offset-8 underline-dashed">
+          <h1 className="text-6xl my-6 text-center dark:text-white text-l-fgDeeper underline underline-offset-8 underline-dashed">
             Vite React SSG
           </h1>
-          <p className="max-w-3xl text-5xl md:text-6xl font-bold mx-auto dark:text-white text-gray-800 text-center py-2">
+          <p className="max-w-3xl text-5xl md:text-6xl font-bold mx-auto dark:text-d-fgDeep text-l-fgDeep text-center py-2">
             Building fast, content focused static sites
           </p>
           <div className="flex items-center justify-center mt-4">

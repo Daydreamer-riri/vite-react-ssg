@@ -1,9 +1,9 @@
 pre.shiki {
-  background-color: rgb(248, 248, 248) !important;
+  background-color: #f9f9f9 !important;
 }
 html.dark pre.shiki {
-  background-color: rgb(225, 225, 225) !important;
-  filter: invert(98%) hue-rotate(180deg);
+  background-color: #18181b !important;
+  color: var(--shiki-dark);
 }
 
 :root {
@@ -39,4 +39,32 @@ html.dark pre.shiki {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--c-scrollbar-hover);
+}
+
+.header-anchor {
+  float: left;
+  margin-top: 0.025rem;
+  margin-left: -0.8em;
+  /* padding-right: 0.5em; */
+  font-weight: 600;
+  text-decoration: none;
+  opacity: 0;
+  transition-property: opacity;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 0.15s;
+  border-style: none !important;
+}
+
+h1:hover .header-anchor,
+h2:hover .header-anchor,
+h2:focus .header-anchor,
+h3:hover .header-anchor,
+h3:focus .header-anchor,
+h4:hover .header-anchor,
+h4:focus .header-anchor,
+h5:hover .header-anchor,
+h5:focus .header-anchor,
+h6:hover .header-anchor,
+h6:focus .header-anchor {
+  opacity: 0.5;
 }
