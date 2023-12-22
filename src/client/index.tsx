@@ -17,9 +17,12 @@ export function ViteReactSSG(
   const {
     transformState,
     rootContainer = '#root',
-    ssrWhenDev = true,
+    ssrWhenDev,
     getStyleCollector = null,
   } = options
+
+  if (process.env.NODE_ENV === 'development' && ssrWhenDev !== undefined)
+    console.warn('[vite-react-ssg] `ssrWhenDev` option is no longer needed. If you want to use csr, just replace `vite-react-ssg dev` with `vite`.')
 
   const isClient = typeof window !== 'undefined'
 
@@ -98,7 +101,8 @@ export function ViteReactSSG(
           <RouterProvider router={router!} />
         </HelmetProvider>
       )
-      if (!ssrWhenDev && process.env.NODE_ENV === 'development') {
+      const isSSR = document.querySelector('[data-server-rendered=true]') !== null
+      if (!isSSR && process.env.NODE_ENV === 'development') {
         const root = ReactDOMCreateRoot(container)
         React.startTransition(() => {
           root.render(app)

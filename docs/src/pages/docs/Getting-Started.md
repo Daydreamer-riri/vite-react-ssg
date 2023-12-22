@@ -76,4 +76,21 @@ export const routes: RouteRecord[] = [
 ]
 ```
 
+## Use CSR during development
+
+Vite React SSG provide SSR (Server-Side Rendering) during development to ensure consistency between development and production as much as possible.
+
+But if you want to use CSR during development, just:
+
+```diff
+// package.json
+{
+  "scripts": {
+-   "dev": "vite-react-ssg dev",
++   "dev": "vite",
+    "build": "vite-react-ssg build"
+  }
+}
+```
+
 That's all!

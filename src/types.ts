@@ -135,11 +135,7 @@ export interface ViteReactSSGClientOptions {
    */
   rootContainer?: string | Element
   /**
-   * Use SSR during development.
-   *
-   * If false, the 'dev' script in 'package.json' needs to be set to `"vite"`.
-   *
-   * @default true
+   * @deprecated This option is no longer needed
    */
   ssrWhenDev?: boolean
   getStyleCollector?: (() => StyleCollector | Promise<StyleCollector>) | null
