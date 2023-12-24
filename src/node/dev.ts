@@ -12,6 +12,7 @@ import { createFetchRequest, removeLeadingSlash, resolveAlias, version } from '.
 import { render } from './server'
 import type { CreateRootFactory } from './build'
 import { bindShortcuts } from './shortcuts'
+import { baseMiddleware } from './middlewares'
 
 export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteConfig: InlineConfig = {}) {
   const mode = process.env.MODE || process.env.NODE_ENV || ssgOptions.mode || 'development'
@@ -69,6 +70,8 @@ export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteCon
       server: { middlewareMode: true },
       appType: 'custom',
     })
+
+    app.use(baseMiddleware(getBase()))
 
     app.use((req, res, next) => {
       viteServer.middlewares.handle(req, res, next)
