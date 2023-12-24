@@ -8,7 +8,7 @@ import fs from 'fs-extra'
 import { certificateFor } from '@childrentime/devcert'
 import type { RouteRecord, ViteReactSSGContext, ViteReactSSGOptions } from '../types'
 import { createLink, detectEntry, renderHTML } from './html'
-import { createFetchRequest, resolveAlias, version } from './utils'
+import { createFetchRequest, removeLeadingSlash, resolveAlias, version } from './utils'
 import { render } from './server'
 import type { CreateRootFactory } from './build'
 import { bindShortcuts } from './shortcuts'
@@ -150,7 +150,7 @@ export async function printServerInfo(server: ViteDevServer, onlyUrl = false, ht
   const info = server.config.logger.info
   const port = server.config.server.port || 5173
   const protocol = https ? 'https' : 'http'
-  const url = `${protocol}://localhost:${port}/${getBase().replace(/^\//, '')}`
+  const url = `${protocol}://localhost:${port}/${removeLeadingSlash(getBase())}`
 
   if (!onlyUrl) {
     let ssrReadyMessage = ' -- SSR'

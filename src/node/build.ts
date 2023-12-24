@@ -10,7 +10,7 @@ import type { VitePluginPWAAPI } from 'vite-plugin-pwa'
 import { JSDOM } from 'jsdom'
 import type { RouteRecord, ViteReactSSGContext, ViteReactSSGOptions } from '../types'
 import { serializeState } from '../utils/state'
-import { buildLog, createRequest, getSize, resolveAlias, routesToPaths } from './utils'
+import { buildLog, createRequest, getSize, removeLeadingSlash, resolveAlias, routesToPaths, withTrailingSlash } from './utils'
 import { getCritters } from './critial'
 import { preLoad, render } from './server'
 import { renderPreloadLinks } from './preload-links'
@@ -166,7 +166,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
 
         const transformedIndexHTML = (await onBeforePageRender?.(path, indexHTML, appCtx)) || indexHTML
 
-        const fetchUrl = `${base.replace(/\/+$/, '')}/${path.replace(/^\/+/, '')}`
+        const fetchUrl = `${withTrailingSlash(base)}${removeLeadingSlash(path)}`
         const request = createRequest(fetchUrl)
 
         const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag } = await render([...routes], request, styleCollector, base)
