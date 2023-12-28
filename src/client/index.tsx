@@ -5,7 +5,6 @@ import { RouterProvider, createBrowserRouter, matchRoutes } from 'react-router-d
 import type { RouterOptions, ViteReactSSGClientOptions, ViteReactSSGContext } from '../types'
 import { documentReady } from '../utils/document-ready'
 import { deserializeState } from '../utils/state'
-import SiteMetadataDefaults from './components/SiteMetadataDefaults'
 
 export * from '../types'
 
@@ -61,8 +60,8 @@ export function ViteReactSSG(
     await fn?.(context)
 
     if (!client) {
-      const route = context.routePath ?? '/'
-      context.initialState = {} // TODO:
+      // const route = context.routePath ?? '/'
+      // context.initialState = {} // TODO:
     }
 
     const initialState = context.initialState
@@ -97,7 +96,6 @@ export function ViteReactSSG(
       const { router } = await createRoot(true)
       const app = (
         <HelmetProvider>
-          <SiteMetadataDefaults />
           <RouterProvider router={router!} />
         </HelmetProvider>
       )

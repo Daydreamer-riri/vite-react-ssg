@@ -2,7 +2,6 @@ import React from 'react'
 import type { FilledContext } from 'react-helmet-async'
 import { HelmetProvider } from 'react-helmet-async'
 import { StaticRouterProvider, createStaticHandler, createStaticRouter } from 'react-router-dom/server.js'
-import SiteMetadataDefaults from '../client/components/SiteMetadataDefaults'
 import type { RouteRecord, StyleCollector } from '../types'
 import { renderStaticApp } from './serverRenderer'
 import { createRequest } from './utils'
@@ -18,7 +17,6 @@ export async function render(routes: RouteRecord[], request: Request, styleColle
   const router = createStaticRouter(dataRoutes, context)
   let app = (
     <HelmetProvider context={helmetContext}>
-      <SiteMetadataDefaults />
       <StaticRouterProvider router={router} context={context} />
     </HelmetProvider>
   )
