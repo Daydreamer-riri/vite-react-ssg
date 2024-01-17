@@ -100,7 +100,7 @@ export const routes: RouteRecord[] = [
 ]
 ```
 
-## Use CSR during development
+### Use CSR during development
 
 Vite React SSG provide SSR (Server-Side Rendering) during development to ensure consistency between development and production as much as possible.
 
@@ -115,6 +115,18 @@ But if you want to use CSR during development, just:
     "build": "vite-react-ssg build"
   }
 }
+```
+
+### Single Page SSG
+
+For SSG of an index page only (i.e. without `react-router-dom`); import `vite-react-ssg/single-page` instead.
+
+```tsx
+// src/main.tsx
+import { ViteReactSSG } from 'vite-react-ssg/single-page'
+import App from './App.tsx'
+
+export const createRoot = ViteReactSSG(<App />)
 ```
 
 ## Extra route options
@@ -134,7 +146,7 @@ to determine which paths will be pre-rendered by vite-react-ssg.
 
 This function is only valid for dynamic route.
 
-```ts
+```tsx
 const route = {
   path: 'nest/:b',
   Component: React.lazy(() => import('./pages/nest/[b]')),

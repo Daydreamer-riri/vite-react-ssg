@@ -112,7 +112,6 @@ export interface ViteReactSSGContext<HasRouter extends boolean = true> {
   routes: HasRouter extends true ? Readonly<RouteRecord[]> : undefined
   routerOptions: HasRouter extends true ? RouterOptions : undefined
   initialState: Record<string, any>
-  // head: VueHeadClient<MergeHead> | undefined
   isClient: boolean
   onSSRAppRendered(cb: Function): void
   triggerOnSSRAppRendered(route: string, appHTML: string, appCtx: ViteReactSSGContext): Promise<unknown[]>
