@@ -11,6 +11,7 @@ export default function Index() {
         <img src={reactLogo} />
       </div>
       <h1>Vite + React</h1>
+      <h2>vite-react-ssg single-page</h2>
       <div className="card">
         <button onClick={() => setCount(count => count + 1)}>
           count is {count}

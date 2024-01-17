@@ -45,3 +45,21 @@ describe('lazy-pages', () => {
     expect(fileB2).toContain('<div>b2</div>')
   })
 })
+
+describe('single-page', () => {
+  it('generates', async () => {
+    const files = await fg('**/*.html', {
+      cwd: 'examples/single-page/dist',
+    })
+    expect(files).toMatchInlineSnapshot(`
+      [
+        "index.html",
+      ]
+    `)
+  })
+
+  it('index-content', async () => {
+    const index = await fs.readFile('examples/single-page/dist/index.html', 'utf-8')
+    expect(index).toContain('<h2>vite-react-ssg single-page</h2>')
+  })
+})
