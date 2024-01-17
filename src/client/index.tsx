@@ -75,8 +75,15 @@ export function ViteReactSSG(
   if (isClient) {
     (async () => {
       const container = typeof rootContainer === 'string'
-        ? document.querySelector(rootContainer)!
+        ? document.querySelector(rootContainer)
         : rootContainer
+
+      if (!container) {
+        // @ts-expect-error global variable
+        if (typeof $jsdom === 'undefined')
+          console.warn('[vite-react-ssg] Root container not found.')
+        return
+      }
 
       const lazeMatches = matchRoutes(routerOptions.routes, window.location, BASE_URL)?.filter(
         m => m.route.lazy,

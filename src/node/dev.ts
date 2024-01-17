@@ -28,6 +28,7 @@ export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteCon
     onBeforePageRender,
     onPageRendered,
     rootContainerId = 'root',
+    mock = false,
   }: ViteReactSSGOptions = Object.assign({}, config.ssgOptions || {}, ssgOptions)
 
   const ssrEntry = await resolveAlias(config, entry)
@@ -62,6 +63,12 @@ export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteCon
 
   async function createServer() {
     process.env.__DEV_MODE_SSR = 'true'
+
+    if (mock) {
+      // @ts-expect-error allow js
+      const { jsdomGlobal }: { jsdomGlobal: () => void } = await import('./jsdomGlobal.mjs')
+      jsdomGlobal()
+    }
 
     const app = express()
 
