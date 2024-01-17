@@ -1,5 +1,5 @@
 import type { Options as CrittersOptions } from 'critters'
-import type { ReactElement } from 'react'
+import type { ReactElement, ReactNode } from 'react'
 import type { IndexRouteObject, NonIndexRouteObject, createBrowserRouter } from 'react-router-dom'
 
 type Router = ReturnType<typeof createBrowserRouter>
@@ -110,7 +110,7 @@ export interface ViteReactSSGOptions {
 export interface ViteReactSSGContext<HasRouter extends boolean = true> {
   router?: HasRouter extends true ? Router : undefined
   routes: HasRouter extends true ? Readonly<RouteRecord[]> : undefined
-  routerOptions: RouterOptions
+  routerOptions: HasRouter extends true ? RouterOptions : undefined
   initialState: Record<string, any>
   // head: VueHeadClient<MergeHead> | undefined
   isClient: boolean
@@ -123,6 +123,7 @@ export interface ViteReactSSGContext<HasRouter extends boolean = true> {
   routePath?: string
   base: string
   getStyleCollector: (() => StyleCollector | Promise<StyleCollector>) | null
+  app?: HasRouter extends true ? never : ReactNode
 }
 
 export interface ViteReactSSGClientOptions {

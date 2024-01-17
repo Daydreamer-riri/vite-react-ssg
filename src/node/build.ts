@@ -42,6 +42,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
   const ssgOut = join(root, '.vite-react-ssg-temp', Math.random().toString(36).substring(2, 12))
   const outDir = config.build.outDir || 'dist'
   const out = isAbsolute(outDir) ? outDir : join(root, outDir)
+  const configBase = config.base
 
   const {
     script = 'sync',
@@ -125,11 +126,11 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
     ? await import(serverEntry)
     : _require(serverEntry)
   const includedRoutes = serverEntryIncludedRoutes || configIncludedRoutes
-  const { routes, base } = await createRoot(false)
+  const { routes } = await createRoot(false)
 
   // load lazy route
   const { lazyPaths } = await routesToPaths(routes)
-  const dataRoutes = await preLoad([...routes!], lazyPaths)
+  const dataRoutes = await preLoad([...(routes || [])], lazyPaths)
 
   const { paths, pathToEntry } = await routesToPaths(dataRoutes)
 
@@ -143,7 +144,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
 
   buildLog('Rendering Pages...', routesPaths.length)
 
-  const critters = crittersOptions !== false ? await getCritters(outDir, { publicPath: base, ...crittersOptions }) : undefined
+  const critters = crittersOptions !== false ? await getCritters(outDir, { publicPath: configBase, ...crittersOptions }) : undefined
   if (critters)
     console.log(`${gray('[vite-react-ssg]')} ${blue('Critical CSS generation enabled via `critters`')}`)
 
@@ -160,7 +161,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
     queue.add(async () => {
       try {
         const appCtx = await createRoot(false, path) as ViteReactSSGContext<true>
-        const { initialState, base, routes, triggerOnSSRAppRendered, transformState = serializeState, getStyleCollector } = appCtx
+        const { initialState, base, routes, triggerOnSSRAppRendered, transformState = serializeState, getStyleCollector, app } = appCtx
 
         const styleCollector = getStyleCollector ? await getStyleCollector() : null
 
@@ -169,7 +170,8 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
         const fetchUrl = `${withTrailingSlash(base)}${removeLeadingSlash(path)}`
         const request = createRequest(fetchUrl)
 
-        const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag } = await render([...routes], request, styleCollector, base)
+        const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag } = await render(app ?? [...routes], request, styleCollector, base)
+
         await triggerOnSSRAppRendered?.(path, appHTML, appCtx)
 
         const renderedHTML = await renderHTML({

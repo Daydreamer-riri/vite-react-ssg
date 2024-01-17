@@ -26,7 +26,7 @@ export async function routesToPaths(routes?: Readonly<RouteRecord[]>) {
       pathToEntry[path] = new Set([entry])
   }
 
-  if (!routes)
+  if (!routes || routes.length === 0)
     return { paths: ['/'], pathToEntry }
 
   const paths = new Set<string>()

@@ -91,20 +91,20 @@ export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteCon
 
         const createRoot: CreateRootFactory = await viteServer.ssrLoadModule(ssrEntry).then(m => m.createRoot)
         const appCtx = await createRoot(false, url) as ViteReactSSGContext<true>
-        const { routes, getStyleCollector, base } = appCtx
+        const { routes, getStyleCollector, base, app } = appCtx
         const transformedIndexHTML = (await onBeforePageRender?.(url, indexHTML, appCtx)) || indexHTML
 
         const styleCollector = getStyleCollector ? await getStyleCollector() : null
 
         const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag, routerContext }
-          = await render([...routes], createFetchRequest(req), styleCollector, base)
+          = await render(app ?? [...routes], createFetchRequest(req), styleCollector, base)
 
         metaAttributes.push(styleTag)
 
-        const matchesEntries = routerContext.matches
+        const matchesEntries = routerContext?.matches
           .map(match => (match.route as RouteRecord).entry as string)
           .filter(entry => !!entry)
-          .map(entry => entry[0] === '/' ? entry : `/${entry}`)
+          .map(entry => entry[0] === '/' ? entry : `/${entry}`) ?? []
         const mods = await Promise.all(
           [entry, ...matchesEntries].map(async entry => await viteServer.moduleGraph.getModuleByUrl(entry)),
         )
