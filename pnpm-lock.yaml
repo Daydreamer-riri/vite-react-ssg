@@ -109,11 +109,11 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0(typescript@5.1.6)
       vite:
-        specifier: ^5.0.7
-        version: 5.0.7(@types/node@18.15.11)
+        specifier: ^5.0.12
+        version: 5.0.12(@types/node@18.15.11)
       vite-plugin-pwa:
         specifier: ^0.17.4
-        version: 0.17.4(vite@5.0.7)(workbox-build@7.0.0)(workbox-window@7.0.0)
+        version: 0.17.4(vite@5.0.12)(workbox-build@7.0.0)(workbox-window@7.0.0)
       vitest:
         specifier: 1.0.4
         version: 1.0.4(@types/node@18.15.11)(jsdom@23.0.1)
@@ -135,7 +135,7 @@ importers:
         version: 2.0.6
       '@vitejs/plugin-react-swc':
         specifier: ^3.5.0
-        version: 3.5.0(vite@5.0.7)
+        version: 3.5.0(vite@5.0.12)
       rehype-autolink-headings:
         specifier: ^7.1.0
         version: 7.1.0
@@ -150,10 +150,10 @@ importers:
         version: 14.2.0
       unocss:
         specifier: ^0.58.0
-        version: 0.58.0(postcss@8.4.32)(rollup@4.8.0)(vite@5.0.7)
+        version: 0.58.0(postcss@8.4.32)(rollup@4.8.0)(vite@5.0.12)
       vite-plugin-pages:
         specifier: ^0.32.0
-        version: 0.32.0(@vue/compiler-sfc@3.3.12)(vite@5.0.7)
+        version: 0.32.0(@vue/compiler-sfc@3.3.12)(vite@5.0.12)
       vite-react-ssg:
         specifier: '*'
         version: link:..
@@ -169,13 +169,13 @@ importers:
     devDependencies:
       '@vitejs/plugin-react-swc':
         specifier: ^3.5.0
-        version: 3.5.0(vite@5.0.7)
+        version: 3.5.0(vite@5.0.12)
       vite:
-        specifier: 5.0.7
-        version: 5.0.7(@types/node@18.15.11)
+        specifier: 5.0.12
+        version: 5.0.12(@types/node@18.15.11)
       vite-plugin-pages:
         specifier: ^0.32.0
-        version: 0.32.0(@vue/compiler-sfc@3.3.12)(vite@5.0.7)
+        version: 0.32.0(@vue/compiler-sfc@3.3.12)(vite@5.0.12)
       vite-react-ssg:
         specifier: workspace:*
         version: link:../..
@@ -191,13 +191,13 @@ importers:
     devDependencies:
       '@vitejs/plugin-react-swc':
         specifier: ^3.5.0
-        version: 3.5.0(vite@5.0.7)
+        version: 3.5.0(vite@5.0.12)
       vite:
-        specifier: 5.0.7
-        version: 5.0.7(@types/node@18.15.11)
+        specifier: 5.0.12
+        version: 5.0.12(@types/node@18.15.11)
       vite-plugin-pages:
         specifier: ^0.32.0
-        version: 0.32.0(@vue/compiler-sfc@3.3.12)(vite@5.0.7)
+        version: 0.32.0(@vue/compiler-sfc@3.3.12)(vite@5.0.12)
       vite-react-ssg:
         specifier: workspace:*
         version: link:../..
@@ -213,13 +213,13 @@ importers:
     devDependencies:
       '@vitejs/plugin-react-swc':
         specifier: ^3.5.0
-        version: 3.5.0(vite@5.0.7)
+        version: 3.5.0(vite@5.0.12)
       vite:
-        specifier: 5.0.7
-        version: 5.0.7(@types/node@18.15.11)
+        specifier: 5.0.12
+        version: 5.0.12(@types/node@18.15.11)
       vite-plugin-pages:
         specifier: ^0.32.0
-        version: 0.32.0(@vue/compiler-sfc@3.3.12)(vite@5.0.7)
+        version: 0.32.0(@vue/compiler-sfc@3.3.12)(vite@5.0.12)
       vite-react-ssg:
         specifier: workspace:*
         version: link:../..
@@ -235,13 +235,13 @@ importers:
     devDependencies:
       '@vitejs/plugin-react-swc':
         specifier: ^3.5.0
-        version: 3.5.0(vite@5.0.7)
+        version: 3.5.0(vite@5.0.12)
       vite:
-        specifier: 5.0.7
-        version: 5.0.7(@types/node@18.15.11)
+        specifier: 5.0.12
+        version: 5.0.12(@types/node@18.15.11)
       vite-plugin-pages:
         specifier: ^0.32.0
-        version: 0.32.0(@vue/compiler-sfc@3.3.12)(vite@5.0.7)
+        version: 0.32.0(@vue/compiler-sfc@3.3.12)(vite@5.0.12)
       vite-react-ssg:
         specifier: workspace:*
         version: link:../..
@@ -260,13 +260,13 @@ importers:
     devDependencies:
       '@vitejs/plugin-react-swc':
         specifier: ^3.5.0
-        version: 3.5.0(vite@5.0.7)
+        version: 3.5.0(vite@5.0.12)
       vite:
-        specifier: 5.0.7
-        version: 5.0.7(@types/node@18.15.11)
+        specifier: 5.0.12
+        version: 5.0.12(@types/node@18.15.11)
       vite-plugin-pages:
         specifier: ^0.32.0
-        version: 0.32.0(@vue/compiler-sfc@3.3.12)(vite@5.0.7)
+        version: 0.32.0(@vue/compiler-sfc@3.3.12)(vite@5.0.12)
       vite-react-ssg:
         specifier: workspace:*
         version: link:../..
@@ -288,10 +288,10 @@ importers:
         version: 2.0.6
       '@vitejs/plugin-react-swc':
         specifier: ^3.5.0
-        version: 3.5.0(vite@5.0.7)
+        version: 3.5.0(vite@5.0.12)
       vite:
-        specifier: 5.0.7
-        version: 5.0.7(@types/node@18.15.11)
+        specifier: 5.0.12
+        version: 5.0.12(@types/node@18.15.11)
       vite-react-ssg:
         specifier: workspace:*
         version: link:../..
@@ -5049,7 +5049,7 @@ packages:
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
     dev: true
 
-  /@unocss/astro@0.58.0(rollup@4.8.0)(vite@5.0.7):
+  /@unocss/astro@0.58.0(rollup@4.8.0)(vite@5.0.12):
     resolution: {integrity: sha512-df+tEFO5eKXjQOwSWQhS9IdjD0sfLHLtn8U09sEKR2Nmh5CvpwyBxmvLQgOCilPou7ehmyKfsyGRLZg7IMp+Ew==}
     peerDependencies:
       vite: ^2.9.0 || ^3.0.0-0 || ^4.0.0 || ^5.0.0-0
@@ -5059,8 +5059,8 @@ packages:
     dependencies:
       '@unocss/core': 0.58.0
       '@unocss/reset': 0.58.0
-      '@unocss/vite': 0.58.0(rollup@4.8.0)(vite@5.0.7)
-      vite: 5.0.7(@types/node@18.15.11)
+      '@unocss/vite': 0.58.0(rollup@4.8.0)(vite@5.0.12)
+      vite: 5.0.12(@types/node@18.15.11)
     transitivePeerDependencies:
       - rollup
     dev: true
@@ -5242,7 +5242,7 @@ packages:
       '@unocss/core': 0.58.0
     dev: true
 
-  /@unocss/vite@0.58.0(rollup@4.8.0)(vite@5.0.7):
+  /@unocss/vite@0.58.0(rollup@4.8.0)(vite@5.0.12):
     resolution: {integrity: sha512-OCUOLMSOBEtXOEyBbAvMI3/xdR175BWRzmvV9Wc34ANZclEvCdVH8+WU725ibjY4VT0gVIuX68b13fhXdHV41A==}
     peerDependencies:
       vite: ^2.9.0 || ^3.0.0-0 || ^4.0.0 || ^5.0.0-0
@@ -5257,18 +5257,18 @@ packages:
       chokidar: 3.5.3
       fast-glob: 3.3.2
       magic-string: 0.30.5
-      vite: 5.0.7(@types/node@18.15.11)
+      vite: 5.0.12(@types/node@18.15.11)
     transitivePeerDependencies:
       - rollup
     dev: true
 
-  /@vitejs/plugin-react-swc@3.5.0(vite@5.0.7):
+  /@vitejs/plugin-react-swc@3.5.0(vite@5.0.12):
     resolution: {integrity: sha512-1PrOvAaDpqlCV+Up8RkAh9qaiUjoDUcjtttyhXDKw53XA6Ve16SOp6cCOpRs8Dj8DqUQs6eTW5YkLcLJjrXAig==}
     peerDependencies:
       vite: ^4 || ^5
     dependencies:
       '@swc/core': 1.3.100
-      vite: 5.0.7(@types/node@18.15.11)
+      vite: 5.0.12(@types/node@18.15.11)
     transitivePeerDependencies:
       - '@swc/helpers'
     dev: true
@@ -11672,7 +11672,7 @@ packages:
     resolution: {integrity: sha512-hAZsKq7Yy11Zu1DE0OzWjw7nnLZmJZYTDZZyEFHZdUhV8FkH5MCfoU1XMaxXovpyW5nq5scPqq0ZDP9Zyl04oQ==}
     engines: {node: '>= 10.0.0'}
 
-  /unocss@0.58.0(postcss@8.4.32)(rollup@4.8.0)(vite@5.0.7):
+  /unocss@0.58.0(postcss@8.4.32)(rollup@4.8.0)(vite@5.0.12):
     resolution: {integrity: sha512-MSPRHxBqWN+1AHGV+J5uUy4//e6ZBK6O+ISzD0qrXcCD/GNtxk1+lYjOK2ltkUiKX539+/KF91vNxzhhwEf+xA==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -11684,7 +11684,7 @@ packages:
       vite:
         optional: true
     dependencies:
-      '@unocss/astro': 0.58.0(rollup@4.8.0)(vite@5.0.7)
+      '@unocss/astro': 0.58.0(rollup@4.8.0)(vite@5.0.12)
       '@unocss/cli': 0.58.0(rollup@4.8.0)
       '@unocss/core': 0.58.0
       '@unocss/extractor-arbitrary-variants': 0.58.0
@@ -11703,8 +11703,8 @@ packages:
       '@unocss/transformer-compile-class': 0.58.0
       '@unocss/transformer-directives': 0.58.0
       '@unocss/transformer-variant-group': 0.58.0
-      '@unocss/vite': 0.58.0(rollup@4.8.0)(vite@5.0.7)
-      vite: 5.0.7(@types/node@18.15.11)
+      '@unocss/vite': 0.58.0(rollup@4.8.0)(vite@5.0.12)
+      vite: 5.0.12(@types/node@18.15.11)
     transitivePeerDependencies:
       - postcss
       - rollup
@@ -11849,7 +11849,7 @@ packages:
       debug: 4.3.4
       pathe: 1.1.1
       picocolors: 1.0.0
-      vite: 5.0.7(@types/node@18.15.11)
+      vite: 5.0.12(@types/node@18.15.11)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -11861,7 +11861,7 @@ packages:
       - terser
     dev: true
 
-  /vite-plugin-pages@0.32.0(@vue/compiler-sfc@3.3.12)(vite@5.0.7):
+  /vite-plugin-pages@0.32.0(@vue/compiler-sfc@3.3.12)(vite@5.0.12):
     resolution: {integrity: sha512-OxS3n0zUo5wsfgNCAuw2FiG/KD1ipgQV+2Flst4RyeI2iPv+m0YueVq+nx41k5NOWJj/zhqEas6I0b7HXveXjA==}
     peerDependencies:
       '@vue/compiler-sfc': ^2.7.0 || ^3.0.0
@@ -11879,13 +11879,13 @@ packages:
       json5: 2.2.3
       local-pkg: 0.5.0
       picocolors: 1.0.0
-      vite: 5.0.7(@types/node@18.15.11)
+      vite: 5.0.12(@types/node@18.15.11)
       yaml: 2.3.4
     transitivePeerDependencies:
       - supports-color
     dev: true
 
-  /vite-plugin-pwa@0.17.4(vite@5.0.7)(workbox-build@7.0.0)(workbox-window@7.0.0):
+  /vite-plugin-pwa@0.17.4(vite@5.0.12)(workbox-build@7.0.0)(workbox-window@7.0.0):
     resolution: {integrity: sha512-j9iiyinFOYyof4Zk3Q+DtmYyDVBDAi6PuMGNGq6uGI0pw7E+LNm9e+nQ2ep9obMP/kjdWwzilqUrlfVRj9OobA==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
@@ -11896,15 +11896,15 @@ packages:
       debug: 4.3.4
       fast-glob: 3.3.2
       pretty-bytes: 6.1.1
-      vite: 5.0.7(@types/node@18.15.11)
+      vite: 5.0.12(@types/node@18.15.11)
       workbox-build: 7.0.0
       workbox-window: 7.0.0
     transitivePeerDependencies:
       - supports-color
     dev: true
 
-  /vite@5.0.7(@types/node@18.15.11):
-    resolution: {integrity: sha512-B4T4rJCDPihrQo2B+h1MbeGL/k/GMAHzhQ8S0LjQ142s6/+l3hHTT095ORvsshj4QCkoWu3Xtmob5mazvakaOw==}
+  /vite@5.0.12(@types/node@18.15.11):
+    resolution: {integrity: sha512-4hsnEkG3q0N4Tzf1+t6NdN9dg/L3BM+q8SWgbSPnJvrgH2kgdyzfVJwbR1ic69/4uMJJ/3dqDZZE5/WwqW8U1w==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
     peerDependencies:
@@ -11984,7 +11984,7 @@ packages:
       strip-literal: 1.3.0
       tinybench: 2.5.1
       tinypool: 0.8.1
-      vite: 5.0.7(@types/node@18.15.11)
+      vite: 5.0.12(@types/node@18.15.11)
       vite-node: 1.0.4(@types/node@18.15.11)
       why-is-node-running: 2.2.2
     transitivePeerDependencies:
