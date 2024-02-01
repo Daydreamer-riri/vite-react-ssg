@@ -57,3 +57,32 @@ const routes = [
 ```
 
 See [example](https://github.com/Daydreamer-riri/vite-react-ssg/blob/main/examples/lazy-pages/src/App.tsx).
+
+## Data fetch
+
+You can use react-router-dom's `loader` to fetch data at build time and use `useLoaderData` to get the data in the component.
+
+```tsx
+import type { Params } from 'react-router-dom'
+import { useLoaderData } from 'react-router-dom'
+
+export function Component() {
+  const data = useLoaderData()
+
+  return (
+    <div>{/* your component */}</div>
+  )
+}
+
+export async function loader({ params }: { params: Params<string> }) {
+  const data = await fetch(`/api/${params.path}/data`)
+  return data
+}
+
+export function getStaticPaths() {
+  // ... get path
+  return path
+}
+```
+
+See [example](https://github.com/Daydreamer-riri/vite-react-ssg/blob/main/examples/with-loader/src/pages/[docs].tsx).

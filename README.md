@@ -13,6 +13,7 @@ See demo(also document): [docs](https://vite-react-ssg.netlify.app/)
 - [Extra route options](#extra-route-options)
   - [`entry`](#entry)
   - [`getStaticPaths`](#getstaticpaths)
+- [Data fetch](#data-fetch)
 - [lazy](#lazy)
 - [`<ClientOnly/>`](#clientonly)
 - [Document head](#document-head)
@@ -135,7 +136,8 @@ The RouteObject of vite-react-ssg is based on react-router, and vite-react-ssg r
 
 #### `entry`
 
-Used to obtain static resources.If you introduce static resources (such as css files) in that route and use lazy loading (such as React.lazy or route.lazy), you should set the entry field. It should be the path from root to the target file.
+Used to obtain static resources.If you introduce static resources (such as css files) in that route and use lazy loading (such as React.lazy or route.lazy), you should set the entry field.
+It should be the path from root to the target file.
 
 eg: `src/pages/page1.tsx`
 
@@ -186,6 +188,12 @@ const routes = [
 ```
 
 See [example](./examples/lazy-pages/src/App.tsx).
+
+## Data fetch
+
+You can use react-router-dom's `loader` to fetch data at build time and use `useLoaderData` to get the data in the component.
+
+See [example | with-loader](./examples/with-loader/src/pages/[docs].tsx).
 
 ## `<ClientOnly/>`
 
@@ -539,7 +547,6 @@ export default defineConfig({
 - [x] SSR in dev environment
 - [x] More Client components, such as `<ClientOnly />`
 - [x] `getStaticPaths` for dynamic routes
-- [ ] Initial State
 
 ## Credits
 
