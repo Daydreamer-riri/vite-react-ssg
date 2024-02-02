@@ -18,7 +18,7 @@ export default function ClientOnly({
   if (isBrowser) {
     if (
       typeof children !== 'function'
-        && process.env.NODE_ENV === 'development'
+      && process.env.NODE_ENV === 'development'
     ) {
       throw new Error(`vite-react-ssg error: The children of <ClientOnly> must be a "render function", e.g. <ClientOnly>{() => <span>{window.location.href}</span>}</ClientOnly>.
 Current type: ${isValidElement(children) ? 'React element' : typeof children}`)
