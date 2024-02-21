@@ -68,3 +68,16 @@ h6:hover .header-anchor,
 h6:focus .header-anchor {
   opacity: 0.5;
 }
+
+.prose :where(code):not(:where(.not-prose, .not-prose *, pre code)) {
+  font-size: 0.9em;
+  font-weight: 400;
+  background-color: #f5f5f5cc;
+  padding: 0.2em 0.4em;
+  border-radius: 0.3em;
+}
+
+.prose :where(:not(pre) > code):not(:where(.not-prose, .not-prose *))::before,
+.prose :where(:not(pre) > code):not(:where(.not-prose, .not-prose *))::after {
+  content: none;
+}
