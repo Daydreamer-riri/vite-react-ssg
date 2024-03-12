@@ -8,5 +8,6 @@ export default defineConfig({
   ssgOptions: {
     // It will cause Hydration Failed
     // formatting: 'minify',
+    mock: true,
   },
 })
