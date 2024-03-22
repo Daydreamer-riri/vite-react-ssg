@@ -113,9 +113,9 @@ export interface ViteReactSSGContext<HasRouter extends boolean = true> {
   routerOptions: HasRouter extends true ? RouterOptions : undefined
   initialState: Record<string, any>
   isClient: boolean
-  onSSRAppRendered(cb: Function): void
-  triggerOnSSRAppRendered(route: string, appHTML: string, appCtx: ViteReactSSGContext): Promise<unknown[]>
-  transformState?(state: any): any
+  onSSRAppRendered: (cb: Function) => void
+  triggerOnSSRAppRendered: (route: string, appHTML: string, appCtx: ViteReactSSGContext) => Promise<unknown[]>
+  transformState?: (state: any) => any
   /**
    * Current router path on SSG, `undefined` on client side.
    */

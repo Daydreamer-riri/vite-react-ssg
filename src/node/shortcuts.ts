@@ -6,7 +6,7 @@ import { printServerInfo } from './dev'
 export interface CLIShortcut {
   key: string
   description: string
-  action(viteServer: ViteDevServer, server: Server<typeof IncomingMessage, typeof ServerResponse>): void | Promise<void>
+  action: (viteServer: ViteDevServer, server: Server<typeof IncomingMessage, typeof ServerResponse>) => void | Promise<void>
 }
 
 const SHORTCUTS: CLIShortcut[] = [

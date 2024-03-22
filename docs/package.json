@@ -6,7 +6,8 @@
     "postinstall": "pnpm -w run build",
     "build": "vite-react-ssg build",
     "dev": "vite-react-ssg dev",
-    "start": "serve -l 5173 dist"
+    "start": "serve -l 5173 dist",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@unocss/reset": "^0.58.0",
@@ -14,8 +15,8 @@
 
   },
   "devDependencies": {
-    "@mdx-js/rollup": "3.0.0",
-    "@types/mdx": "2.0.6",
+    "@mdx-js/rollup": "3.0.1",
+    "@types/mdx": "2.0.11",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "rehype-autolink-headings": "^7.1.0",
     "rehype-shikiji": "0.9.10",
