@@ -20,7 +20,7 @@ export const routes: RouteRecord[] = [
         entry: 'src/pages/index.tsx',
       },
       {
-        path: 'nest/:b',
+        path: 'nest/*',
         Component: React.lazy(() => import('./pages/nest/[b]')),
         entry: 'src/pages/nest/[b].tsx',
         getStaticPaths: () => ['nest/b1', 'nest/b2'],

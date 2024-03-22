@@ -39,7 +39,7 @@ export async function routesToPaths(routes?: Readonly<RouteRecord[]>) {
       let path = route.path
       path = handlePath(path, prefix, route.entry)
 
-      if (route.getStaticPaths && path?.includes(':')) {
+      if (route.getStaticPaths && isDynamicSegmentsRoute(path)) {
         const staticPaths = await route.getStaticPaths()
         for (let staticPath of staticPaths) {
           staticPath = handlePath(staticPath, prefix, route.entry) as string
@@ -170,4 +170,11 @@ export function withTrailingSlash(path: string): string {
 const postfixRE = /[?#].*$/s
 export function cleanUrl(url: string): string {
   return url.replace(postfixRE, '')
+}
+
+const dynamicRE = /[:*?]/
+function isDynamicSegmentsRoute(route?: string) {
+  if (!route)
+    return false
+  return dynamicRE.test(route)
 }
