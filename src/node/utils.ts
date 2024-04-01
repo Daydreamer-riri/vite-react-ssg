@@ -30,12 +30,20 @@ export async function routesToPaths(routes?: Readonly<RouteRecord[]>) {
     return { paths: ['/'], pathToEntry }
 
   const paths = new Set<string>()
-  const lazyPaths = new Set<string>()
 
   const getPaths = async (routes: Readonly<RouteRecord[]>, prefix = '') => {
     // remove trailing slash
     prefix = prefix.replace(/\/$/g, '')
-    for (const route of routes) {
+    for (let route of routes) {
+      if (route.lazy) {
+        const lazyData = await route.lazy()
+        if (lazyData) {
+          route = {
+            ...route,
+            ...lazyData,
+          }
+        }
+      }
       let path = route.path
       path = handlePath(path, prefix, route.entry)
 
@@ -48,9 +56,6 @@ export async function routesToPaths(routes?: Readonly<RouteRecord[]>) {
         }
       }
 
-      if (route.lazy)
-        lazyPaths.add(route.index ? prefix : path ?? '')
-
       if (route.index)
         addEntry(prefix, route.entry)
 
@@ -60,7 +65,7 @@ export async function routesToPaths(routes?: Readonly<RouteRecord[]>) {
   }
 
   await getPaths(routes)
-  return { paths: Array.from(paths), pathToEntry, lazyPaths: Array.from(lazyPaths) }
+  return { paths: Array.from(paths), pathToEntry }
 
   function handlePath(path: string | undefined, prefix: string, entry: string | undefined) {
     // check for leading slash

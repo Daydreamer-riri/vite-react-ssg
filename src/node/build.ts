@@ -12,7 +12,7 @@ import type { RouteRecord, ViteReactSSGContext, ViteReactSSGOptions } from '../t
 import { serializeState } from '../utils/state'
 import { buildLog, createRequest, getSize, removeLeadingSlash, resolveAlias, routesToPaths, withTrailingSlash } from './utils'
 import { getCritters } from './critial'
-import { preLoad, render } from './server'
+import { render } from './server'
 import { renderPreloadLinks } from './preload-links'
 import { detectEntry, renderHTML } from './html'
 
@@ -128,11 +128,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
   const includedRoutes = serverEntryIncludedRoutes || configIncludedRoutes
   const { routes } = await createRoot(false)
 
-  // load lazy route
-  const { lazyPaths } = await routesToPaths(routes)
-  const dataRoutes = await preLoad([...(routes || [])], lazyPaths)
-
-  const { paths, pathToEntry } = await routesToPaths(dataRoutes)
+  const { paths, pathToEntry } = await routesToPaths(routes)
 
   let routesPaths = includeAllRoutes
     ? paths
