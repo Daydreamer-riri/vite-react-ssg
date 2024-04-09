@@ -1,27 +1,20 @@
 import { join } from 'node:path'
-import https from 'node:https'
-import type { InlineConfig, Logger, ModuleNode, ViteDevServer } from 'vite'
+import type { InlineConfig, ModuleNode, ViteDevServer } from 'vite'
 import { createServer as createViteServer, resolveConfig, version as viteVersion } from 'vite'
-import { bgLightCyan, bold, cyan, dim, green, reset } from 'kolorist'
-import express from 'express'
 import fs from 'fs-extra'
-import { certificateFor } from '@childrentime/devcert'
+import { bgLightCyan, bold, cyan, dim, green, red, reset } from 'kolorist'
 import type { RouteRecord, ViteReactSSGContext, ViteReactSSGOptions } from '../types'
+import { fromNodeRequest } from '../pollfill/node-adapter'
 import { createLink, detectEntry, renderHTML } from './html'
-import { createFetchRequest, removeLeadingSlash, resolveAlias, version } from './utils'
+import { joinUrlSegments, resolveAlias, version } from './utils'
 import { render } from './server'
 import type { CreateRootFactory } from './build'
-import { bindShortcuts } from './shortcuts'
-import { baseMiddleware } from './middlewares'
 
-export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteConfig: InlineConfig = {}) {
+export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteConfig: InlineConfig = {}, customOptions?: unknown) {
   const mode = process.env.MODE || process.env.NODE_ENV || ssgOptions.mode || 'development'
   const config = await resolveConfig(viteConfig, 'serve', mode, mode)
   const cwd = process.cwd()
   const root = config.root || cwd
-  const httpsOptions = config.server.https
-  // @ts-expect-error internal var
-  setBase(config.rawBase)
 
   const {
     entry = await detectEntry(root),
@@ -38,27 +31,11 @@ export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteCon
   // @ts-expect-error global var
   globalThis.__ssr_start_time = performance.now()
 
-  createServer().then(async app => {
-    const port = viteServer.config.server.port || 5173
-
-    if (httpsOptions) {
-      const localHttpsOptions
-        = typeof httpsOptions === 'boolean'
-          ? await certificateFor(['localhost'])
-          : httpsOptions
-      const server = https.createServer(localHttpsOptions, app)
-
-      server.listen(port, () => {
-        printServerInfo(viteServer, false, true)
-        bindShortcuts(viteServer, server)
-      })
-    }
-    else {
-      const server = app.listen(port, () => {
-        printServerInfo(viteServer)
-        bindShortcuts(viteServer, server)
-      })
-    }
+  createServer().catch(err => {
+    console.error(
+      `${red(`failed to start server. error:`)}\n${err.stack}`,
+    )
+    process.exit(1)
   })
 
   async function createServer() {
@@ -70,135 +47,124 @@ export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteCon
       jsdomGlobal()
     }
 
-    const app = express()
-
     viteServer = await createViteServer({
-      // ...options,
-      server: { middlewareMode: true },
-      appType: 'custom',
-    })
+      ...viteConfig,
+      plugins: [
+        ...viteConfig.plugins ?? [],
+        {
+          name: 'vite-react-ssg:dev-server-remix',
+          configureServer(server) {
+            return () => {
+              server.middlewares.use(async (req, res, _next) => {
+                try {
+                  const url = req.originalUrl!
+                  const indexHTML = await viteServer.transformIndexHtml(url, template)
 
-    app.use(baseMiddleware(getBase()))
+                  const createRoot: CreateRootFactory = await viteServer.ssrLoadModule(ssrEntry).then(m => m.createRoot)
+                  const appCtx = await createRoot(false, url) as ViteReactSSGContext<true>
+                  const { routes, getStyleCollector, base, app } = appCtx
+                  const transformedIndexHTML = (await onBeforePageRender?.(url, indexHTML, appCtx)) || indexHTML
 
-    app.use((req, res, next) => {
-      viteServer.middlewares.handle(req, res, next)
-    })
+                  const styleCollector = getStyleCollector ? await getStyleCollector() : null
 
-    app.use('*', async (req, res) => {
-      try {
-        const url = req.originalUrl
-        const indexHTML = await viteServer.transformIndexHtml(url, template)
+                  const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag, routerContext }
+                    = await render(app ?? [...routes], fromNodeRequest(req), styleCollector, base)
 
-        const createRoot: CreateRootFactory = await viteServer.ssrLoadModule(ssrEntry).then(m => m.createRoot)
-        const appCtx = await createRoot(false, url) as ViteReactSSGContext<true>
-        const { routes, getStyleCollector, base, app } = appCtx
-        const transformedIndexHTML = (await onBeforePageRender?.(url, indexHTML, appCtx)) || indexHTML
+                  metaAttributes.push(styleTag)
 
-        const styleCollector = getStyleCollector ? await getStyleCollector() : null
+                  const matchesEntries = routerContext?.matches
+                    .map(match => (match.route as RouteRecord).entry as string)
+                    .filter(entry => !!entry)
+                    .map(entry => entry[0] === '/' ? entry : `/${entry}`) ?? []
+                  const mods = await Promise.all(
+                    [ssrEntry, entry, ...matchesEntries].map(async entry => await viteServer.moduleGraph.getModuleByUrl(entry)),
+                  )
 
-        const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag, routerContext }
-          = await render(app ?? [...routes], createFetchRequest(req), styleCollector, base)
+                  const assetsUrls = new Set<string>()
 
-        metaAttributes.push(styleTag)
+                  const collectAssets = async (mod: ModuleNode | undefined) => {
+                    if (!mod || !mod?.ssrTransformResult)
+                      return
 
-        const matchesEntries = routerContext?.matches
-          .map(match => (match.route as RouteRecord).entry as string)
-          .filter(entry => !!entry)
-          .map(entry => entry[0] === '/' ? entry : `/${entry}`) ?? []
-        const mods = await Promise.all(
-          [entry, ...matchesEntries].map(async entry => await viteServer.moduleGraph.getModuleByUrl(entry)),
-        )
+                    const { deps = [], dynamicDeps = [] } = mod?.ssrTransformResult
+                    const allDeps = [...deps, ...dynamicDeps]
+                    for (const dep of allDeps) {
+                      if (dep.endsWith('.css')) {
+                        assetsUrls.add(dep)
+                      }
+                      else if (dep.endsWith('.ts') || dep.endsWith('.tsx')) {
+                        const depModule = await viteServer.moduleGraph.getModuleByUrl(dep)
+                        depModule && await collectAssets(depModule)
+                      }
+                    }
+                  }
+                  await Promise.all(mods.map(async mod => collectAssets(mod)))
+                  const preloadLink = [...assetsUrls].map(item => createLink(joinUrlSegments(config.base, item)))
+                  metaAttributes.push(...preloadLink)
 
-        const assetsUrls = new Set<string>()
+                  const renderedHTML = await renderHTML({
+                    rootContainerId,
+                    appHTML,
+                    indexHTML: transformedIndexHTML,
+                    metaAttributes,
+                    bodyAttributes,
+                    htmlAttributes,
+                    initialState: null,
+                  })
 
-        const collectAssets = async (mod: ModuleNode | undefined) => {
-          if (!mod || !mod?.ssrTransformResult)
-            return
+                  const transformed = await onPageRendered?.(url, renderedHTML, appCtx) || renderedHTML
 
-          const { deps = [], dynamicDeps = [] } = mod?.ssrTransformResult
-          const allDeps = [...deps, ...dynamicDeps]
-          for (const dep of allDeps) {
-            if (
-              dep.endsWith('.css')) {
-              assetsUrls.add(dep)
+                  res.statusCode = 200
+                  res.setHeader('Content-Type', 'text/html')
+                  res.end(transformed)
+                }
+                catch (e: any) {
+                  viteServer.ssrFixStacktrace(e)
+                  console.error(`[vite-react-ssg] error: ${e.stack}`)
+                  res.statusCode = 500
+                  res.end(e.stack)
+                }
+              })
             }
-            else if (dep.endsWith('.ts') || dep.endsWith('.tsx')) {
-              const depModule = await viteServer.moduleGraph.getModuleByUrl(dep)
-              depModule && await collectAssets(depModule)
-            }
-          }
-        }
-        await Promise.all(mods.map(async mod => collectAssets(mod)))
-        const preloadLink = [...assetsUrls].map(item => createLink(item))
-        metaAttributes.push(...preloadLink)
-
-        const renderedHTML = await renderHTML({
-          rootContainerId,
-          appHTML,
-          indexHTML: transformedIndexHTML,
-          metaAttributes,
-          bodyAttributes,
-          htmlAttributes,
-          initialState: null,
-        })
-
-        const transformed = await onPageRendered?.(url, renderedHTML, appCtx) || renderedHTML
-
-        res.status(200).set({ 'Content-Type': 'text/html' }).end(transformed)
-      }
-      catch (e: any) {
-        viteServer.ssrFixStacktrace(e)
-        console.error(`[vite-react-ssg] error: ${e.stack}`)
-        res.status(500).end(e.stack)
-      }
+          },
+        },
+      ],
     })
-    return app
+    await viteServer.listen()
+    printServerInfo(viteServer, !!customOptions)
+    viteServer.bindCLIShortcuts({ print: true })
+    return viteServer
   }
 }
 
-export async function printServerInfo(server: ViteDevServer, onlyUrl = false, https = false) {
+export async function printServerInfo(server: ViteDevServer, onlyUrl = false) {
+  if (onlyUrl)
+    return server.printUrls()
+
   const info = server.config.logger.info
-  const port = server.config.server.port || 5173
-  const protocol = https ? 'https' : 'http'
-  const url = `${protocol}://localhost:${port}/${removeLeadingSlash(getBase())}`
 
-  if (!onlyUrl) {
-    let ssrReadyMessage = ' -- SSR'
+  let ssrReadyMessage = ' -- SSR'
 
-    // @ts-expect-error global var
-    if (globalThis.__ssr_start_time) {
-      ssrReadyMessage
+  // @ts-expect-error global var
+  if (globalThis.__ssr_start_time) {
+    ssrReadyMessage
         += ` ready in ${reset(bold(`${Math.round(
           // @ts-expect-error global var
           performance.now() - globalThis.__ssr_start_time,
         )}ms`))}`
-    }
+  }
 
-    info(
+  info(
       `\n ${bgLightCyan(` VITE-REACT-SSG v${version} `)}`,
       { clear: !server.config.logger.hasWarned },
-    )
-    info(
+  )
+  info(
       `${cyan(`\n  VITE v${viteVersion}`) + dim(ssrReadyMessage)}\n`,
-    )
-  }
+  )
 
   info(
     green('  dev server running at:'),
   )
 
-  printUrls(url, info)
-}
-
-function printUrls(url: string, info: Logger['info']) {
-  const colorUrl = (url: string) => cyan(url.replace(/:(\d+)\//, (_, port) => `:${bold(port)}/`))
-  info(`  ${green('➜')}  ${bold('Local')}:   ${colorUrl(url)}`)
-}
-
-let base = ''
-function getBase() {
-  return base
-}
-function setBase(newBase: string) {
-  base = newBase
+  server.printUrls()
 }

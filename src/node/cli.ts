@@ -60,11 +60,15 @@ yargs(hideBin(process.argv))
         alias: 'b',
         type: 'string',
         describe: 'The base path to render',
+      })
+      .option('host', {
+        type: 'boolean',
+        describe: 'The host to expose',
       }),
     async args => {
-      const { config: configFile = undefined, ...ssgOptions } = args
+      const { config: configFile = undefined, host, ...ssgOptions } = args
 
-      await dev(ssgOptions, { configFile })
+      await dev(ssgOptions, { configFile, server: { host } })
     },
   )
   .fail((msg, err, yargs) => {

@@ -530,10 +530,6 @@ export default {
 }
 ```
 
-### Https
-
-If you set `https` to true in Vite, we will by default use `devcert` to generate a local HTTPS service for you. Of course, if you pass in your own custom https parameters, we will also help you pass them through to the Express server.
-
 ```ts
 export default defineConfig({
   server: {
