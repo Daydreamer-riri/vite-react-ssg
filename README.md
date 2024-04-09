@@ -4,7 +4,7 @@ Static-site generation for React on Vite.
 
 See demo(also document): [docs](https://vite-react-ssg.netlify.app/)
 
-Support for @tanstack/router is in progress!
+**🎈 Support for [`@tanstack/router`](https://tanstack.com/router/latest/docs/framework/react/overview) and [`wouter`](https://github.com/molefrog/wouter) is in progress!**
 
 [![NPM version](https://img.shields.io/npm/v/vite-react-ssg?color=a1b858&label=)](https://www.npmjs.com/package/vite-react-ssg)
 
