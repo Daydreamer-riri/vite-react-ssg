@@ -36,6 +36,7 @@ function renderPreloadLink(document: Document, file: string) {
     appendLink(document, {
       rel: 'stylesheet',
       href: file,
+      crossOrigin: '',
     })
   }
 }

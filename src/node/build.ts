@@ -13,8 +13,8 @@ import { serializeState } from '../utils/state'
 import { buildLog, createRequest, getSize, removeLeadingSlash, resolveAlias, routesToPaths, withTrailingSlash } from './utils'
 import { getCritters } from './critial'
 import { render } from './server'
-import { renderPreloadLinks } from './preload-links'
 import { detectEntry, renderHTML } from './html'
+import { renderPreloadLinks } from './preload-links'
 
 export type SSRManifest = Record<string, string[]>
 export interface ManifestItem {
@@ -188,8 +188,10 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
 
         const html = jsdom.serialize()
         let transformed = (await onPageRendered?.(path, html, appCtx)) || html
-        if (critters)
+        if (critters) {
           transformed = (await crittersQueue.add(() => critters.process(transformed)))!
+          transformed = transformed.replace(/<link\srel="stylesheet"/g, '<link rel="stylesheet" crossorigin')
+        }
 
         if (styleTag)
           transformed = transformed.replace('<head>', `<head>${styleTag}`)
