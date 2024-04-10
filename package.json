@@ -79,6 +79,7 @@
   "peerDependencies": {
     "@childrentime/devcert": "*",
     "critters": "^0.0.19",
+    "prettier": "*",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.14.1",
@@ -90,6 +91,9 @@
       "optional": true
     },
     "critters": {
+      "optional": true
+    },
+    "prettier": {
       "optional": true
     },
     "react-router-dom": {
@@ -106,7 +110,6 @@
     "html5parser": "^2.0.2",
     "jsdom": "^24.0.0",
     "kolorist": "^1.8.0",
-    "prettier": "^3.2.4",
     "react-helmet-async": "^1.3.0",
     "yargs": "^17.7.2"
   },
@@ -126,6 +129,7 @@
     "esno": "^4.7.0",
     "fast-glob": "3.3.2",
     "p-queue": "^8.0.1",
+    "prettier": "^3.2.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.15.0",
