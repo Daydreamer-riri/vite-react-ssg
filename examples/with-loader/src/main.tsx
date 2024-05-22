@@ -13,6 +13,10 @@ const routes: RouteRecord[] = [
     path: '/docs/:docs',
     lazy: () => import('./pages/[docs]'),
   },
+  {
+    path: '/json',
+    lazy: () => import('./pages/json'),
+  },
 ]
 
 const routesWithLayout = [{
