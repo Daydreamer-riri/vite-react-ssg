@@ -77,6 +77,10 @@ h6:focus .header-anchor {
   border-radius: 0.3em;
 }
 
+.dark .prose :where(code):not(:where(.not-prose, .not-prose *, pre code)) {
+  background-color: #f5f5f516;
+}
+
 .prose :where(:not(pre) > code):not(:where(.not-prose, .not-prose *))::before,
 .prose :where(:not(pre) > code):not(:where(.not-prose, .not-prose *))::after {
   content: none;
