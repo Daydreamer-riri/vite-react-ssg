@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import mdx from '@mdx-js/rollup'
 import react from '@vitejs/plugin-react-swc'
 import UnoCSS from 'unocss/vite'
-import rehypeShikiji from 'rehype-shikiji'
+import rehypeShiki from '@shikijs/rehype'
 import rehypeSlug from 'rehype-slug'
 import rehypeAutoLinkHeadings from 'rehype-autolink-headings'
 
@@ -22,7 +22,8 @@ export default defineConfig({
             },
           },
         ],
-        [rehypeShikiji, { themes: { light: 'vitesse-light', dark: 'vitesse-dark' } }],
+        // @ts-expect-error ignore
+        [rehypeShiki, { themes: { light: 'vitesse-light', dark: 'vitesse-dark' } }],
       ],
     }),
     UnoCSS(),
