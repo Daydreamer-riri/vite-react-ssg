@@ -2,7 +2,7 @@
   "name": "vite-react-ssg",
   "type": "module",
   "version": "0.6.2",
-  "packageManager": "pnpm@8.6.6",
+  "packageManager": "pnpm@9.4.0",
   "description": "",
   "author": "Riri <Daydreamerriri@outlook.com>",
   "license": "MIT",
