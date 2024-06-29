@@ -5,6 +5,7 @@ export default function Docs() {
   const doc = useLoaderData() as string
 
   return (
+    // eslint-disable-next-line react-dom/no-dangerously-set-innerhtml
     <div dangerouslySetInnerHTML={{ __html: doc }} />
   )
 }

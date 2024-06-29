@@ -15,10 +15,10 @@ export default function Index() {
       </div>
       <h1>Vite + React</h1>
       <div className="card">
-        <button onClick={() => setCount(count => count + 1)}>
+        <button type="button" onClick={() => setCount(count => count + 1)}>
           count is {count}
         </button>
-        <button onClick={() => startTransition(() => void 0)}>
+        <button type="button" onClick={() => startTransition(() => void 0)}>
           to A
         </button>
         <Link to="/a">TO A</Link>

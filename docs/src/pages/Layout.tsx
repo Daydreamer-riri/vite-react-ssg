@@ -67,7 +67,12 @@ export default function Layout() {
               >
                 Repo
               </a>
-              <button title="Toggle Color Scheme" className="py-2 px-6 pl-2 op-60 hover:op-100" onClick={() => toggleTheme()}>
+              <button
+                type="button"
+                title="Toggle Color Scheme"
+                className="py-2 px-6 pl-2 op-60 hover:op-100"
+                onClick={() => toggleTheme()}
+              >
                 <div className="i-ri-sun-line dark:i-ri-moon-line"></div>
               </button>
             </nav>
@@ -75,6 +80,7 @@ export default function Layout() {
               title="Menu"
               className="sm:hidden flex flex-col ml-4"
               onClick={() => setMenuOpen(!menuOpen)}
+              type="button"
             >
               <span className="w-6 h-1 bg-gray-800 dark:bg-white mb-1" />
               <span className="w-6 h-1 bg-gray-800 dark:bg-white mb-1" />

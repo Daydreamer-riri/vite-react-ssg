@@ -21,7 +21,12 @@ export default function Layout() {
           <Outlet />
         </Suspense>
         <div>
-          <button onClick={() => setState(v => !v)}>layout change title</button>
+          <button
+            onClick={() => setState(v => !v)}
+            type="button"
+          >
+            layout change title
+          </button>
         </div>
       </main>
     </>

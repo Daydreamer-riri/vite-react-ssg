@@ -5,6 +5,12 @@ export default function ACount() {
   const [count, setCount] = useState(0)
 
   return (
-    <button className="a-count" onClick={() => setCount(prev => ++prev)}>{count}</button>
+    <button
+      type="button"
+      className="a-count"
+      onClick={() => setCount(prev => ++prev)}
+    >
+      {count}
+    </button>
   )
 }
