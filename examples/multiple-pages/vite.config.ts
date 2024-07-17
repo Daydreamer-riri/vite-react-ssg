@@ -10,4 +10,11 @@ export default defineConfig({
     // formatting: 'minify',
     mock: true,
   },
+  server: {
+    headers: {
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'Cross-Origin-Embedder-Policy': 'require-corp',
+      'This-Is-A-Custom-Header': 'yes',
+    },
+  },
 })

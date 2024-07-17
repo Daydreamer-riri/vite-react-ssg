@@ -1,6 +1,6 @@
 import { join } from 'node:path'
 import type { InlineConfig, ModuleNode, ViteDevServer } from 'vite'
-import { createServer as createViteServer, resolveConfig, version as viteVersion } from 'vite'
+import { createServer as createViteServer, resolveConfig, send, version as viteVersion } from 'vite'
 import fs from 'fs-extra'
 import { bgLightCyan, bold, cyan, dim, green, red, reset } from 'kolorist'
 import type { RouteRecord, ViteReactSSGContext, ViteReactSSGOptions } from '../types'
@@ -116,7 +116,11 @@ export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteCon
 
                   res.statusCode = 200
                   res.setHeader('Content-Type', 'text/html')
-                  res.end(transformed)
+                  const isDev: boolean = 'pluginContainer' in server
+                  const headers = isDev
+                    ? server.config.server.headers
+                    : server.config.preview.headers
+                  send(req, res, transformed, 'html', { headers })
                 }
                 catch (e: any) {
                   viteServer.ssrFixStacktrace(e)
