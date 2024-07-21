@@ -63,3 +63,24 @@ describe('single-page', () => {
     expect(index).toContain('<h2>vite-react-ssg single-page</h2>')
   })
 })
+
+describe('with-loader', () => {
+  it('generates', async () => {
+    const files = await fg('**/*.html', {
+      cwd: 'examples/with-loader/dist',
+    })
+    expect(files).toMatchInlineSnapshot(`
+      [
+        "index.html",
+        "json.html",
+        "docs/a.html",
+        "docs/b.html",
+      ]
+    `)
+  })
+
+  it('docs-content', async () => {
+    const index = await fs.readFile('examples/with-loader/dist/docs/a.html', 'utf-8')
+    expect(index).toContain('<li>A</li>')
+  })
+})
