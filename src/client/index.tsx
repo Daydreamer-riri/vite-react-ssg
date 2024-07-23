@@ -5,6 +5,7 @@ import { RouterProvider, createBrowserRouter, matchRoutes } from 'react-router-d
 import type { IndexRouteRecord, NonIndexRouteRecord, RouteRecord, RouterOptions, ViteReactSSGClientOptions, ViteReactSSGContext } from '../types'
 import { documentReady } from '../utils/document-ready'
 import { deserializeState } from '../utils/state'
+import { joinUrlSegments, stripBase, withLeadingSlash } from '../utils/path'
 
 export * from '../types'
 
@@ -28,7 +29,7 @@ export function ViteReactSSG(
   const BASE_URL = routerOptions.basename ?? '/'
 
   async function createRoot(client = false, routePath?: string) {
-    const browserRouter = client ? createBrowserRouter(routerOptions.routes, { basename: BASE_URL }) : undefined
+    const browserRouter = client ? createBrowserRouter(convertRoutesToDataRoutes(routerOptions.routes, transformStaticLoaderRoute), { basename: BASE_URL }) : undefined
 
     const appRenderCallbacks: Function[] = []
     const onSSRAppRendered = client
@@ -122,9 +123,39 @@ export function ViteReactSSG(
   }
 
   return createRoot
+
+  function transformStaticLoaderRoute(route: RouteRecord) {
+    const loader: RouteRecord['loader'] = async ({ request }) => {
+      let staticLoadData: any
+      if (window.__VITE_REACT_SSG_STATIC_LOADER_DATA__) {
+        staticLoadData = window.__VITE_REACT_SSG_STATIC_LOADER_DATA__
+      }
+      else {
+        const manifestUrl = joinUrlSegments(BASE_URL, `static-loader-data-manifest-${window.__VITE_REACT_SSG_HASH__}.json`)
+        staticLoadData = await (await fetch(withLeadingSlash(manifestUrl))).json()
+        window.__VITE_REACT_SSG_STATIC_LOADER_DATA__ = staticLoadData
+      }
+
+      const { url } = request
+      let { pathname } = new URL(url)
+      if (BASE_URL !== '/') {
+        pathname = stripBase(pathname, BASE_URL)
+      }
+      const routeData = staticLoadData?.[pathname]?.[route.id!]
+      return routeData ?? null
+    }
+    route.loader = loader
+    return route
+  }
 }
 
-type MapRoutePropertiesFunction = <T>(route: T) => T
+declare global {
+  interface Window {
+    __VITE_REACT_SSG_STATIC_LOADER_DATA__: any
+    __VITE_REACT_SSG_HASH__: string
+  }
+}
+type MapRoutePropertiesFunction = (route: RouteRecord) => RouteRecord
 export function convertRoutesToDataRoutes(
   routes: RouteRecord[],
   mapRouteProperties: MapRoutePropertiesFunction,
@@ -139,7 +170,7 @@ export function convertRoutesToDataRoutes(
     if (isIndexRoute(route)) {
       const indexRoute: IndexRouteRecord = {
         ...route,
-        ...mapRouteProperties(route),
+        ...mapRouteProperties(route) as IndexRouteRecord,
         id,
       }
       // manifest[id] = indexRoute
@@ -148,7 +179,7 @@ export function convertRoutesToDataRoutes(
     else {
       const pathOrLayoutRoute: NonIndexRouteRecord = {
         ...route,
-        ...mapRouteProperties(route),
+        ...mapRouteProperties(route) as NonIndexRouteRecord,
         id,
         children: undefined,
       }

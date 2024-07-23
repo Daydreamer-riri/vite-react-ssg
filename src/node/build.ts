@@ -10,10 +10,11 @@ import type { VitePluginPWAAPI } from 'vite-plugin-pwa'
 import { JSDOM } from 'jsdom'
 import type { RouteRecord, ViteReactSSGContext, ViteReactSSGOptions } from '../types'
 import { serializeState } from '../utils/state'
-import { buildLog, createRequest, getSize, removeLeadingSlash, resolveAlias, routesToPaths, withTrailingSlash } from './utils'
+import { removeLeadingSlash, withTrailingSlash } from '../utils/path'
+import { buildLog, createRequest, getSize, resolveAlias, routesToPaths } from './utils'
 import { getCritters } from './critial'
 import { render } from './server'
-import { detectEntry, renderHTML } from './html'
+import { SCRIPT_COMMENT_PLACEHOLDER, detectEntry, renderHTML } from './html'
 import { renderPreloadLinks } from './preload-links'
 
 export type SSRManifest = Record<string, string[]>
@@ -41,7 +42,8 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
   const config = await resolveConfig(viteConfig, 'build', mode, mode)
   const cwd = process.cwd()
   const root = config.root || cwd
-  const ssgOut = join(root, '.vite-react-ssg-temp', Math.random().toString(36).substring(2, 12))
+  const hash = Math.random().toString(36).substring(2, 12)
+  const ssgOut = join(root, '.vite-react-ssg-temp', hash)
   const outDir = config.build.outDir || 'dist'
   const out = isAbsolute(outDir) ? outDir : join(root, outDir)
   const configBase = config.base
@@ -85,6 +87,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
       },
     },
     mode: config.mode,
+    ssr: { noExternal: ['vite-react-ssg'] },
   }))
 
   if (mock) {
@@ -116,6 +119,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
       },
     },
     mode: config.mode,
+    ssr: { noExternal: ['vite-react-ssg'] },
   }))
 
   const prefix = (format === 'esm' && process.platform === 'win32') ? 'file://' : ''
@@ -193,6 +197,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
 
         const html = jsdom.serialize()
         let transformed = (await onPageRendered?.(path, html, appCtx)) || html
+        transformed = transformed.replace(SCRIPT_COMMENT_PLACEHOLDER, `window.__VITE_REACT_SSG_HASH__ = '${hash}'`)
         if (critters) {
           transformed = (await crittersQueue.add(() => critters.process(transformed)))!
           transformed = transformed.replace(/<link\srel="stylesheet"/g, '<link rel="stylesheet" crossorigin')
@@ -225,7 +230,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
 
   await queue.start().onIdle()
 
-  await fs.writeFile(join(out, 'static-loader-data-manifest.json'), JSON.stringify(staticLoaderDataManifest, null, 2))
+  await fs.writeFile(join(out, `static-loader-data-manifest-${hash}.json`), JSON.stringify(staticLoaderDataManifest, null, 2))
 
   await fs.remove(join(root, '.vite-react-ssg-temp'))
 
