@@ -1,6 +1,8 @@
 import { join } from 'node:path'
 import fs from 'fs-extra'
 
+export const SCRIPT_COMMENT_PLACEHOLDER = '/* SCRIPT_COMMENT_PLACEHOLDER */'
+
 export async function renderHTML({
   rootContainerId,
   indexHTML,
@@ -23,6 +25,8 @@ export async function renderHTML({
     ? `\n<script>window.__INITIAL_STATE__=${initialState}</script>`
     : ''
 
+  const scriptPlaceHolder = `\n<script>${SCRIPT_COMMENT_PLACEHOLDER}</script>`
+
   // add head
   const headStartTag = '<head>'
   const metaTags = metaAttributes.join('')
@@ -41,7 +45,7 @@ export async function renderHTML({
     return indexHTML
       .replace(
         container,
-        `<div id="${rootContainerId}" data-server-rendered="true">${appHTML}</div>${stateScript}`,
+        `<div id="${rootContainerId}" data-server-rendered="true">${appHTML}</div>${stateScript}${scriptPlaceHolder}`,
       )
   }
 

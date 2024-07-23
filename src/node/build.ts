@@ -27,6 +27,8 @@ export interface ManifestItem {
 
 export type Manifest = Record<string, ManifestItem>
 
+export type StaticLoaderDataManifest = Record<string, Record<string, unknown> | undefined>
+
 export type CreateRootFactory = (client: boolean, routePath?: string) => Promise<ViteReactSSGContext<true> | ViteReactSSGContext<false>>
 
 function DefaultIncludedRoutes(paths: string[], _routes: Readonly<RouteRecord[]>) {
@@ -153,6 +155,8 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
   const queue = new PQueue({ concurrency })
   const crittersQueue = new PQueue({ concurrency: 1 })
 
+  const staticLoaderDataManifest: StaticLoaderDataManifest = {}
+
   for (const path of routesPaths) {
     queue.add(async () => {
       try {
@@ -166,7 +170,8 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
         const fetchUrl = `${withTrailingSlash(base)}${removeLeadingSlash(path)}`
         const request = createRequest(fetchUrl)
 
-        const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag } = await render(app ?? [...routes], request, styleCollector, base)
+        const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag, routerContext } = await render(app ?? [...routes], request, styleCollector, base)
+        staticLoaderDataManifest[path] = routerContext?.loaderData
 
         await triggerOnSSRAppRendered?.(path, appHTML, appCtx)
 
@@ -219,6 +224,8 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
   }
 
   await queue.start().onIdle()
+
+  await fs.writeFile(join(out, 'static-loader-data-manifest.json'), JSON.stringify(staticLoaderDataManifest, null, 2))
 
   await fs.remove(join(root, '.vite-react-ssg-temp'))
 

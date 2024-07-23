@@ -2,7 +2,7 @@ import React from 'react'
 import { createRoot as ReactDOMCreateRoot, hydrateRoot } from 'react-dom/client'
 import { HelmetProvider } from 'react-helmet-async'
 import { RouterProvider, createBrowserRouter, matchRoutes } from 'react-router-dom'
-import type { RouterOptions, ViteReactSSGClientOptions, ViteReactSSGContext } from '../types'
+import type { IndexRouteRecord, NonIndexRouteRecord, RouteRecord, RouterOptions, ViteReactSSGClientOptions, ViteReactSSGContext } from '../types'
 import { documentReady } from '../utils/document-ready'
 import { deserializeState } from '../utils/state'
 
@@ -122,6 +122,56 @@ export function ViteReactSSG(
   }
 
   return createRoot
+}
+
+type MapRoutePropertiesFunction = <T>(route: T) => T
+export function convertRoutesToDataRoutes(
+  routes: RouteRecord[],
+  mapRouteProperties: MapRoutePropertiesFunction,
+  parentPath: string[] = [],
+  // manifest: RouteManifest = {},
+): RouteRecord[] {
+  return routes.map((route, index) => {
+    const treePath = [...parentPath, String(index)]
+    const id = typeof route.id === 'string' ? route.id : treePath.join('-')
+    route.id = id
+
+    if (isIndexRoute(route)) {
+      const indexRoute: IndexRouteRecord = {
+        ...route,
+        ...mapRouteProperties(route),
+        id,
+      }
+      // manifest[id] = indexRoute
+      return indexRoute
+    }
+    else {
+      const pathOrLayoutRoute: NonIndexRouteRecord = {
+        ...route,
+        ...mapRouteProperties(route),
+        id,
+        children: undefined,
+      }
+      // manifest[id] = pathOrLayoutRoute
+
+      if (route.children) {
+        pathOrLayoutRoute.children = convertRoutesToDataRoutes(
+          route.children,
+          mapRouteProperties,
+          treePath,
+          // manifest,
+        )
+      }
+
+      return pathOrLayoutRoute
+    }
+  })
+}
+
+function isIndexRoute(
+  route: RouteRecord,
+): route is IndexRouteRecord {
+  return route.index === true
 }
 
 export { default as Head } from './components/Head'
