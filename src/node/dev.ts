@@ -1,15 +1,12 @@
 import { join } from 'node:path'
-import type { InlineConfig, ModuleNode, ViteDevServer } from 'vite'
-import { createServer as createViteServer, resolveConfig, send, version as viteVersion } from 'vite'
+import type { InlineConfig, ViteDevServer } from 'vite'
+import { createServer as createViteServer, resolveConfig, version as viteVersion } from 'vite'
 import fs from 'fs-extra'
 import { bgLightCyan, bold, cyan, dim, green, red, reset } from 'kolorist'
-import type { RouteRecord, ViteReactSSGContext, ViteReactSSGOptions } from '../types'
-import { fromNodeRequest } from '../pollfill/node-adapter'
-import { joinUrlSegments } from '../utils/path'
-import { createLink, detectEntry, renderHTML } from './html'
+import type { ViteReactSSGOptions } from '../types'
+import { detectEntry } from './html'
 import { resolveAlias, version } from './utils'
-import { render } from './server'
-import type { CreateRootFactory } from './build'
+import { ssrServerPlugin } from './vite-plugin/ssr-server'
 
 export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteConfig: InlineConfig = {}, customOptions?: unknown) {
   const mode = process.env.MODE || process.env.NODE_ENV || ssgOptions.mode || 'development'
@@ -52,87 +49,14 @@ export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteCon
       ...viteConfig,
       plugins: [
         ...viteConfig.plugins ?? [],
-        {
-          name: 'vite-react-ssg:dev-server-remix',
-          configureServer(server) {
-            return () => {
-              server.middlewares.use(async (req, res, _next) => {
-                try {
-                  const url = req.originalUrl!
-                  const indexHTML = await viteServer.transformIndexHtml(url, template)
-
-                  const createRoot: CreateRootFactory = await viteServer.ssrLoadModule(ssrEntry).then(m => m.createRoot)
-                  const appCtx = await createRoot(false, url) as ViteReactSSGContext<true>
-                  const { routes, getStyleCollector, base, app } = appCtx
-                  const transformedIndexHTML = (await onBeforePageRender?.(url, indexHTML, appCtx)) || indexHTML
-
-                  const styleCollector = getStyleCollector ? await getStyleCollector() : null
-
-                  const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag, routerContext }
-                    = await render(app ?? [...routes], fromNodeRequest(req), styleCollector, base)
-
-                  metaAttributes.push(styleTag)
-
-                  const matchesEntries = routerContext?.matches
-                    .map(match => (match.route as RouteRecord).entry as string)
-                    .filter(entry => !!entry)
-                    .map(entry => entry[0] === '/' ? entry : `/${entry}`) ?? []
-                  const mods = await Promise.all(
-                    [ssrEntry, entry, ...matchesEntries].map(async entry => await viteServer.moduleGraph.getModuleByUrl(entry)),
-                  )
-
-                  const assetsUrls = new Set<string>()
-
-                  const collectAssets = async (mod: ModuleNode | undefined) => {
-                    if (!mod || !mod?.ssrTransformResult)
-                      return
-
-                    const { deps = [], dynamicDeps = [] } = mod?.ssrTransformResult
-                    const allDeps = [...deps, ...dynamicDeps]
-                    for (const dep of allDeps) {
-                      if (dep.endsWith('.css')) {
-                        assetsUrls.add(dep)
-                      }
-                      else if (dep.endsWith('.ts') || dep.endsWith('.tsx')) {
-                        const depModule = await viteServer.moduleGraph.getModuleByUrl(dep)
-                        depModule && await collectAssets(depModule)
-                      }
-                    }
-                  }
-                  await Promise.all(mods.map(async mod => collectAssets(mod)))
-                  const preloadLink = [...assetsUrls].map(item => createLink(joinUrlSegments(config.base, item)))
-                  metaAttributes.push(...preloadLink)
-
-                  const renderedHTML = await renderHTML({
-                    rootContainerId,
-                    appHTML,
-                    indexHTML: transformedIndexHTML,
-                    metaAttributes,
-                    bodyAttributes,
-                    htmlAttributes,
-                    initialState: null,
-                  })
-
-                  const transformed = await onPageRendered?.(url, renderedHTML, appCtx) || renderedHTML
-
-                  res.statusCode = 200
-                  res.setHeader('Content-Type', 'text/html')
-                  const isDev: boolean = 'pluginContainer' in server
-                  const headers = isDev
-                    ? server.config.server.headers
-                    : server.config.preview.headers
-                  send(req, res, transformed, 'html', { headers })
-                }
-                catch (e: any) {
-                  viteServer.ssrFixStacktrace(e)
-                  console.error(`[vite-react-ssg] error: ${e.stack}`)
-                  res.statusCode = 500
-                  res.end(e.stack)
-                }
-              })
-            }
-          },
-        },
+        ssrServerPlugin({
+          template,
+          ssrEntry,
+          onBeforePageRender,
+          onPageRendered,
+          entry,
+          rootContainerId,
+        }),
       ],
     })
     await viteServer.listen()

@@ -10,7 +10,7 @@ const routes: RouteRecord[] = [
     entry: 'src/pages/index.tsx',
   },
   {
-    id: 'docs',
+    id: 'doc?s',
     path: '/docs/:docs',
     lazy: () => import('./pages/[docs]'),
   },

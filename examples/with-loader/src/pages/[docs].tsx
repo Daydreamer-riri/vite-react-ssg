@@ -5,7 +5,6 @@ import { Link, useLoaderData, useParams } from 'react-router-dom'
 export default function Docs() {
   const doc = useLoaderData() as string
   const { docs } = useParams()
-  console.log('🚀 ~ Docs ~ docs:', docs)
   const anotherPage = docs === 'a' ? 'b' : 'a'
 
   return (

@@ -4,7 +4,7 @@ import mdx from '@mdx-js/rollup'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: 'with-loader',
+  base: '/with-loader/',
   plugins: [
     mdx(),
     react(),

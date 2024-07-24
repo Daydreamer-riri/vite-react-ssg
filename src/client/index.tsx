@@ -2,10 +2,11 @@ import React from 'react'
 import { createRoot as ReactDOMCreateRoot, hydrateRoot } from 'react-dom/client'
 import { HelmetProvider } from 'react-helmet-async'
 import { RouterProvider, createBrowserRouter, matchRoutes } from 'react-router-dom'
-import type { IndexRouteRecord, NonIndexRouteRecord, RouteRecord, RouterOptions, ViteReactSSGClientOptions, ViteReactSSGContext } from '../types'
+import type { RouteRecord, RouterOptions, ViteReactSSGClientOptions, ViteReactSSGContext } from '../types'
 import { documentReady } from '../utils/document-ready'
 import { deserializeState } from '../utils/state'
 import { joinUrlSegments, stripBase, withLeadingSlash } from '../utils/path'
+import { convertRoutesToDataRoutes } from '../utils/remix-router'
 
 export * from '../types'
 
@@ -126,23 +127,31 @@ export function ViteReactSSG(
 
   function transformStaticLoaderRoute(route: RouteRecord) {
     const loader: RouteRecord['loader'] = async ({ request }) => {
-      let staticLoadData: any
-      if (window.__VITE_REACT_SSG_STATIC_LOADER_DATA__) {
-        staticLoadData = window.__VITE_REACT_SSG_STATIC_LOADER_DATA__
+      if (import.meta.env.DEV) {
+        const routeId = encodeURIComponent(route.id!)
+        const dataQuery = `_data=${routeId}`
+        const url = request.url.includes('?') ? `${request.url}&${dataQuery}` : `${request.url}?${dataQuery}`
+        return fetch(url)
       }
       else {
-        const manifestUrl = joinUrlSegments(BASE_URL, `static-loader-data-manifest-${window.__VITE_REACT_SSG_HASH__}.json`)
-        staticLoadData = await (await fetch(withLeadingSlash(manifestUrl))).json()
-        window.__VITE_REACT_SSG_STATIC_LOADER_DATA__ = staticLoadData
-      }
+        let staticLoadData: any
+        if (window.__VITE_REACT_SSG_STATIC_LOADER_DATA__) {
+          staticLoadData = window.__VITE_REACT_SSG_STATIC_LOADER_DATA__
+        }
+        else {
+          const manifestUrl = joinUrlSegments(BASE_URL, `static-loader-data-manifest-${window.__VITE_REACT_SSG_HASH__}.json`)
+          staticLoadData = await (await fetch(withLeadingSlash(manifestUrl))).json()
+          window.__VITE_REACT_SSG_STATIC_LOADER_DATA__ = staticLoadData
+        }
 
-      const { url } = request
-      let { pathname } = new URL(url)
-      if (BASE_URL !== '/') {
-        pathname = stripBase(pathname, BASE_URL)
+        const { url } = request
+        let { pathname } = new URL(url)
+        if (BASE_URL !== '/') {
+          pathname = stripBase(pathname, BASE_URL)
+        }
+        const routeData = staticLoadData?.[pathname]?.[route.id!]
+        return routeData ?? null
       }
-      const routeData = staticLoadData?.[pathname]?.[route.id!]
-      return routeData ?? null
     }
     route.loader = loader
     return route
@@ -154,55 +163,6 @@ declare global {
     __VITE_REACT_SSG_STATIC_LOADER_DATA__: any
     __VITE_REACT_SSG_HASH__: string
   }
-}
-type MapRoutePropertiesFunction = (route: RouteRecord) => RouteRecord
-export function convertRoutesToDataRoutes(
-  routes: RouteRecord[],
-  mapRouteProperties: MapRoutePropertiesFunction,
-  parentPath: string[] = [],
-  // manifest: RouteManifest = {},
-): RouteRecord[] {
-  return routes.map((route, index) => {
-    const treePath = [...parentPath, String(index)]
-    const id = typeof route.id === 'string' ? route.id : treePath.join('-')
-    route.id = id
-
-    if (isIndexRoute(route)) {
-      const indexRoute: IndexRouteRecord = {
-        ...route,
-        ...mapRouteProperties(route) as IndexRouteRecord,
-        id,
-      }
-      // manifest[id] = indexRoute
-      return indexRoute
-    }
-    else {
-      const pathOrLayoutRoute: NonIndexRouteRecord = {
-        ...route,
-        ...mapRouteProperties(route) as NonIndexRouteRecord,
-        id,
-        children: undefined,
-      }
-      // manifest[id] = pathOrLayoutRoute
-
-      if (route.children) {
-        pathOrLayoutRoute.children = convertRoutesToDataRoutes(
-          route.children,
-          mapRouteProperties,
-          treePath,
-          // manifest,
-        )
-      }
-
-      return pathOrLayoutRoute
-    }
-  })
-}
-
-function isIndexRoute(
-  route: RouteRecord,
-): route is IndexRouteRecord {
-  return route.index === true
 }
 
 export { default as Head } from './components/Head'
