@@ -5,7 +5,7 @@ import { blue, cyan, dim, gray, green, red, yellow } from 'kolorist'
 import PQueue from 'p-queue'
 import fs from 'fs-extra'
 import type { InlineConfig } from 'vite'
-import { mergeConfig, resolveConfig, build as viteBuild, version as viteVersion } from 'vite'
+import { createLogger, mergeConfig, resolveConfig, build as viteBuild, version as viteVersion } from 'vite'
 import type { VitePluginPWAAPI } from 'vite-plugin-pwa'
 import { JSDOM } from 'jsdom'
 import type { RouteRecord, ViteReactSSGContext, ViteReactSSGOptions } from '../types'
@@ -68,6 +68,13 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
   if (fs.existsSync(ssgOut))
     await fs.remove(ssgOut)
 
+  const clientLogger = createLogger()
+  const loggerWarn = clientLogger.warn
+  clientLogger.warn = (msg: string, options) => {
+    if (msg.includes('vite:resolve') && msg.includes('externalized for browser compatibility'))
+      return
+    loggerWarn(msg, options)
+  }
   // client
   buildLog('Build for client...')
   await viteBuild(mergeConfig(viteConfig, {
@@ -86,6 +93,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
         },
       },
     },
+    customLogger: clientLogger,
     mode: config.mode,
     ssr: { noExternal: ['vite-react-ssg'] },
   }))
@@ -230,7 +238,12 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
 
   await queue.start().onIdle()
 
-  await fs.writeFile(join(out, `static-loader-data-manifest-${hash}.json`), JSON.stringify(staticLoaderDataManifest, null, 2))
+  buildLog('Generating static loader data manifest...')
+  const staticLoaderDataManifestString = JSON.stringify(staticLoaderDataManifest, null, 0)
+  await fs.writeFile(join(out, `static-loader-data-manifest-${hash}.json`), staticLoaderDataManifestString)
+  config.logger.info(
+    `${dim(`${outDir}/`)}${cyan(`static-loader-data-manifest-${hash}.json`.padEnd(15, ' '))}  ${dim(getSize(staticLoaderDataManifestString))}`,
+  )
 
   await fs.remove(join(root, '.vite-react-ssg-temp'))
 
