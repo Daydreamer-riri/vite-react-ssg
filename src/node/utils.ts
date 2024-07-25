@@ -59,6 +59,11 @@ export async function routesToPaths(routes?: Readonly<RouteRecord[]>) {
       if (route.index)
         addEntry(prefix, route.entry)
 
+      if (route.index && !path) {
+        addEntry('/', route.entry)
+        paths.add('/')
+      }
+
       if (Array.isArray(route.children))
         await getPaths(route.children, path)
     }
