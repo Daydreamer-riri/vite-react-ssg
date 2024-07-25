@@ -5,15 +5,16 @@ import { blue, cyan, dim, gray, green, red, yellow } from 'kolorist'
 import PQueue from 'p-queue'
 import fs from 'fs-extra'
 import type { InlineConfig } from 'vite'
-import { mergeConfig, resolveConfig, build as viteBuild, version as viteVersion } from 'vite'
+import { createLogger, mergeConfig, resolveConfig, build as viteBuild, version as viteVersion } from 'vite'
 import type { VitePluginPWAAPI } from 'vite-plugin-pwa'
 import { JSDOM } from 'jsdom'
 import type { RouteRecord, ViteReactSSGContext, ViteReactSSGOptions } from '../types'
 import { serializeState } from '../utils/state'
-import { buildLog, createRequest, getSize, removeLeadingSlash, resolveAlias, routesToPaths, withTrailingSlash } from './utils'
+import { removeLeadingSlash, withTrailingSlash } from '../utils/path'
+import { buildLog, createRequest, getSize, resolveAlias, routesToPaths } from './utils'
 import { getCritters } from './critial'
 import { render } from './server'
-import { detectEntry, renderHTML } from './html'
+import { SCRIPT_COMMENT_PLACEHOLDER, detectEntry, renderHTML } from './html'
 import { renderPreloadLinks } from './preload-links'
 
 export type SSRManifest = Record<string, string[]>
@@ -27,6 +28,8 @@ export interface ManifestItem {
 
 export type Manifest = Record<string, ManifestItem>
 
+export type StaticLoaderDataManifest = Record<string, Record<string, unknown> | undefined>
+
 export type CreateRootFactory = (client: boolean, routePath?: string) => Promise<ViteReactSSGContext<true> | ViteReactSSGContext<false>>
 
 function DefaultIncludedRoutes(paths: string[], _routes: Readonly<RouteRecord[]>) {
@@ -39,7 +42,8 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
   const config = await resolveConfig(viteConfig, 'build', mode, mode)
   const cwd = process.cwd()
   const root = config.root || cwd
-  const ssgOut = join(root, '.vite-react-ssg-temp', Math.random().toString(36).substring(2, 12))
+  const hash = Math.random().toString(36).substring(2, 12)
+  const ssgOut = join(root, '.vite-react-ssg-temp', hash)
   const outDir = config.build.outDir || 'dist'
   const out = isAbsolute(outDir) ? outDir : join(root, outDir)
   const configBase = config.base
@@ -64,6 +68,13 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
   if (fs.existsSync(ssgOut))
     await fs.remove(ssgOut)
 
+  const clientLogger = createLogger()
+  const loggerWarn = clientLogger.warn
+  clientLogger.warn = (msg: string, options) => {
+    if (msg.includes('vite:resolve') && msg.includes('externalized for browser compatibility'))
+      return
+    loggerWarn(msg, options)
+  }
   // client
   buildLog('Build for client...')
   await viteBuild(mergeConfig(viteConfig, {
@@ -82,7 +93,9 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
         },
       },
     },
+    customLogger: clientLogger,
     mode: config.mode,
+    ssr: { noExternal: ['vite-react-ssg'] },
   }))
 
   if (mock) {
@@ -114,6 +127,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
       },
     },
     mode: config.mode,
+    ssr: { noExternal: ['vite-react-ssg'] },
   }))
 
   const prefix = (format === 'esm' && process.platform === 'win32') ? 'file://' : ''
@@ -153,6 +167,8 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
   const queue = new PQueue({ concurrency })
   const crittersQueue = new PQueue({ concurrency: 1 })
 
+  const staticLoaderDataManifest: StaticLoaderDataManifest = {}
+
   for (const path of routesPaths) {
     queue.add(async () => {
       try {
@@ -166,7 +182,8 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
         const fetchUrl = `${withTrailingSlash(base)}${removeLeadingSlash(path)}`
         const request = createRequest(fetchUrl)
 
-        const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag } = await render(app ?? [...routes], request, styleCollector, base)
+        const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag, routerContext } = await render(app ?? [...routes], request, styleCollector, base)
+        staticLoaderDataManifest[path] = routerContext?.loaderData
 
         await triggerOnSSRAppRendered?.(path, appHTML, appCtx)
 
@@ -188,6 +205,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
 
         const html = jsdom.serialize()
         let transformed = (await onPageRendered?.(path, html, appCtx)) || html
+        transformed = transformed.replace(SCRIPT_COMMENT_PLACEHOLDER, `window.__VITE_REACT_SSG_HASH__ = '${hash}'`)
         if (critters) {
           transformed = (await crittersQueue.add(() => critters.process(transformed)))!
           transformed = transformed.replace(/<link\srel="stylesheet"/g, '<link rel="stylesheet" crossorigin')
@@ -219,6 +237,13 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
   }
 
   await queue.start().onIdle()
+
+  buildLog('Generating static loader data manifest...')
+  const staticLoaderDataManifestString = JSON.stringify(staticLoaderDataManifest, null, 0)
+  await fs.writeFile(join(out, `static-loader-data-manifest-${hash}.json`), staticLoaderDataManifestString)
+  config.logger.info(
+    `${dim(`${outDir}/`)}${cyan(`static-loader-data-manifest-${hash}.json`.padEnd(15, ' '))}  ${dim(getSize(staticLoaderDataManifestString))}`,
+  )
 
   await fs.remove(join(root, '.vite-react-ssg-temp'))
 

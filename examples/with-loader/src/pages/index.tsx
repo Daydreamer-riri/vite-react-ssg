@@ -11,9 +11,9 @@ export default function Index() {
       </div>
       <h1>Vite + React</h1>
       <div className="card">
-        <Link to="/docs/a">TO A</Link>
-        {' '}
-        <Link to="/docs/b">TO B</Link>
+        <Link style={{ display: 'block' }} to="/docs/a">TO A</Link>
+        <Link style={{ display: 'block' }} to="/docs/b">TO B</Link>
+        <Link style={{ display: 'block' }} to="/json">TO JSON</Link>
       </div>
     </>
   )

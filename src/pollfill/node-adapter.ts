@@ -1,4 +1,6 @@
 import type { IncomingHttpHeaders, ServerResponse } from 'node:http'
+import { once } from 'node:events'
+import { Readable } from 'node:stream'
 import type * as Vite from 'vite'
 
 import invariant from '../invariant'
@@ -51,4 +53,36 @@ export function fromNodeRequest(
   // }
 
   return new Request(url.href, init)
+}
+// Adapted from solid-start's `handleNodeResponse`:
+// https://github.com/solidjs/solid-start/blob/7398163869b489cce503c167e284891cf51a6613/packages/start/node/fetch.js#L162-L185
+export async function toNodeRequest(res: Response, nodeRes: ServerResponse) {
+  nodeRes.statusCode = res.status
+  nodeRes.statusMessage = res.statusText
+
+  // const cookiesStrings = []
+
+  for (const [name, value] of res.headers) {
+    // if (name === 'set-cookie') {
+    //   cookiesStrings.push(...splitCookiesString(value))
+    // }
+    // else {
+    nodeRes.setHeader(name, value)
+    // }
+  }
+
+  // if (cookiesStrings.length) {
+  //   nodeRes.setHeader('set-cookie', cookiesStrings)
+  // }
+
+  if (res.body) {
+    // https://github.com/microsoft/TypeScript/issues/29867
+    const responseBody = res.body as unknown as AsyncIterable<Uint8Array>
+    const readable = Readable.from(responseBody)
+    readable.pipe(nodeRes)
+    await once(readable, 'end')
+  }
+  else {
+    nodeRes.end()
+  }
 }

@@ -10,6 +10,7 @@ const routes: RouteRecord[] = [
     entry: 'src/pages/index.tsx',
   },
   {
+    id: 'doc?s',
     path: '/docs/:docs',
     lazy: () => import('./pages/[docs]'),
   },
@@ -25,4 +26,4 @@ const routesWithLayout = [{
   children: routes,
 }]
 
-export const createRoot = ViteReactSSG({ routes: routesWithLayout })
+export const createRoot = ViteReactSSG({ routes: routesWithLayout, basename: import.meta.env.BASE_URL })
