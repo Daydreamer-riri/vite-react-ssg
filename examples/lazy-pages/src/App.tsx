@@ -12,19 +12,16 @@ export const routes: RouteRecord[] = [
       {
         path: 'a',
         lazy: () => import('./pages/a'),
-        // Component: React.lazy(() => import('./pages/a')),
       },
       {
         index: true,
         lazy: () => defaultToComponent(import('./pages/index')),
-        entry: 'src/pages/index.tsx',
       },
       {
         path: 'nest/:b',
         lazy: () => defaultToComponent(import('./pages/nest/[b]')),
       },
     ],
-    entry: 'src/Layout.tsx',
   },
 ]
 

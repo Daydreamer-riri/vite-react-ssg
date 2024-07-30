@@ -157,7 +157,7 @@ const route = {
   entry: 'src/pages/nest/[b].tsx',
   // To determine which paths will be pre-rendered
   getStaticPaths: () => ['nest/b1', 'nest/b2'],
-},
+}
 ```
 
 ## lazy

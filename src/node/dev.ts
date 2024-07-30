@@ -88,7 +88,7 @@ export async function printServerInfo(server: ViteDevServer, onlyUrl = false) {
       { clear: !server.config.logger.hasWarned },
   )
   info(
-      `${cyan(`\n  VITE v${viteVersion}`) + dim(ssrReadyMessage)}\n`,
+        `${cyan(`\n  VITE v${viteVersion}`) + dim(ssrReadyMessage)}\n`,
   )
 
   info(

@@ -14,20 +14,8 @@ export function getSize(str: string) {
 }
 
 export async function routesToPaths(routes?: Readonly<RouteRecord[]>) {
-  const pathToEntry: Record<string, Set<string>> = {}
-  function addEntry(path: string, entry: string | undefined) {
-    if (!entry)
-      return
-    if (entry[0] === '/')
-      entry = entry.slice(1) // allow to start with a slash
-    if (pathToEntry[path])
-      pathToEntry[path].add(entry)
-    else
-      pathToEntry[path] = new Set([entry])
-  }
-
   if (!routes || routes.length === 0)
-    return { paths: ['/'], pathToEntry }
+    return { paths: ['/'] }
 
   const paths = new Set<string>()
 
@@ -45,22 +33,18 @@ export async function routesToPaths(routes?: Readonly<RouteRecord[]>) {
         }
       }
       let path = route.path
-      path = handlePath(path, prefix, route.entry)
+      path = handlePath(path, prefix)
 
       if (route.getStaticPaths && isDynamicSegmentsRoute(path)) {
         const staticPaths = await route.getStaticPaths()
         for (let staticPath of staticPaths) {
-          staticPath = handlePath(staticPath, prefix, route.entry) as string
+          staticPath = handlePath(staticPath, prefix) as string
           if (Array.isArray(route.children))
             await getPaths(route.children, staticPath)
         }
       }
 
-      if (route.index)
-        addEntry(prefix, route.entry)
-
       if (route.index && !path) {
-        addEntry('/', route.entry)
         paths.add('/')
       }
 
@@ -70,9 +54,9 @@ export async function routesToPaths(routes?: Readonly<RouteRecord[]>) {
   }
 
   await getPaths(routes)
-  return { paths: Array.from(paths), pathToEntry }
+  return { paths: Array.from(paths) }
 
-  function handlePath(path: string | undefined, prefix: string, entry: string | undefined) {
+  function handlePath(path: string | undefined, prefix: string) {
     // check for leading slash
     if (path != null) {
       path = (prefix && !path.startsWith('/'))
@@ -80,12 +64,6 @@ export async function routesToPaths(routes?: Readonly<RouteRecord[]>) {
         : path
 
       paths.add(path)
-      addEntry(path, entry)
-
-      if (pathToEntry[prefix]) {
-        const pathCopy = path
-        pathToEntry[prefix].forEach(entry => addEntry(pathCopy, entry))
-      }
     }
 
     return path

@@ -7,7 +7,6 @@ const routes: RouteRecord[] = [
   {
     index: true,
     lazy: () => import('./pages'),
-    entry: 'src/pages/index.tsx',
   },
   {
     id: 'doc?s',

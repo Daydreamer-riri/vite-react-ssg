@@ -9,6 +9,7 @@ export default defineConfig({
     // It will cause Hydration Failed
     // formatting: 'minify',
     mock: true,
+    crittersOptions: false,
   },
   server: {
     headers: {

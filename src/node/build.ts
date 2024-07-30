@@ -16,7 +16,9 @@ import { getCritters } from './critial'
 import { render } from './server'
 import { SCRIPT_COMMENT_PLACEHOLDER, detectEntry, renderHTML } from './html'
 import { renderPreloadLinks } from './preload-links'
+import { collectAssets } from './assets'
 
+const dotVitedir = Number.parseInt(viteVersion) >= 5 ? ['.vite'] : []
 export type SSRManifest = Record<string, string[]>
 export interface ManifestItem {
   css?: string[]
@@ -111,6 +113,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
   await viteBuild(mergeConfig(viteConfig, {
     build: {
       ssr: ssrEntry,
+      manifest: true,
       outDir: ssgOut,
       minify: false,
       cssCodeSplit: false,
@@ -133,6 +136,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
   const prefix = (format === 'esm' && process.platform === 'win32') ? 'file://' : ''
   const ext = format === 'esm' ? '.mjs' : '.cjs'
   const serverEntry = join(prefix, ssgOut, parse(ssrEntry).name + ext)
+  const serverManifest: Manifest = JSON.parse(await fs.readFile(join(ssgOut, ...dotVitedir, 'manifest.json'), 'utf-8'))
 
   const _require = createRequire(import.meta.url)
 
@@ -142,7 +146,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
   const includedRoutes = serverEntryIncludedRoutes || configIncludedRoutes
   const { routes } = await createRoot(false)
 
-  const { paths, pathToEntry } = await routesToPaths(routes)
+  const { paths } = await routesToPaths(routes)
 
   let routesPaths = includeAllRoutes
     ? paths
@@ -158,7 +162,6 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
   if (critters)
     console.log(`${gray('[vite-react-ssg]')} ${blue('Critical CSS generation enabled via `critters`')}`)
 
-  const dotVitedir = Number.parseInt(viteVersion) >= 5 ? ['.vite'] : []
   const ssrManifest: SSRManifest = JSON.parse(await fs.readFile(join(out, ...dotVitedir, 'ssr-manifest.json'), 'utf-8'))
   const manifest: Manifest = JSON.parse(await fs.readFile(join(out, ...dotVitedir, 'manifest.json'), 'utf-8'))
   let indexHTML = await fs.readFile(join(out, 'index.html'), 'utf-8')
@@ -182,6 +185,8 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
         const fetchUrl = `${withTrailingSlash(base)}${removeLeadingSlash(path)}`
         const request = createRequest(fetchUrl)
 
+        const assets = !app ? collectAssets({ routes: [...routes], locationArg: fetchUrl, base, serverManifest, manifest, ssrManifest }) : new Set<string>()
+
         const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag, routerContext } = await render(app ?? [...routes], request, styleCollector, base)
         staticLoaderDataManifest[path] = routerContext?.loaderData
 
@@ -199,9 +204,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
 
         const jsdom = new JSDOM(renderedHTML)
 
-        const modules = collectModulesForEntrys(manifest, pathToEntry?.[path])
-
-        renderPreloadLinks(jsdom.window.document, modules, ssrManifest)
+        renderPreloadLinks(jsdom.window.document, assets)
 
         const html = jsdom.serialize()
         let transformed = (await onPageRendered?.(path, html, appCtx)) || html
@@ -297,27 +300,4 @@ async function formatHtml(html: string, formatting: ViteReactSSGOptions['formatt
     }
   }
   return html
-}
-
-function collectModulesForEntrys(manifest: Manifest, entrys: Set<string> | undefined) {
-  const mods = new Set<string>()
-  if (!entrys)
-    return mods
-
-  for (const entry of entrys)
-    collectModules(manifest, entry, mods)
-
-  return mods
-}
-
-function collectModules(manifest: Manifest, entry: string | undefined, mods = new Set<string>()) {
-  if (!entry)
-    return mods
-
-  mods.add(entry)
-  manifest[entry]?.dynamicImports?.forEach(item => {
-    collectModules(manifest, item, mods)
-  })
-
-  return mods
 }

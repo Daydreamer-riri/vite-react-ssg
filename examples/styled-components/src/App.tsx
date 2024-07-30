@@ -30,6 +30,5 @@ export const routes: RouteRecord[] = [
     path: '/',
     element: <Layout />,
     children,
-    entry: 'src/Layout.tsx',
   },
 ]

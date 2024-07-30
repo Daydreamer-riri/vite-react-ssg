@@ -143,12 +143,6 @@ export interface ViteReactSSGClientOptions {
 
 interface CommonRouteOptions {
   /**
-   * Used to obtain static resources through manifest
-   *
-   * @example `src/pages/home.tsx`
-   */
-  entry?: string
-  /**
    * The getStaticPaths() function should return an array of path
    * to determine which paths will be pre-rendered by vite-react-ssg.
    *

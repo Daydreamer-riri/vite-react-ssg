@@ -1,21 +1,8 @@
-import type { SSRManifest } from './build'
-
-export function renderPreloadLinks(document: Document, modules: Set<string>, ssrManifest: SSRManifest) {
+export function renderPreloadLinks(document: Document, assets: Set<string>) {
   const seen = new Set()
 
-  const preloadLinks: string[] = []
-
-  // preload modules
-  Array.from(modules).forEach(id => {
-    const files = ssrManifest[id] || []
-    files.forEach(file => {
-      if (!preloadLinks.includes(file))
-        preloadLinks.push(file)
-    })
-  })
-
-  if (preloadLinks) {
-    preloadLinks.forEach(file => {
+  if (assets) {
+    assets.forEach(file => {
       if (!seen.has(file)) {
         seen.add(file)
         renderPreloadLink(document, file)
@@ -35,6 +22,23 @@ function renderPreloadLink(document: Document, file: string) {
   else if (file.endsWith('.css')) {
     appendLink(document, {
       rel: 'stylesheet',
+      href: file,
+      crossOrigin: '',
+    })
+  }
+  else if (file.endsWith('.woff') || file.endsWith('.woff2') || file.endsWith('.ttf')) {
+    appendLink(document, {
+      rel: 'preload',
+      as: 'font',
+      type: 'font/woff2',
+      href: file,
+      crossOrigin: '',
+    })
+  }
+  else if (file.endsWith('.png') || file.endsWith('.jpg') || file.endsWith('.jpeg') || file.endsWith('.webp') || file.endsWith('.gif') || file.endsWith('.ico') || file.endsWith('.svg')) {
+    appendLink(document, {
+      rel: 'preload',
+      as: 'image',
       href: file,
       crossOrigin: '',
     })

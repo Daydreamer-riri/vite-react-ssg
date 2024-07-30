@@ -3,7 +3,7 @@ import { send } from 'vite'
 import type { LoaderFunction, LoaderFunctionArgs } from 'react-router-dom'
 import { json, matchRoutes } from 'react-router-dom'
 import type { CreateRootFactory } from '../build'
-import type { RouteRecord, ViteReactSSGContext, ViteReactSSGOptions } from '../../types'
+import type { ViteReactSSGContext, ViteReactSSGOptions } from '../../types'
 import { render } from '../server'
 import { fromNodeRequest, toNodeRequest } from '../../pollfill/node-adapter'
 import { createLink, renderHTML } from '../html'
@@ -84,17 +84,13 @@ export function ssrServerPlugin({
 
           const styleCollector = getStyleCollector ? await getStyleCollector() : null
 
-          const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag, routerContext }
+          const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag }
                     = await render(app ?? [...routes], fromNodeRequest(req), styleCollector, base)
 
           metaAttributes.push(styleTag)
 
-          const matchesEntries = routerContext?.matches
-            .map(match => (match.route as RouteRecord).entry as string)
-            .filter(entry => !!entry)
-            .map(entry => entry[0] === '/' ? entry : `/${entry}`) ?? []
           const mods = await Promise.all(
-            [ssrEntry, entry, ...matchesEntries].map(async entry => await server.moduleGraph.getModuleByUrl(entry)),
+            [ssrEntry, entry].map(async entry => await server.moduleGraph.getModuleByUrl(entry)),
           )
 
           const assetsUrls = new Set<string>()
