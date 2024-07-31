@@ -28,6 +28,7 @@ export function collectAssets({
   ssrManifest,
 }: CollectAssetsOpts) {
   const matches = matchRoutes([...routes], locationArg, base)
+  const routeEntries = matches?.map(item => item.route.entry).filter(Boolean) as string[] ?? []
   const dynamicImports = new Set<string>()
   matches?.forEach(item => {
     let lazyStr = ''
@@ -45,6 +46,7 @@ export function collectAssets({
     }
   })
   const entries = new Set<string>()
+  routeEntries.forEach(e => entries.add(e))
   const manifestEntries = [...Object.entries(serverManifest)]
   dynamicImports.forEach(name => {
     const result = manifestEntries.find(([_, value]) => value.file.endsWith(name))
