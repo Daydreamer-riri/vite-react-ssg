@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet, ScrollRestoration } from 'react-router-dom'
 import { NavLink } from 'vite-react-ssg'
 
 const docsList = ['Getting-Started', 'API', 'Components', 'Integration', 'Configuration']
@@ -6,6 +6,7 @@ const docsList = ['Getting-Started', 'API', 'Components', 'Integration', 'Config
 export default function Layout() {
   return (
     <div className="container mx-auto mt-4 pt-12">
+      <ScrollRestoration />
       <div className="flex flex-wrap">
         <div className="w-full sm:w-3/12 lg:w-2/12 pr-4 tex-left">
           <div className="block overflow-y-auto pt-8 pb-4 border-r-1 border-l-border dark:border-d-border sticky top-8">

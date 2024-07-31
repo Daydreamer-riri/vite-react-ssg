@@ -25,7 +25,7 @@ export default function Layout() {
   // )
 
   return (
-    <div className="dark:bg-d-bg font-mono bg-l-bg relative overflow-y-scroll h-screen dark:text-d-fg text-l-fg">
+    <div className="dark:bg-d-bg font-mono bg-l-bg relative dark:text-d-fg text-l-fg">
       <Head>
         <title>{title}</title>
       </Head>
@@ -70,7 +70,7 @@ export default function Layout() {
               <button
                 type="button"
                 title="Toggle Color Scheme"
-                className="py-2 px-6 pl-2 op-60 hover:op-100"
+                className="py-2 px-6 pl-8 md:pl-2 op-60 hover:op-100"
                 onClick={() => toggleTheme()}
               >
                 <div className="i-ri-sun-line dark:i-ri-moon-line"></div>
