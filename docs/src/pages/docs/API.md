@@ -4,12 +4,6 @@
 
 The RouteObject of vite-react-ssg is based on react-router, and vite-react-ssg receives some additional properties.
 
-### `entry`
-
-Used to obtain static resources.If you introduce static resources (such as css files) in that route and use lazy loading (such as React.lazy or route.lazy), you should set the entry field. It should be the path from root to the target file.
-
-eg: `src/pages/page1.tsx`
-
 ### `getStaticPaths`
 
 The `getStaticPaths()` function should return an array of path
@@ -26,6 +20,13 @@ const route = {
   getStaticPaths: () => ['nest/b1', 'nest/b2'],
 },
 ```
+
+### `entry`
+
+**You are not required to use this field. It is only necessary when "prehydration style loss" occurs.**
+It should be the path from root to the target file.
+
+eg: `src/pages/page1.tsx`
 
 ## With React-router lazy
 
@@ -62,26 +63,43 @@ See [example](https://github.com/Daydreamer-riri/vite-react-ssg/blob/main/exampl
 
 You can use react-router-dom's `loader` to fetch data at build time and use `useLoaderData` to get the data in the component.
 
+In production, the `loader` will only be executed at build time, and the data will be fetched by the manifest generated at build time during the browser navigations .
+
+In the development environment, the `loader` also runs only on the server.It provides data to the HTML during initial server rendering, and during browser route navigations , it makes calls to the server by initiating a fetch on the service.
+
 ```tsx
-import type { Params } from 'react-router-dom'
 import { useLoaderData } from 'react-router-dom'
 
-export function Component() {
-  const data = useLoaderData()
+export default function Docs() {
+  const data = useLoaderData() as Awaited<ReturnType<typeof loader>>
 
   return (
-    <div>{/* your component */}</div>
+    <>
+      <div>{data.key}</div>
+      {/* eslint-disable-next-line react-dom/no-dangerously-set-innerhtml */}
+      <div dangerouslySetInnerHTML={{ __html: data.packageCodeHtml }} style={{ textAlign: 'start' }}></div>
+    </>
   )
 }
 
-export async function loader({ params }: { params: Params<string> }) {
-  const data = await fetch(`/api/${params.path}/data`)
-  return data
-}
+export const Component = Docs
 
-export function getStaticPaths() {
-  // ... get path
-  return path
+export const entry = 'src/pages/json.tsx'
+
+export async function loader() {
+  // The code here will not be executed on the client side, and the modules imported will not be sent to the client.
+  const fs = (await import('node:fs'))
+  const cwd = process.cwd()
+  const json = (await import('../docs/test.json')).default
+
+  const packageJson = await fs.promises.readFile(`${cwd}/package.json`, 'utf-8')
+  const { codeToHtml } = await import('shiki')
+  const packageJsonHtml = await codeToHtml(packageJson, { lang: 'json', theme: 'vitesse-light' })
+
+  return {
+    ...json,
+    packageCodeHtml: packageJsonHtml,
+  }
 }
 ```
 

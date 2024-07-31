@@ -44,8 +44,7 @@ export const createRoot = ViteReactSSG(
 import React from 'react'
 import type { RouteRecord } from 'vite-react-ssg'
 import './App.css'
-
-const Layout = React.lazy(() => import('./Layout'))
+import Layout from './Layout'
 
 export const routes: RouteRecord[] = [
   {
@@ -55,19 +54,18 @@ export const routes: RouteRecord[] = [
     children: [
       {
         path: 'a',
-        Component: React.lazy(() => import('./pages/a')),
-        entry: 'src/pages/a.tsx',
+        lazy: () => import('./pages/a'),
       },
       {
         index: true,
         Component: React.lazy(() => import('./pages/index')),
-        // Used to obtain static resources through manifest
-        entry: 'src/pages/index.tsx',
       },
       {
         path: 'nest/:b',
-        Component: React.lazy(() => import('./pages/nest/[b]')),
-        entry: 'src/pages/nest/[b].tsx',
+        lazy: () => {
+          const Component = await import('./pages/nest/[b]')
+          return { Component }
+        },
         // To determine which paths will be pre-rendered
         getStaticPaths: () => ['nest/b1', 'nest/b2'],
       },
