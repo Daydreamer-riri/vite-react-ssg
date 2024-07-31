@@ -146,8 +146,8 @@ importers:
         specifier: ^0.32.0
         version: 0.32.0(@vue/compiler-sfc@3.3.12)(vite@5.3.1(@types/node@18.15.11)(sass@1.77.8)(terser@5.19.0))
       vite-react-ssg:
-        specifier: '*'
-        version: 0.6.4(critters@0.0.22)(prettier@3.3.2)(react-dom@18.2.0(react@18.2.0))(react-router-dom@6.15.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react@18.2.0)(styled-components@6.0.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(vite@5.3.1(@types/node@18.15.11)(sass@1.77.8)(terser@5.19.0))
+        specifier: workspace:*
+        version: link:..
 
   examples/auto-pages:
     dependencies:
@@ -5924,27 +5924,6 @@ packages:
       vite: ^3.1.0 || ^4.0.0 || ^5.0.0
       workbox-build: ^7.0.0
       workbox-window: ^7.0.0
-
-  vite-react-ssg@0.6.4:
-    resolution: {integrity: sha512-ob0PJktgEIby/OKxIy09v4qouORcpViI74FcPofs/IliopYL3dyz6aUqpG8oWyqEUO3chUNEOU4RhBo+/iM30A==}
-    hasBin: true
-    peerDependencies:
-      critters: ^0.0.19
-      prettier: '*'
-      react: ^18.0.0
-      react-dom: ^18.0.0
-      react-router-dom: ^6.14.1
-      styled-components: ^6.0.0
-      vite: ^2.0.0 || ^3.0.0 || ^4.0.0 || ^5.0.0
-    peerDependenciesMeta:
-      critters:
-        optional: true
-      prettier:
-        optional: true
-      react-router-dom:
-        optional: true
-      styled-components:
-        optional: true
 
   vite@5.3.1:
     resolution: {integrity: sha512-XBmSKRLXLxiaPYamLv3/hnP/KXDai1NDexN0FpkTaZXTfycHvkRHoenpgl/fvuK/kPbB6xAgoyiryAhQNxYmAQ==}
@@ -13512,30 +13491,6 @@ snapshots:
       workbox-window: 7.0.0
     transitivePeerDependencies:
       - supports-color
-
-  vite-react-ssg@0.6.4(critters@0.0.22)(prettier@3.3.2)(react-dom@18.2.0(react@18.2.0))(react-router-dom@6.15.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react@18.2.0)(styled-components@6.0.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(vite@5.3.1(@types/node@18.15.11)(sass@1.77.8)(terser@5.19.0)):
-    dependencies:
-      '@remix-run/web-fetch': 4.4.2
-      fs-extra: 11.2.0
-      html-minifier: 4.0.0
-      html5parser: 2.0.2
-      jsdom: 24.1.0
-      kolorist: 1.8.0
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      react-helmet-async: 1.3.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      vite: 5.3.1(@types/node@18.15.11)(sass@1.77.8)(terser@5.19.0)
-      yargs: 17.7.2
-    optionalDependencies:
-      critters: 0.0.22
-      prettier: 3.3.2
-      react-router-dom: 6.15.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      styled-components: 6.0.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-    transitivePeerDependencies:
-      - bufferutil
-      - canvas
-      - supports-color
-      - utf-8-validate
 
   vite@5.3.1(@types/node@18.15.11)(sass@1.77.8)(terser@5.19.0):
     dependencies:

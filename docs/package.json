@@ -24,6 +24,6 @@
     "serve": "^14.2.0",
     "unocss": "^0.61.0",
     "vite-plugin-pages": "^0.32.0",
-    "vite-react-ssg": "*"
+    "vite-react-ssg": "workspace:*"
   }
 }
