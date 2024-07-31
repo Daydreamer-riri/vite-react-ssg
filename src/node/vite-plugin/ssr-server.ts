@@ -102,7 +102,12 @@ export function ssrServerPlugin({
             const { deps = [], dynamicDeps = [] } = mod?.ssrTransformResult
             const allDeps = [...deps, ...dynamicDeps]
             for (const dep of allDeps) {
-              if (dep.endsWith('.css')) {
+              if (
+                dep.endsWith('.css')
+                || dep.endsWith('.scss')
+                || dep.endsWith('.sass')
+                || dep.endsWith('.less')
+              ) {
                 assetsUrls.add(dep)
               }
               else if (dep.endsWith('.ts') || dep.endsWith('.tsx')) {

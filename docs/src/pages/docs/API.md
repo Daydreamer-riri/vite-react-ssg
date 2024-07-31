@@ -65,7 +65,7 @@ You can use react-router-dom's `loader` to fetch data at build time and use `use
 
 In production, the `loader` will only be executed at build time, and the data will be fetched by the manifest generated at build time during the browser navigations .
 
-In the development environment, the `loader` also runs only on the server.It provides data to the HTML during initial server rendering, and during browser route navigations , it makes calls to the server by initiating a fetch on the service.
+In the development environment, the `loader` also runs only on the server.It provides data to the HTML during initial server rendering, and during browser route navigations, it makes calls to the server by initiating a fetch on the service.
 
 ```tsx
 import { useLoaderData } from 'react-router-dom'
