@@ -28,6 +28,7 @@ export default function Layout() {
     <div className="dark:bg-d-bg font-mono bg-l-bg relative dark:text-d-fg text-l-fg">
       <Head>
         <title>{title}</title>
+        <body className="dark:bg-d-bg bg-l-bg dark:text-d-fg text-l-fg" />
       </Head>
       <header className="h-24 sm:h-32 flex items-center z-20 w-full">
         <div className="container mx-auto px-6 flex items-center justify-between">
