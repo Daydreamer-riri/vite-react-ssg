@@ -62,8 +62,12 @@ function extractHelmet(context: FilledContext, styleCollector: StyleCollector | 
   const { helmet } = context
   const htmlAttributes = helmet.htmlAttributes.toString()
   const bodyAttributes = helmet.bodyAttributes.toString()
+  let titleString = helmet.title.toString()
+  if (titleString.split('>')[1] === '</title') {
+    titleString = ''
+  }
   const metaStrings = [
-    helmet.title.toString(),
+    titleString,
     helmet.meta.toString(),
     helmet.link.toString(),
     helmet.script.toString(),
