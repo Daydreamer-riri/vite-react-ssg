@@ -11,7 +11,7 @@ export default function invariant<T>(
 export default function invariant(value: any, message?: string) {
   if (value === false || value === null || typeof value === 'undefined') {
     console.error(
-      'The following error is a bug in Remix; please open an issue! https://github.com/remix-run/remix/issues/new',
+      'The following error is a bug in Vite-react-ssg; please open an issue! https://github.com/Daydreamer-riri/vite-react-ssg/issues/new',
     )
     throw new Error(message)
   }

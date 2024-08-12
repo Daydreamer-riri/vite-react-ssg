@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.7.1",
   "packageManager": "pnpm@9.4.0",
-  "description": "",
+  "description": "Static-site generation for React on Vite.",
   "author": "Riri <Daydreamerriri@outlook.com>",
   "license": "MIT",
   "homepage": "https://github.com/Daydreamer-riri/vite-react-ssg#readme",

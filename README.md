@@ -4,11 +4,12 @@ Static-site generation for React on Vite.
 
 See demo(also document): [docs](https://vite-react-ssg.netlify.app/)
 
-**🎈 Support for [`@tanstack/router`](https://tanstack.com/router/latest/docs/framework/react/overview) and [`wouter`](https://github.com/molefrog/wouter) is in progress!**
+**🎈 Support for [`@tanstack/router`](https://tanstack.com/router/latest/docs/framework/react/overview)
+and [`wouter`](https://github.com/molefrog/wouter) is in progress!**
 
 [![NPM version](https://img.shields.io/npm/v/vite-react-ssg?color=a1b858&label=)](https://www.npmjs.com/package/vite-react-ssg)
 
-# Table of contents
+## Table of contents
 
 - [Usage](#usage)
 - [Use CSR during development](#use-csr-during-development)
@@ -25,7 +26,6 @@ See demo(also document): [docs](https://vite-react-ssg.netlify.app/)
 - [Critical CSS](#critical-css)
 - [Configuration](#configuration)
   - [Custom Routes to Render](#custom-routes-to-render)
-  - [Https](#https)
 - [Roadmap](#roadmap)
 - [Credits](#credits)
 
@@ -103,7 +103,8 @@ export const routes: RouteRecord[] = [
 
 ### Use CSR during development
 
-Vite React SSG provide SSR (Server-Side Rendering) during development to ensure consistency between development and production as much as possible.
+Vite React SSG provide SSR (Server-Side Rendering) during development to ensure consistency
+between development and production as much as possible.
 
 But if you want to use CSR during development, just:
 
@@ -120,7 +121,8 @@ But if you want to use CSR during development, just:
 
 ### Single Page SSG
 
-For SSG of an index page only (i.e. without `react-router-dom`); import `vite-react-ssg/single-page` instead.
+For SSG of an index page only (i.e. without `react-router-dom`);
+import `vite-react-ssg/single-page` instead.
 
 ```tsx
 // src/main.tsx
@@ -180,7 +182,7 @@ export function getStaticPaths() {
 const routes = [
   {
     path: '/:page',
-    lazy: () => import('./pages/[page]')
+    lazy: () => import('./pages/[page]'),
   }
 ]
 ```
@@ -393,7 +395,8 @@ npm i -D critters
 
 Critical CSS generation will automatically be enabled for you.
 
-To configure `critters`, pass [its options](https://github.com/GoogleChromeLabs/critters#usage) into `ssgOptions.crittersOptions` in `vite.config.ts`:
+To configure `critters`, pass [its options](https://github.com/GoogleChromeLabs/critters#usage)
+into `ssgOptions.crittersOptions` in `vite.config.ts`:
 
 ```ts
 // vite.config.ts
