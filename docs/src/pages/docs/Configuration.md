@@ -110,7 +110,7 @@ Mock browser global variables (window, document, etc...) from SSG.
 #### type
 
 ```ts
-'minify' | 'prettify' | 'none'
+'prettify' | 'none'
 ```
 
 **default** `'none'`
@@ -127,7 +127,7 @@ Apply formatter to the generated index file.
 string
 ```
 
-Vite environmeng mode.
+Vite environment mode.
 
 ### dirStyle
 
@@ -155,7 +155,7 @@ boolean
 **default** `false`
 
 Generate for all routes, including dynamic routes.
-If enabled, you will need to configGure your serve
+If enabled, you will need to configure your serve
 manually to handle dynamic routes properly.
 
 ### crittersOptions

@@ -275,17 +275,7 @@ function rewriteScripts(indexHTML: string, mode?: string) {
 }
 
 async function formatHtml(html: string, formatting: ViteReactSSGOptions['formatting']) {
-  if (formatting === 'minify') {
-    const htmlMinifier = await import('html-minifier')
-    return htmlMinifier.minify(html, {
-      collapseWhitespace: true,
-      caseSensitive: true,
-      collapseInlineTagWhitespace: false,
-      minifyJS: true,
-      minifyCSS: true,
-    })
-  }
-  else if (formatting === 'prettify') {
+  if (formatting === 'prettify') {
     try {
       // @ts-expect-error dynamic import
       const prettier = (await import('prettier/esm/standalone.mjs')).default

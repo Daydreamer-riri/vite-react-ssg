@@ -36,7 +36,7 @@ export interface ViteReactSSGOptions {
    *
    * @default 'none'
    */
-  formatting?: 'minify' | 'prettify' | 'none'
+  formatting?: 'prettify' | 'none'
   /**
    * Vite environmeng mode.
    */

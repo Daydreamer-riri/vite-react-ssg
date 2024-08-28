@@ -459,9 +459,9 @@ interface ViteReactSSGOptions {
    *
    * @default 'none'
    */
-  formatting?: 'minify' | 'prettify' | 'none'
+  formatting?: 'prettify' | 'none'
   /**
-   * Vite environmeng mode.
+   * Vite environment mode.
    */
   mode?: string
   /**
@@ -475,7 +475,7 @@ interface ViteReactSSGOptions {
   dirStyle?: 'flat' | 'nested'
   /**
    * Generate for all routes, including dynamic routes.
-   * If enabled, you will need to configGure your serve
+   * If enabled, you will need to configure your serve
    * manually to handle dynamic routes properly.
    *
    * @default false
