@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-expressions */
 import { bold, gray, red, reset, underline } from 'kolorist'
 import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'

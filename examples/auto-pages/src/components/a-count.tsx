@@ -12,7 +12,8 @@ export default function ACount({ onClick }: { onClick: (value: number) => void }
         onClick?.(count + 1)
       }}
       type="button"
-    >{count}
+    >
+      {count}
     </button>
   )
 }

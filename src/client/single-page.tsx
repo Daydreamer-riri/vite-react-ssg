@@ -86,7 +86,7 @@ export function ViteReactSSG(
         <HelmetProvider>
           {App}
         </HelmetProvider>
-      )
+      ) as ReactNode
       const isSSR = document.querySelector('[data-server-rendered=true]') !== null
       if (!isSSR && process.env.NODE_ENV === 'development') {
         const root = ReactDOMCreateRoot(container)

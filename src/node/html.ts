@@ -80,7 +80,7 @@ export async function detectEntry(root: string) {
   // eslint-disable-next-line regexp/no-super-linear-backtracking, regexp/no-useless-non-capturing-group, regexp/no-dupe-characters-character-class, regexp/no-useless-lazy, regexp/no-useless-flag, regexp/no-useless-escape, regexp/strict
   const scriptSrcReg = /<script(?:.*?)src=["'](.+?)["'](?!<)(?:.*)\>(?:[\n\r\s]*?)(?:<\/script>)/gim
   const html = await fs.readFile(join(root, 'index.html'), 'utf-8')
-  const scripts = [...html.matchAll(scriptSrcReg)] || []
+  const scripts = [...html.matchAll(scriptSrcReg)]
   const [, entry] = scripts.find(matchResult => {
     const [script] = matchResult
     const [, scriptType] = script.match(/.*\stype=(?:'|")?([^>'"\s]+)/i) || []

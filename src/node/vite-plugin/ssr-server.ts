@@ -70,7 +70,7 @@ export function ssrServerPlugin({
               return
             }
             const response = await callRouteLoader({
-              loader,
+              loader: loader as LoaderFunction,
               params: match.params,
               request,
               routeId,

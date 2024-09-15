@@ -2,6 +2,10 @@ import ririd from '@ririd/eslint-config'
 
 export default ririd({
   formatters: true,
+  rules: {
+    'ts/no-unsafe-function-type': 'off',
+    'ts/no-unused-expressions': 'off',
+  },
 }, {
   files: ['**/*.md/**/*.html'],
   rules: {

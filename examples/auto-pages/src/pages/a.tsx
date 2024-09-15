@@ -10,7 +10,8 @@ export default function A() {
   return (
     <>
       <h1 className="a">Page A</h1>
-      <Link to="/">to index</Link>{' '}
+      <Link to="/">to index</Link>
+      {' '}
       <Link to={`/nest/${count}`}>to nest/{count}</Link>
       <ACount onClick={value => setCount(value)} />
       <ClientOnly>
