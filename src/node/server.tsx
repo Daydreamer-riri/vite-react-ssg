@@ -4,9 +4,25 @@ import type { FilledContext } from 'react-helmet-async'
 import { HelmetProvider } from 'react-helmet-async'
 import type { StaticHandlerContext } from 'react-router-dom/server.js'
 import type { RootRoute } from '@tanstack/react-router'
-import type { RouteRecord, StyleCollector } from '../types'
+import ReactDOMServer from 'react-dom/server'
+import type { RouteRecord, StyleCollector, ViteReactSSGContext } from '../types'
+import { removeLeadingSlash, withTrailingSlash } from '../utils/path'
 import { renderStaticApp } from './serverRenderer'
 import { createRequest } from './utils'
+
+export async function serverRender(path: string, context: ViteReactSSGContext<true>) {
+  const { base, getStyleCollector } = context
+  const fetchUrl = `${withTrailingSlash(base)}${removeLeadingSlash(path)}`
+  const request = createRequest(fetchUrl)
+  const styleCollector = getStyleCollector ? await getStyleCollector() : null
+  if (context.routerType === 'tanstack') {
+    const tanstackContext = context as import('../client/tanstack').ViteReactSSGContext<true>
+    return renderTanstack(tanstackContext.routeTree, path, styleCollector)
+  }
+
+  const { app, routes } = context
+  return render(app ?? [...routes], request, styleCollector, base)
+}
 
 export async function render(routesOrApp: RouteRecord[] | ReactNode, request: Request, styleCollector: StyleCollector | null, basename?: string) {
   const helmetContext = {} as FilledContext
@@ -68,11 +84,11 @@ export async function renderTanstack(routeTree: RootRoute, url: string, styleCol
   if (styleCollector)
     app = styleCollector.collect(app)
 
-  const appHTML = await renderStaticApp(app)
+  const appHTML = ReactDOMServer.renderToString(app)
 
   const { htmlAttributes, bodyAttributes, metaAttributes, styleTag } = extractHelmet(helmetContext, styleCollector)
 
-  return { appHTML, htmlAttributes, bodyAttributes, metaAttributes, styleTag, routerContext: {} }
+  return { appHTML, htmlAttributes, bodyAttributes, metaAttributes, styleTag, routerContext: null }
 }
 
 export async function preLoad(routes: RouteRecord[], paths: string[] | undefined) {

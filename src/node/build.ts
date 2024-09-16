@@ -11,9 +11,9 @@ import { JSDOM } from 'jsdom'
 import type { RouteRecord, ViteReactSSGContext, ViteReactSSGOptions } from '../types'
 import { serializeState } from '../utils/state'
 import { removeLeadingSlash, withTrailingSlash } from '../utils/path'
-import { buildLog, createRequest, getSize, resolveAlias, routesToPaths } from './utils'
+import { buildLog, getSize, resolveAlias, routesToPaths } from './utils'
 import { getCritters } from './critial'
-import { render } from './server'
+import { serverRender } from './server'
 import { SCRIPT_COMMENT_PLACEHOLDER, detectEntry, renderHTML } from './html'
 import { renderPreloadLinks } from './preload-links'
 import { collectAssets } from './assets'
@@ -176,18 +176,15 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
     queue.add(async () => {
       try {
         const appCtx = await createRoot(false, path) as ViteReactSSGContext<true>
-        const { initialState, base, routes, triggerOnSSRAppRendered, transformState = serializeState, getStyleCollector, app } = appCtx
-
-        const styleCollector = getStyleCollector ? await getStyleCollector() : null
+        const { base, routes, triggerOnSSRAppRendered, transformState = serializeState, app } = appCtx
 
         const transformedIndexHTML = (await onBeforePageRender?.(path, indexHTML, appCtx)) || indexHTML
 
         const fetchUrl = `${withTrailingSlash(base)}${removeLeadingSlash(path)}`
-        const request = createRequest(fetchUrl)
 
         const assets = !app ? collectAssets({ routes: [...routes], locationArg: fetchUrl, base, serverManifest, manifest, ssrManifest }) : new Set<string>()
 
-        const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag, routerContext } = await render(app ?? [...routes], request, styleCollector, base)
+        const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag, routerContext } = await serverRender(path, appCtx)
         staticLoaderDataManifest[path] = routerContext?.loaderData
 
         await triggerOnSSRAppRendered?.(path, appHTML, appCtx)

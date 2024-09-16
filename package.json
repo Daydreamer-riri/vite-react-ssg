@@ -36,6 +36,11 @@
       "import": "./dist/client/single-page.mjs",
       "require": "./dist/client/single-page.cjs"
     },
+    "./tanstack": {
+      "types": "./dist/tanstack.d.ts",
+      "import": "./dist/tanstack.mjs",
+      "require": "./dist/tanstack.cjs"
+    },
     "./style-collectors/styled-components": {
       "types": "./dist/style-collectors/styled-components.d.ts",
       "import": "./dist/style-collectors/styled-components.mjs",

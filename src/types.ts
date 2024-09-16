@@ -142,6 +142,8 @@ export interface ViteReactSSGContext<HasRouter extends boolean = true> {
   base: string
   getStyleCollector: (() => StyleCollector | Promise<StyleCollector>) | null
   app?: HasRouter extends true ? never : ReactNode
+
+  routerType?: 'tanstack' | 'remix'
 }
 
 export interface ViteReactSSGClientOptions {
@@ -201,6 +203,8 @@ export interface StyleCollector {
 }
 
 // extend vite.config.ts
+// eslint-disable-next-line ts/ban-ts-comment
+// @ts-ignore
 declare module 'vite' {
   interface UserConfig {
     ssgOptions?: ViteReactSSGOptions
