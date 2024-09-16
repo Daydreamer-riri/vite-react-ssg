@@ -1,8 +1,27 @@
-import type { Options as CrittersOptions } from 'critters'
 import type { ReactElement, ReactNode } from 'react'
 import type { IndexRouteObject, NonIndexRouteObject, createBrowserRouter } from 'react-router-dom'
 
 type Router = ReturnType<typeof createBrowserRouter>
+export interface CrittersOptions {
+  path?: string
+  publicPath?: string
+  external?: boolean
+  inlineThreshold?: number
+  minimumExternalSize?: number
+  pruneSource?: boolean
+  mergeStylesheets?: boolean
+  additionalStylesheets?: string[]
+  preload?: 'body' | 'media' | 'swap' | 'js' | 'js-lazy'
+  noscriptFallback?: boolean
+  inlineFonts?: boolean
+  preloadFonts?: boolean
+  fonts?: boolean
+  keyframes?: string
+  compress?: boolean
+  logLevel?: 'info' | 'warn' | 'error' | 'trace' | 'debug' | 'silent'
+  reduceInlineStyles?: boolean
+  // logger?: Logger
+}
 
 export interface ViteReactSSGOptions {
   /**

@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import type { FilledContext } from 'react-helmet-async'
 import { HelmetProvider } from 'react-helmet-async'
 import type { StaticHandlerContext } from 'react-router-dom/server.js'
+import type { RootRoute } from '@tanstack/react-router'
 import type { RouteRecord, StyleCollector } from '../types'
 import { renderStaticApp } from './serverRenderer'
 import { createRequest } from './utils'
@@ -43,6 +44,35 @@ export async function render(routesOrApp: RouteRecord[] | ReactNode, request: Re
   const { htmlAttributes, bodyAttributes, metaAttributes, styleTag } = extractHelmet(helmetContext, styleCollector)
 
   return { appHTML, htmlAttributes, bodyAttributes, metaAttributes, styleTag, routerContext: context }
+}
+
+export async function renderTanstack(routeTree: RootRoute, url: string, styleCollector: StyleCollector | null) {
+  const { createRouter, createMemoryHistory } = await import('@tanstack/react-router')
+  const { StartServer } = await import('@tanstack/start/server')
+  const router = createRouter({ routeTree })
+  const memoryHistory = createMemoryHistory({
+    initialEntries: [url],
+  })
+
+  router.update({
+    history: memoryHistory,
+  })
+
+  await router.load()
+  const helmetContext = {} as FilledContext
+  let app = (
+    <HelmetProvider context={helmetContext}>
+      <StartServer router={router} />
+    </HelmetProvider>
+  )
+  if (styleCollector)
+    app = styleCollector.collect(app)
+
+  const appHTML = await renderStaticApp(app)
+
+  const { htmlAttributes, bodyAttributes, metaAttributes, styleTag } = extractHelmet(helmetContext, styleCollector)
+
+  return { appHTML, htmlAttributes, bodyAttributes, metaAttributes, styleTag, routerContext: {} }
 }
 
 export async function preLoad(routes: RouteRecord[], paths: string[] | undefined) {
