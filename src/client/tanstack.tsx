@@ -121,11 +121,6 @@ export function ViteReactSSG(
       // }
 
       const { router } = await createRoot(true)
-      window.__TSR__ = {
-        matches: [],
-        // @ts-expect-error test
-        initMatch: () => {},
-      }
       const app = (
         <HelmetProvider>
           <StartClient router={router!} />
