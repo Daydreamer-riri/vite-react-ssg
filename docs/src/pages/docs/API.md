@@ -57,6 +57,10 @@ const routes = [
 ]
 ```
 
+If you are seeing a [flash of unstyled content](https://en.wikipedia.org/wiki/Flash_of_unstyled_content), make sure you are using the `lazy` field for any components that import css files.
+
+If your component isn't loading, make sure you have wrapped it or its parent in `Suspense` tags as described in the [React documentation](https://react.dev/reference/react/lazy#usage). 
+
 See [example](https://github.com/Daydreamer-riri/vite-react-ssg/blob/main/examples/lazy-pages/src/App.tsx).
 
 ## Data fetch
