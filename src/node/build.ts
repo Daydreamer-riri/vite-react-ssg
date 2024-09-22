@@ -130,7 +130,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
       },
     },
     mode: config.mode,
-    ssr: { noExternal: ['vite-react-ssg'] },
+    ssr: { noExternal: ['vite-react-ssg', 'vite-react-ssg/tanstack'] },
   }))
 
   const prefix = (format === 'esm' && process.platform === 'win32') ? 'file://' : ''

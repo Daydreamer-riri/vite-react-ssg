@@ -17,6 +17,24 @@ declare module '@tanstack/react-router' {
 }
 
 // const rootElement = document.getElementById('app')!
+// const OriginComponent = routeTree.options.component!
+// function component() {
+//   return (
+//     <Html>
+//       <Head>
+//         <Meta />
+//       </Head>
+//       <Body>
+//         {/* <div id="root"> */}
+//         <OriginComponent />
+//         {/* </div> */}
+//       </Body>
+//     </Html>
+//   )
+// }
+// routeTree.update({
+//   component,
+// })
 
 export const createRoot = ViteReactSSG({
   router,

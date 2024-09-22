@@ -3,10 +3,11 @@ import type { ReactNode } from 'react'
 import type { FilledContext } from 'react-helmet-async'
 import { HelmetProvider } from 'react-helmet-async'
 import type { StaticHandlerContext } from 'react-router-dom/server.js'
-import type { RootRoute } from '@tanstack/react-router'
-import ReactDOMServer from 'react-dom/server'
+import type { AnyRouter } from '@tanstack/react-router'
+import { JSDOM } from 'jsdom'
 import type { RouteRecord, StyleCollector, ViteReactSSGContext } from '../types'
 import { removeLeadingSlash, withTrailingSlash } from '../utils/path'
+import { META_CONTAINER_ID } from '../utils/tanstack-router'
 import { renderStaticApp } from './serverRenderer'
 import { createRequest } from './utils'
 
@@ -16,8 +17,8 @@ export async function serverRender(path: string, context: ViteReactSSGContext<tr
   const request = createRequest(fetchUrl)
   const styleCollector = getStyleCollector ? await getStyleCollector() : null
   if (context.routerType === 'tanstack') {
-    const tanstackContext = context as import('../client/tanstack').ViteReactSSGContext<true>
-    return renderTanstack(tanstackContext.routeTree, path, styleCollector)
+    const tanstackContext = context as unknown as import('../client/tanstack').ViteReactSSGContext<true>
+    return renderTanstack(tanstackContext.router, path, styleCollector)
   }
 
   const { app, routes } = context
@@ -62,10 +63,10 @@ export async function render(routesOrApp: RouteRecord[] | ReactNode, request: Re
   return { appHTML, htmlAttributes, bodyAttributes, metaAttributes, styleTag, routerContext: context }
 }
 
-export async function renderTanstack(routeTree: RootRoute, url: string, styleCollector: StyleCollector | null) {
+export async function renderTanstack(_router: AnyRouter, url: string, styleCollector: StyleCollector | null) {
   const { createRouter, createMemoryHistory } = await import('@tanstack/react-router')
+  const router = createRouter(_router.options)
   const { StartServer } = await import('@tanstack/start/server')
-  const router = createRouter({ routeTree })
   const memoryHistory = createMemoryHistory({
     initialEntries: [url],
   })
@@ -84,11 +85,18 @@ export async function renderTanstack(routeTree: RootRoute, url: string, styleCol
   if (styleCollector)
     app = styleCollector.collect(app)
 
-  const appHTML = ReactDOMServer.renderToString(app)
+  const appHTML = await renderStaticApp(app)
+  const jsdom = new JSDOM(appHTML)
+  // __AUTO_GENERATED_PRINT_VAR_START__
+  const headElements = jsdom.window.document.querySelector(`#${META_CONTAINER_ID}`)
 
   const { htmlAttributes, bodyAttributes, metaAttributes, styleTag } = extractHelmet(helmetContext, styleCollector)
+  if (headElements?.innerHTML) {
+    metaAttributes.unshift(headElements.innerHTML)
+    headElements.innerHTML = ''
+  }
 
-  return { appHTML, htmlAttributes, bodyAttributes, metaAttributes, styleTag, routerContext: null }
+  return { appHTML: jsdom.serialize(), htmlAttributes, bodyAttributes, metaAttributes, styleTag, routerContext: null }
 }
 
 export async function preLoad(routes: RouteRecord[], paths: string[] | undefined) {

@@ -27,3 +27,5 @@ export function convertRouteTreeToRouteOption(routeTree: RootRoute): RouteRecord
   traverseRouteTree(routeTree)
   return routes
 }
+
+export const META_CONTAINER_ID = '__SSG_TANSTACK_META_CONTAINER__'

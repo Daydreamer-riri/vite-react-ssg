@@ -20,6 +20,7 @@ export default defineBuildConfig({
     '@tanstack/react-router',
     '@tanstack/start/client',
     '@tanstack/start/server',
+    '@tanstack/start',
   ],
   rollup: {
     emitCJS: true,

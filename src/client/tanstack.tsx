@@ -1,12 +1,12 @@
 import React from 'react'
 import { createRoot as ReactDOMCreateRoot, hydrateRoot } from 'react-dom/client'
 import { HelmetProvider } from 'react-helmet-async'
-import type { AnyRouter, Router } from '@tanstack/react-router'
-import { StartClient } from '@tanstack/start'
+import type { AnyRouter } from '@tanstack/react-router'
+import { Meta, StartClient } from '@tanstack/start'
 import type { ViteReactSSGContext as BaseViteReactSSGContext, ViteReactSSGClientOptions } from '../types'
 import { documentReady } from '../utils/document-ready'
 import { deserializeState } from '../utils/state'
-import { convertRouteTreeToRouteOption } from '../utils/tanstack-router'
+import { META_CONTAINER_ID, convertRouteTreeToRouteOption } from '../utils/tanstack-router'
 
 export * from '../types'
 
@@ -17,7 +17,7 @@ export interface RouterOptions {
 }
 
 export type ViteReactSSGContext<HasRouter extends boolean = true> = Omit<BaseViteReactSSGContext, 'router'> & {
-  router?: HasRouter extends true ? Router<any, any> : undefined
+  router: HasRouter extends true ? AnyRouter : undefined
   routeTree?: AnyRouter['routeTree']
 }
 
@@ -42,8 +42,34 @@ export function ViteReactSSG(
 
   const routes = convertRouteTreeToRouteOption(routerOptions.routes)
 
+  const routeTree = routerOptions.routes
+  const OriginComponent = routeTree.options.component!
+  // const component = () => (
+  //   <Html>
+  //     <head>
+  //       <Meta />
+  //     </head>
+  //     <body>
+  //       <div id="root">
+  //         <OriginComponent />
+  //       </div>
+  //     </body>
+  //   </Html>
+  // )
+  const component = () => (
+    <>
+      <OriginComponent />
+      <div id={META_CONTAINER_ID} style={{ display: 'none' }}>
+        <Meta />
+      </div>
+    </>
+  )
+  routeTree.update({
+    component,
+  })
   async function createRoot(client = false, routePath?: string) {
-    const browserRouter = client ? routerOptions.router : undefined
+    const router = routerOptions.router
+    router.options.isServer = !client
 
     const appRenderCallbacks: Function[] = []
     const onSSRAppRendered = client
@@ -52,11 +78,12 @@ export function ViteReactSSG(
     const triggerOnSSRAppRendered = () => {
       return Promise.all(appRenderCallbacks.map(cb => cb()))
     }
+
     const context: ViteReactSSGContext<true> = {
       isClient,
       routes,
-      routeTree: routerOptions.routes,
-      router: browserRouter,
+      routeTree,
+      router,
       routerOptions: {
         routes,
         basename: BASE_URL,
