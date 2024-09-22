@@ -14,7 +14,7 @@ This function is only valid for dynamic route.
 ```ts
 const route = {
   path: 'nest/:b',
-  Component: React.lazy(() => import('./pages/nest/[b]')),
+  lazy: () => import('./pages/nest/[b]'),
   entry: 'src/pages/nest/[b].tsx',
   // To determine which paths will be pre-rendered
   getStaticPaths: () => ['nest/b1', 'nest/b2'],
@@ -56,6 +56,12 @@ const routes = [
   }
 ]
 ```
+
+**Note that** during the build process, `vite-react-ssg` will [automatically detect](https://github.com/Daydreamer-riri/vite-react-ssg/blob/main/src/node/assets.ts#L5) the files directly dynamically imported in the function you pass to the `lazy` field. This helps `vite-react-ssg` to get the route's style files or other static resources during the build, preventing [flash of unstyled content](https://en.wikipedia.org/wiki/Flash_of_unstyled_content).
+
+If you still encounter FOUC (flash of unstyled content), please open an issue.
+
+If your component isn't loading, make sure you have wrapped it or its parent in `Suspense` tags as described in the [React documentation](https://react.dev/reference/react/lazy#usage).
 
 See [example](https://github.com/Daydreamer-riri/vite-react-ssg/blob/main/examples/lazy-pages/src/App.tsx).
 
