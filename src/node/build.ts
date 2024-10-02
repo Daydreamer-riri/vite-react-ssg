@@ -176,13 +176,13 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
     queue.add(async () => {
       try {
         const appCtx = await createRoot(false, path) as ViteReactSSGContext<true>
-        const { base, routes, triggerOnSSRAppRendered, transformState = serializeState, app } = appCtx
+        const { base, routes, triggerOnSSRAppRendered, transformState = serializeState, app, routerType } = appCtx
 
         const transformedIndexHTML = (await onBeforePageRender?.(path, indexHTML, appCtx)) || indexHTML
 
         const fetchUrl = `${withTrailingSlash(base)}${removeLeadingSlash(path)}`
 
-        const assets = !app ? collectAssets({ routes: [...routes], locationArg: fetchUrl, base, serverManifest, manifest, ssrManifest }) : new Set<string>()
+        const assets = (!app && routerType === 'remix') ? await collectAssets({ routes: [...routes], locationArg: fetchUrl, base, serverManifest, manifest, ssrManifest }) : new Set<string>()
 
         const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag, routerContext } = await serverRender(path, appCtx)
         staticLoaderDataManifest[path] = routerContext?.loaderData

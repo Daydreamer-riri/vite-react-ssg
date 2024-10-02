@@ -51,6 +51,7 @@ export function ViteReactSSG(
       routePath,
       base: BASE_URL,
       getStyleCollector,
+      routerType: 'remix',
     }
 
     if (client) {

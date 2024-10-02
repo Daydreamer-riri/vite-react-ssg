@@ -45,6 +45,7 @@ export function ViteReactSSG(
       routerOptions: undefined,
       base: '/',
       app: App,
+      routerType: 'single-page',
     }
 
     if (client) {

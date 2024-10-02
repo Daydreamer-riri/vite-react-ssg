@@ -143,7 +143,7 @@ export interface ViteReactSSGContext<HasRouter extends boolean = true> {
   getStyleCollector: (() => StyleCollector | Promise<StyleCollector>) | null
   app?: HasRouter extends true ? never : ReactNode
 
-  routerType?: 'tanstack' | 'remix'
+  routerType: 'tanstack' | 'remix' | 'single-page'
 }
 
 export interface ViteReactSSGClientOptions {

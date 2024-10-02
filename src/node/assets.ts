@@ -1,4 +1,3 @@
-import { matchRoutes } from 'react-router-dom'
 import type { RouteRecord } from '../types'
 import type { Manifest, SSRManifest } from './build'
 
@@ -19,7 +18,7 @@ interface CollectAssetsOpts {
   ssrManifest: SSRManifest
 }
 
-export function collectAssets({
+export async function collectAssets({
   routes,
   locationArg,
   base,
@@ -27,6 +26,7 @@ export function collectAssets({
   manifest,
   ssrManifest,
 }: CollectAssetsOpts) {
+  const { matchRoutes } = await import('react-router-dom')
   const matches = matchRoutes([...routes], locationArg, base)
   const routeEntries = matches?.map(item => item.route.entry).filter(Boolean) as string[] ?? []
   const dynamicImports = new Set<string>()
