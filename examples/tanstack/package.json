@@ -6,7 +6,7 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "dev": "vite --port=3001",
-    "build": "vite-react-ssg build",
+    "build": "export NODE_ENV=development && vite-react-ssg build",
     "serve": "vite preview",
     "start": "vite"
   },

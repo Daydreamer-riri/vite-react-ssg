@@ -27,6 +27,24 @@ function RootComponent() {
         >
           About
         </Link>
+        <Link
+          to="/dynamic/$param"
+          params={{ param: 'path1' }}
+          activeProps={{
+            className: 'font-bold',
+          }}
+        >
+          path1
+        </Link>
+        <Link
+          to="/dynamic/$param"
+          params={{ param: 'path2' }}
+          activeProps={{
+            className: 'font-bold',
+          }}
+        >
+          path2
+        </Link>
       </div>
       <hr />
       <Outlet />

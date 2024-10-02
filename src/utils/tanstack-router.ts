@@ -1,30 +1,40 @@
 import type { RootRoute, Route } from '@tanstack/react-router'
 import type { RouteRecord } from '../types'
 
-export function convertRouteTreeToRouteOption(routeTree: RootRoute): RouteRecord[] {
+export const ViteReactSSGTanstackRouterStaticPathsContext: any = {}
+
+export function registerPaths(id: string, getStaticPaths: () => string[] | Promise<string[]>) {
+  ViteReactSSGTanstackRouterStaticPathsContext[id] = getStaticPaths
+}
+
+export async function convertRouteTreeToRouteOption(routeTree: RootRoute, client: boolean): Promise<RouteRecord[]> {
   const routes: RouteRecord[] = []
 
-  function traverseRouteTree(node: RootRoute | Route): void {
+  async function traverseRouteTree(node: RootRoute | Route) {
+    if (!client && node.path.includes('$') && node.lazyFn) {
+      await node.lazyFn()
+    }
+
     const routeRecord: RouteRecord = {
       path: node.path,
+      getStaticPaths: ViteReactSSGTanstackRouterStaticPathsContext[node.id],
     }
+
+    routeRecord.path = routeRecord.path?.replaceAll('$', ':')
 
     const children = node.children as Record<string, Route> | undefined
 
     if (children) {
       routeRecord.children = []
-      Object.values(children).forEach(child => {
-        traverseRouteTree(child)
-        routeRecord.children!.push({
-          path: child.path,
-        })
-      })
+      for (const child of Object.values(children)) {
+        routeRecord.children!.push(await traverseRouteTree(child))
+      }
     }
 
-    routes.push(routeRecord)
+    return routeRecord
   }
 
-  traverseRouteTree(routeTree)
+  routes.push(await traverseRouteTree(routeTree))
   return routes
 }
 

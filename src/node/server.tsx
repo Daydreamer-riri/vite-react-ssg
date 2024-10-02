@@ -6,7 +6,7 @@ import type { StaticHandlerContext } from 'react-router-dom/server.js'
 import type { AnyRouter } from '@tanstack/react-router'
 import { JSDOM } from 'jsdom'
 import type { RouteRecord, StyleCollector, ViteReactSSGContext } from '../types'
-import { removeLeadingSlash, withTrailingSlash } from '../utils/path'
+import { removeLeadingSlash, withLeadingSlash, withTrailingSlash } from '../utils/path'
 import { META_CONTAINER_ID } from '../utils/tanstack-router'
 import { renderStaticApp } from './serverRenderer'
 import { createRequest } from './utils'
@@ -64,6 +64,7 @@ export async function render(routesOrApp: RouteRecord[] | ReactNode, request: Re
 }
 
 export async function renderTanstack(_router: AnyRouter, url: string, styleCollector: StyleCollector | null) {
+  url = withLeadingSlash(url)
   const { createRouter, createMemoryHistory } = await import('@tanstack/react-router')
   const router = createRouter(_router.options)
   const { StartServer } = await import('@tanstack/start/server')

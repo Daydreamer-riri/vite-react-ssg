@@ -40,22 +40,8 @@ export function ViteReactSSG(
 
   const BASE_URL = routerOptions.basename ?? '/'
 
-  const routes = convertRouteTreeToRouteOption(routerOptions.routes)
-
   const routeTree = routerOptions.routes
   const OriginComponent = routeTree.options.component!
-  // const component = () => (
-  //   <Html>
-  //     <head>
-  //       <Meta />
-  //     </head>
-  //     <body>
-  //       <div id="root">
-  //         <OriginComponent />
-  //       </div>
-  //     </body>
-  //   </Html>
-  // )
   const component = () => (
     <>
       <OriginComponent />
@@ -68,6 +54,7 @@ export function ViteReactSSG(
     component,
   })
   async function createRoot(client = false, routePath?: string) {
+    const routes = await convertRouteTreeToRouteOption(routerOptions.routes, client)
     const router = routerOptions.router
     router.options.isServer = !client
 
@@ -132,21 +119,6 @@ export function ViteReactSSG(
         return
       }
 
-      // const lazeMatches = matchRoutes(routerOptions.routes, window.location, BASE_URL)?.filter(
-      //   m => m.route.lazy,
-      // )
-      //
-      // // Load the lazy matches and update the routes before creating your router
-      // // so we can hydrate the SSR-rendered content synchronously
-      // if (lazeMatches && lazeMatches?.length > 0) {
-      //   await Promise.all(
-      //     lazeMatches.map(async m => {
-      //       const routeModule = await m.route.lazy!()
-      //       Object.assign(m.route, { ...routeModule, lazy: undefined })
-      //     }),
-      //   )
-      // }
-
       const { router } = await createRoot(true)
       const app = (
         <HelmetProvider>
@@ -169,38 +141,6 @@ export function ViteReactSSG(
   }
 
   return createRoot
-
-  // function transformStaticLoaderRoute(route: RouteRecord) {
-  //   const loader: RouteRecord['loader'] = async ({ request }) => {
-  //     if (import.meta.env.DEV) {
-  //       const routeId = encodeURIComponent(route.id!)
-  //       const dataQuery = `_data=${routeId}`
-  //       const url = request.url.includes('?') ? `${request.url}&${dataQuery}` : `${request.url}?${dataQuery}`
-  //       return fetch(url)
-  //     }
-  //     else {
-  //       let staticLoadData: any
-  //       if (window.__VITE_REACT_SSG_STATIC_LOADER_DATA__) {
-  //         staticLoadData = window.__VITE_REACT_SSG_STATIC_LOADER_DATA__
-  //       }
-  //       else {
-  //         const manifestUrl = joinUrlSegments(BASE_URL, `static-loader-data-manifest-${window.__VITE_REACT_SSG_HASH__}.json`)
-  //         staticLoadData = await (await fetch(withLeadingSlash(manifestUrl))).json()
-  //         window.__VITE_REACT_SSG_STATIC_LOADER_DATA__ = staticLoadData
-  //       }
-  //
-  //       const { url } = request
-  //       let { pathname } = new URL(url)
-  //       if (BASE_URL !== '/') {
-  //         pathname = stripBase(pathname, BASE_URL)
-  //       }
-  //       const routeData = staticLoadData?.[pathname]?.[route.id!]
-  //       return routeData ?? null
-  //     }
-  //   }
-  //   route.loader = loader
-  //   return route
-  // }
 }
 
 declare global {
@@ -212,3 +152,4 @@ declare global {
 
 export { default as Head } from './components/Head'
 export { default as ClientOnly } from './components/ClientOnly'
+export { registerPaths } from '../utils/tanstack-router'
