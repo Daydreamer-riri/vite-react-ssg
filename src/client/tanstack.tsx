@@ -1,8 +1,8 @@
 import React from 'react'
 import { createRoot as ReactDOMCreateRoot, hydrateRoot } from 'react-dom/client'
 import { HelmetProvider } from 'react-helmet-async'
-import type { AnyRouter } from '@tanstack/react-router'
-import { Meta, StartClient } from '@tanstack/start'
+import { type AnyRouter, RouterProvider } from '@tanstack/react-router'
+import { Meta } from '@tanstack/start'
 import type { ViteReactSSGContext as BaseViteReactSSGContext, ViteReactSSGClientOptions } from '../types'
 import { documentReady } from '../utils/document-ready'
 import { deserializeState } from '../utils/state'
@@ -122,7 +122,7 @@ export function ViteReactSSG(
       const { router } = await createRoot(true)
       const app = (
         <HelmetProvider>
-          <StartClient router={router!} />
+          <RouterProvider router={router} />
         </HelmetProvider>
       )
       const isSSR = document.querySelector('[data-server-rendered=true]') !== null

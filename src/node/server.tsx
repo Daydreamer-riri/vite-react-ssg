@@ -88,7 +88,6 @@ export async function renderTanstack(_router: AnyRouter, url: string, styleColle
 
   const appHTML = await renderStaticApp(app)
   const jsdom = new JSDOM(appHTML)
-  // __AUTO_GENERATED_PRINT_VAR_START__
   const headElements = jsdom.window.document.querySelector(`#${META_CONTAINER_ID}`)
 
   const { htmlAttributes, bodyAttributes, metaAttributes, styleTag } = extractHelmet(helmetContext, styleCollector)
@@ -97,7 +96,7 @@ export async function renderTanstack(_router: AnyRouter, url: string, styleColle
     headElements.innerHTML = ''
   }
 
-  return { appHTML: jsdom.serialize(), htmlAttributes, bodyAttributes, metaAttributes, styleTag, routerContext: null }
+  return { appHTML: jsdom.window.document.body.innerHTML, htmlAttributes, bodyAttributes, metaAttributes, styleTag, routerContext: null }
 }
 
 export async function preLoad(routes: RouteRecord[], paths: string[] | undefined) {
