@@ -7,7 +7,7 @@
     "typecheck": "tsc --noEmit",
     "dev": "vite-react-ssg dev",
     "dev:csr": "vite",
-    "build": "export NODE_ENV=development && vite-react-ssg build",
+    "build": "vite-react-ssg build",
     "serve": "vite preview",
     "start": "vite"
   },
