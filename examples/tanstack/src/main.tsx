@@ -7,6 +7,7 @@ import { routeTree } from './routeTree.gen'
 const router = createRouter({
   routeTree,
   defaultPreload: 'intent',
+  basepath: import.meta.env.BASE_URL,
 })
 
 // Register things for typesafety
@@ -39,6 +40,7 @@ declare module '@tanstack/react-router' {
 export const createRoot = ViteReactSSG({
   router,
   routes: routeTree,
+  basename: import.meta.env.BASE_URL,
 }, () => {})
 
 if (false) {

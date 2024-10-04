@@ -46,6 +46,14 @@ function RootComponent() {
         >
           path2
         </Link>
+        <Link
+          to="/json"
+          activeProps={{
+            className: 'font-bold',
+          }}
+        >
+          json
+        </Link>
       </div>
       <hr />
       <Outlet />

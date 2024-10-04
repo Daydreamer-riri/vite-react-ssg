@@ -21,6 +21,8 @@ export type ViteReactSSGContext<HasRouter extends boolean = true> = Omit<BaseVit
   routeTree?: AnyRouter['routeTree']
 }
 
+const HAS_ADD_META_FLAG_KEY = 'HAS_ADD_META_FLAG_KEY'
+
 export function ViteReactSSG(
   routerOptions: RouterOptions,
   fn?: (context: ViteReactSSGContext<true>) => Promise<void> | void,
@@ -42,17 +44,21 @@ export function ViteReactSSG(
 
   const routeTree = routerOptions.routes
   const OriginComponent = routeTree.options.component!
-  const component = () => (
-    <>
-      <OriginComponent />
-      <div id={META_CONTAINER_ID} style={{ display: 'none' }}>
-        <Meta />
-      </div>
-    </>
-  )
-  routeTree.update({
-    component,
-  })
+  if (!OriginComponent[HAS_ADD_META_FLAG_KEY]) {
+    const component = () => (
+      <>
+        <OriginComponent />
+        <div id={META_CONTAINER_ID} style={{ display: 'none' }}>
+          <Meta />
+        </div>
+      </>
+    )
+    component[HAS_ADD_META_FLAG_KEY] = true
+    routeTree.update({
+      component,
+    })
+  }
+
   async function createRoot(client = false, routePath?: string) {
     const routes = await convertRouteTreeToRouteOption(routerOptions.routes, client)
     const router = routerOptions.router

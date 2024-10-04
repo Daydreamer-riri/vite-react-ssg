@@ -11,11 +11,17 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as JsonImport } from './routes/json'
 import { Route as AboutImport } from './routes/about'
 import { Route as IndexImport } from './routes/index'
 import { Route as DynamicParamImport } from './routes/dynamic/$param'
 
 // Create/Update Routes
+
+const JsonRoute = JsonImport.update({
+  path: '/json',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const AboutRoute = AboutImport.update({
   path: '/about',
@@ -50,6 +56,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutImport
       parentRoute: typeof rootRoute
     }
+    '/json': {
+      id: '/json'
+      path: '/json'
+      fullPath: '/json'
+      preLoaderRoute: typeof JsonImport
+      parentRoute: typeof rootRoute
+    }
     '/dynamic/$param': {
       id: '/dynamic/$param'
       path: '/dynamic/$param'
@@ -65,12 +78,14 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/json': typeof JsonRoute
   '/dynamic/$param': typeof DynamicParamRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/json': typeof JsonRoute
   '/dynamic/$param': typeof DynamicParamRoute
 }
 
@@ -78,27 +93,30 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/json': typeof JsonRoute
   '/dynamic/$param': typeof DynamicParamRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/dynamic/$param'
+  fullPaths: '/' | '/about' | '/json' | '/dynamic/$param'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/dynamic/$param'
-  id: '__root__' | '/' | '/about' | '/dynamic/$param'
+  to: '/' | '/about' | '/json' | '/dynamic/$param'
+  id: '__root__' | '/' | '/about' | '/json' | '/dynamic/$param'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  JsonRoute: typeof JsonRoute
   DynamicParamRoute: typeof DynamicParamRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  JsonRoute: JsonRoute,
   DynamicParamRoute: DynamicParamRoute,
 }
 
@@ -116,6 +134,7 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/about",
+        "/json",
         "/dynamic/$param"
       ]
     },
@@ -124,6 +143,9 @@ export const routeTree = rootRoute
     },
     "/about": {
       "filePath": "about.tsx"
+    },
+    "/json": {
+      "filePath": "json.tsx"
     },
     "/dynamic/$param": {
       "filePath": "dynamic/$param.tsx"
