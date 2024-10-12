@@ -83,6 +83,11 @@ export async function renderTanstack(_router: AnyRouter, url: string, styleColle
       <StartServer router={router} />
     </HelmetProvider>
   )
+
+  const matchRoutes = router.matchRoutes(router.latestLocation)
+  const context = {
+    loaderData: matchRoutes.map(item => ({ id: item.id, loaderData: item.loaderData })),
+  }
   if (styleCollector)
     app = styleCollector.collect(app)
 
@@ -96,7 +101,14 @@ export async function renderTanstack(_router: AnyRouter, url: string, styleColle
     headElements.innerHTML = ''
   }
 
-  return { appHTML: jsdom.window.document.body.innerHTML, htmlAttributes, bodyAttributes, metaAttributes, styleTag, routerContext: null }
+  return {
+    appHTML: jsdom.window.document.body.innerHTML,
+    htmlAttributes,
+    bodyAttributes,
+    metaAttributes,
+    styleTag,
+    routerContext: context,
+  }
 }
 
 export async function preLoad(routes: RouteRecord[], paths: string[] | undefined) {

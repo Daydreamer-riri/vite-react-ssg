@@ -7,13 +7,15 @@ export function registerPaths(id: string, getStaticPaths: () => string[] | Promi
   ViteReactSSGTanstackRouterStaticPathsContext[id] = getStaticPaths
 }
 
-export async function convertRouteTreeToRouteOption(routeTree: RootRoute, client: boolean): Promise<RouteRecord[]> {
+export async function convertRouteTreeToRouteOption(routeTree: RootRoute, client: boolean, visitNode?: (node: RootRoute | Route) => any): Promise<RouteRecord[]> {
   const routes: RouteRecord[] = []
 
   async function traverseRouteTree(node: RootRoute | Route) {
     if (!client && node.path.includes('$') && node.lazyFn) {
       await node.lazyFn()
     }
+
+    visitNode?.(node)
 
     const routeRecord: RouteRecord = {
       path: node.path,

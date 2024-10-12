@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/json')({
   component: Json,
-  loader: async () => {
+  loader: async ctx => {
   // The code here will not be executed on the client side, and the modules imported will not be sent to the client.
     const fs = (await import('node:fs'))
     const cwd = process.cwd()

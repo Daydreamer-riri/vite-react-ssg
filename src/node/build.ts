@@ -170,7 +170,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
   const queue = new PQueue({ concurrency })
   const crittersQueue = new PQueue({ concurrency: 1 })
 
-  const staticLoaderDataManifest: StaticLoaderDataManifest = {}
+  const staticLoaderDataManifest: Record<string, unknown> = {}
 
   for (const path of routesPaths) {
     queue.add(async () => {

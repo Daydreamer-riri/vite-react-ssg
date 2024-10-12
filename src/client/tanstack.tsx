@@ -7,6 +7,7 @@ import type { ViteReactSSGContext as BaseViteReactSSGContext, ViteReactSSGClient
 import { documentReady } from '../utils/document-ready'
 import { deserializeState } from '../utils/state'
 import { META_CONTAINER_ID, convertRouteTreeToRouteOption } from '../utils/tanstack-router'
+import { joinUrlSegments, stripBase, withLeadingSlash } from '../utils/path'
 
 export * from '../types'
 
@@ -60,7 +61,31 @@ export function ViteReactSSG(
   }
 
   async function createRoot(client = false, routePath?: string) {
-    const routes = await convertRouteTreeToRouteOption(routerOptions.routes, client)
+    const routes = await convertRouteTreeToRouteOption(
+      routerOptions.routes,
+      client,
+      client
+        ? node => {
+          node.options.loader = async (ctx: any) => {
+            let pathname = ctx.location.pathname
+            let staticLoadData: any
+            if (window.__VITE_REACT_SSG_STATIC_LOADER_DATA__) {
+              staticLoadData = window.__VITE_REACT_SSG_STATIC_LOADER_DATA__
+            }
+            else {
+              const manifestUrl = joinUrlSegments(BASE_URL, `static-loader-data-manifest-${window.__VITE_REACT_SSG_HASH__}.json`)
+              staticLoadData = await (await fetch(withLeadingSlash(manifestUrl))).json()
+              window.__VITE_REACT_SSG_STATIC_LOADER_DATA__ = staticLoadData
+            }
+            if (BASE_URL !== '/') {
+              pathname = stripBase(pathname, BASE_URL)
+            }
+            const routeData = staticLoadData?.[pathname]?.find((item: { id: string }) => item.id === node.id)
+            return routeData?.loaderData ?? null
+          }
+        }
+        : undefined,
+    )
     const router = routerOptions.router
     router.options.isServer = !client
 
