@@ -10,7 +10,7 @@ import type { VitePluginPWAAPI } from 'vite-plugin-pwa'
 import { JSDOM } from 'jsdom'
 import type { RouteRecord, ViteReactSSGContext, ViteReactSSGOptions } from '../types'
 import { serializeState } from '../utils/state'
-import { removeLeadingSlash, withTrailingSlash } from '../utils/path'
+import { removeLeadingSlash, withLeadingSlash, withTrailingSlash } from '../utils/path'
 import { buildLog, getSize, resolveAlias, routesToPaths } from './utils'
 import { getCritters } from './critial'
 import { serverRender } from './server'
@@ -185,7 +185,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
         const assets = (!app && routerType === 'remix') ? await collectAssets({ routes: [...routes], locationArg: fetchUrl, base, serverManifest, manifest, ssrManifest }) : new Set<string>()
 
         const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag, routerContext } = await serverRender(path, appCtx)
-        staticLoaderDataManifest[path] = routerContext?.loaderData
+        staticLoaderDataManifest[withLeadingSlash(path)] = routerContext?.loaderData
 
         await triggerOnSSRAppRendered?.(path, appHTML, appCtx)
 

@@ -66,6 +66,9 @@ export function ViteReactSSG(
       client,
       client
         ? node => {
+          if (!node.options.loader)
+            return
+
           node.options.loader = async (ctx: any) => {
             let pathname = ctx.location.pathname
             let staticLoadData: any
