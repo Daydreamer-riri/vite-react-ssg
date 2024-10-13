@@ -6,6 +6,7 @@ import { fromNodeRequest, toNodeRequest } from '../../pollfill/node-adapter'
 import { createLink, renderHTML } from '../html'
 import { joinUrlSegments } from '../../utils/path'
 import { convertRoutesToDataRoutes } from '../../utils/remix-router'
+import type { ViteReactSSGContext } from '../../types'
 import type { HandlerCreaterOptions } from '.'
 
 export function createRemixSSRHandler({
@@ -17,7 +18,7 @@ export function createRemixSSRHandler({
   onPageRendered,
   server,
   ssgContext: appCtx,
-}: HandlerCreaterOptions): Connect.NextHandleFunction {
+}: HandlerCreaterOptions<ViteReactSSGContext>): Connect.NextHandleFunction {
   return async (req, res, _next) => {
     // dynamic import
     const { matchRoutes } = await import('react-router-dom')

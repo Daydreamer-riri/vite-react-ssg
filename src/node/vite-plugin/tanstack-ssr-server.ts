@@ -4,6 +4,7 @@ import { renderTanstack } from '../server'
 import { createLink, renderHTML } from '../html'
 import { joinUrlSegments } from '../../utils/path'
 import type { ViteReactSSGContext } from '../../client/tanstack'
+import { fromNodeRequest, json, toNodeRequest } from '../../pollfill/node-adapter'
 import type { HandlerCreaterOptions } from '.'
 
 export function createTanstackSSRHandler({
@@ -18,51 +19,70 @@ export function createTanstackSSRHandler({
 }: HandlerCreaterOptions<ViteReactSSGContext>): Connect.NextHandleFunction {
   return async (req, res, _next) => {
     // dynamic import
-    const { routes, base, getStyleCollector } = appCtx
+    const { router, routes, base, getStyleCollector } = appCtx
     const url = req.originalUrl!
     const searchParams = new URLSearchParams(url.split('?')[1])
-    // if (!app && searchParams.has('_data')) {
-    //   const request = fromNodeRequest(req)
-    //   const url = new URL(request.url)
-    //   const routeId = decodeURIComponent(searchParams.get('_data')!)
-    //   const matches = matchRoutes(
-    //     convertRoutesToDataRoutes([...routes], route => route),
-    //     {
-    //       pathname: url.pathname,
-    //       search: url.search,
-    //       hash: url.hash,
-    //       state: null,
-    //       key: 'default',
-    //     },
-    //     base,
-    //   )
-    //   if (!matches) {
-    //     res.statusCode = 404
-    //     res.end(`Route not found: ${routeId}`)
-    //     return
-    //   }
-    //   const match = matches.find(m => m.route.id === routeId)
-    //   if (!match) {
-    //     res.statusCode = 404
-    //     res.end(`Route not found: ${routeId}`)
-    //     return
-    //   }
-    //   const loader = match.route.loader ?? await match.route.lazy?.().then(m => m.loader)
-    //   if (!loader) {
-    //     res.statusCode = 200
-    //     res.end(`There is no loader for the route: ${routeId}`)
-    //     return
-    //   }
-    //   const response = await callRouteLoader({
-    //     loader: loader as LoaderFunction,
-    //     params: match.params,
-    //     request,
-    //     routeId,
-    //   })
-    //   await toNodeRequest(response, res)
-    //   return
-    // }
-    //
+    if (searchParams.has('_data')) {
+      // const {MatchRoute} = await import('@tanstack/react-router')
+      const request = fromNodeRequest(req)
+      const url = new URL(request.url)
+      const routeId = decodeURIComponent(searchParams.get('_data')!)
+
+      const matches = appCtx.router.matchRoutes(url.pathname, Object.fromEntries(searchParams.entries()))
+      //   const matches = matchRoutes(
+      //     convertRoutesToDataRoutes([...routes], route => route),
+      //     {
+      //       pathname: url.pathname,
+      //       search: url.search,
+      //       hash: url.hash,
+      //       state: null,
+      //       key: 'default',
+      //     },
+      //     base,
+      //   )
+      const match = matches.find(m => m.routeId === routeId)
+      if (!match) {
+        res.statusCode = 404
+        res.end(`Route not found: ${routeId}`)
+        return
+      }
+      //   if (!match) {
+      //     res.statusCode = 404
+      //     res.end(`Route not found: ${routeId}`)
+      //     return
+      //   }
+      const { createMemoryHistory } = await import('@tanstack/react-router')
+      const memoryHistory = createMemoryHistory({
+        initialEntries: [req.originalUrl!],
+      })
+
+      router.update({
+        history: memoryHistory,
+      })
+
+      await router.load()
+      const { loaderData } = match
+      if (!loaderData) {
+        res.statusCode = 200
+        res.end(`There is no loader for the route: ${routeId}`)
+        return
+      }
+      //   const loader = match.route.loader ?? await match.route.lazy?.().then(m => m.loader)
+      //   if (!loader) {
+      //     res.statusCode = 200
+      //     res.end(`There is no loader for the route: ${routeId}`)
+      //     return
+      //   }
+      //   const response = await callRouteLoader({
+      //     loader: loader as LoaderFunction,
+      //     params: match.params,
+      //     request,
+      //     routeId,
+      //   })
+      await toNodeRequest(json(loaderData), res)
+      return
+    }
+
     const indexHTML = await server.transformIndexHtml(url, template)
     const transformedIndexHTML = (await onBeforePageRender?.(url, indexHTML, appCtx)) || indexHTML
 

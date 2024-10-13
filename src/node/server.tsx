@@ -86,7 +86,7 @@ export async function renderTanstack(_router: AnyRouter, url: string, styleColle
 
   const matchRoutes = router.matchRoutes(router.latestLocation)
   const context = {
-    loaderData: matchRoutes.map(item => ({ id: item.id, loaderData: item.loaderData })),
+    loaderData: matchRoutes.map(item => ({ id: item.routeId, loaderData: item.loaderData })),
   }
   if (styleCollector)
     app = styleCollector.collect(app)

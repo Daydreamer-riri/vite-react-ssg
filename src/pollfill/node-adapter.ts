@@ -86,3 +86,22 @@ export async function toNodeRequest(res: Response, nodeRes: ServerResponse) {
     nodeRes.end()
   }
 }
+
+export function json(data: any, init?: ResponseInit | number) {
+  if (init === void 0) {
+    init = {}
+  }
+  const responseInit = typeof init === 'number'
+    ? {
+        status: init,
+      }
+    : init
+  const headers = new Headers(responseInit.headers)
+  if (!headers.has('Content-Type')) {
+    headers.set('Content-Type', 'application/json; charset=utf-8')
+  }
+  return new Response(JSON.stringify(data), {
+    ...responseInit,
+    headers,
+  })
+}

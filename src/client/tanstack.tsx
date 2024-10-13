@@ -1,7 +1,8 @@
 import React from 'react'
 import { createRoot as ReactDOMCreateRoot, hydrateRoot } from 'react-dom/client'
 import { HelmetProvider } from 'react-helmet-async'
-import { type AnyRouter, RouterProvider } from '@tanstack/react-router'
+import type { AnyContext, AnyRouter, LoaderFnContext } from '@tanstack/react-router'
+import { RouterProvider } from '@tanstack/react-router'
 import { Meta, StartClient } from '@tanstack/start'
 import type { ViteReactSSGContext as BaseViteReactSSGContext, ViteReactSSGClientOptions } from '../types'
 import { documentReady } from '../utils/document-ready'
@@ -66,11 +67,25 @@ export function ViteReactSSG(
       client,
       client
         ? node => {
-          if (!node.options.loader)
+          const isSSR = document.querySelector('[data-server-rendered=true]') !== null
+          if (!isSSR)
             return
 
-          node.options.loader = async (ctx: any) => {
+          // eslint-disable-next-line ts/no-empty-object-type
+          node.options.loader = async (ctx: LoaderFnContext<any, {}, {}, {}, AnyContext, AnyContext>) => {
             let pathname = ctx.location.pathname
+            if (import.meta.env.DEV) {
+              const routeId = encodeURIComponent(node.id)
+              const dataQuery = `_data=${routeId}`
+              const href = ctx.location.href
+              const url = href.includes('?') ? `${href}&${dataQuery}` : `${href}?${dataQuery}`
+              const res = await fetch(url)
+              const header = res.headers
+              const contentType = header.get('content-type')
+              if (contentType?.startsWith('application/json'))
+                return res.json()
+              return res.text()
+            }
             let staticLoadData: any
             if (window.__VITE_REACT_SSG_STATIC_LOADER_DATA__) {
               staticLoadData = window.__VITE_REACT_SSG_STATIC_LOADER_DATA__

@@ -48,6 +48,7 @@ function RootComponent() {
         </Link>
         <Link
           to="/json"
+          search={{ query: 1 }}
           activeProps={{
             className: 'font-bold',
           }}

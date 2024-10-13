@@ -127,6 +127,10 @@ export function ViteReactSSG(
   return createRoot
 
   function transformStaticLoaderRoute(route: RouteRecord) {
+    const isSSR = document.querySelector('[data-server-rendered=true]') !== null
+    if (!isSSR) {
+      return route
+    }
     const loader: RouteRecord['loader'] = async ({ request }) => {
       if (import.meta.env.DEV) {
         const routeId = encodeURIComponent(route.id!)
