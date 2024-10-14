@@ -1,7 +1,7 @@
 import { join } from 'node:path'
-import { readFileSync } from 'node:fs'
 import { blue, gray, yellow } from 'kolorist'
 import type { ResolvedConfig } from 'vite'
+import { version } from '../../package.json'
 import type { RouteRecord } from '../types'
 
 export function buildLog(text: string, count?: number) {
@@ -110,9 +110,7 @@ export async function resolveAlias(config: ResolvedConfig, entry: string) {
   return result || join(config.root, entry)
 }
 
-export const { version } = JSON.parse(
-  readFileSync(new URL('../package.json', import.meta.url)).toString(),
-)
+export { version }
 
 export function createRequest(path: string) {
   const url = new URL(path, 'http://vite-react-ssg.com')

@@ -142,9 +142,8 @@
     "rimraf": "5.0.1",
     "styled-components": "6.0.5",
     "typescript": "^5.6.2",
-    "unbuild": "^2.0.0",
+    "unbuild": "^3.0.0-rc.11",
     "vite": "^5.4.5",
-    "vite-plugin-pwa": "^0.17.5",
     "vitest": "1.6.0"
   }
 }

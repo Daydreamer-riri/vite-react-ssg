@@ -6,7 +6,6 @@ import PQueue from 'p-queue'
 import fs from 'fs-extra'
 import type { InlineConfig } from 'vite'
 import { createLogger, mergeConfig, resolveConfig, build as viteBuild, version as viteVersion } from 'vite'
-import type { VitePluginPWAAPI } from 'vite-plugin-pwa'
 import { JSDOM } from 'jsdom'
 import type { RouteRecord, ViteReactSSGContext, ViteReactSSGOptions } from '../types'
 import { serializeState } from '../utils/state'
@@ -247,7 +246,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
 
   await fs.remove(join(root, '.vite-react-ssg-temp'))
 
-  const pwaPlugin: VitePluginPWAAPI = config.plugins.find(i => i.name === 'vite-plugin-pwa')?.api
+  const pwaPlugin: { disabled: boolean, generateSW: () => Promise<unknown> } = config.plugins.find(i => i.name === 'vite-plugin-pwa')?.api
   if (pwaPlugin && !pwaPlugin.disabled && pwaPlugin.generateSW) {
     buildLog('Regenerate PWA...')
     await pwaPlugin.generateSW()
