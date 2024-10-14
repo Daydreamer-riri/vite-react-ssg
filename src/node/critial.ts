@@ -1,8 +1,8 @@
-import type Critters from 'critters'
-import type { Options } from 'critters'
+import type { CrittersOptions } from '../types'
 
-export async function getCritters(outDir: string, options: Options = {}): Promise<Critters | undefined> {
+export async function getCritters(outDir: string, options: CrittersOptions = {}): Promise<any | undefined> {
   try {
+    // @ts-expect-error type lost
     const CrittersClass = (await import('critters')).default
 
     return new CrittersClass({

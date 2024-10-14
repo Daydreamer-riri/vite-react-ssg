@@ -1,10 +1,29 @@
-import type { Options as CrittersOptions } from 'critters'
 import type { ReactElement, ReactNode } from 'react'
 import type { IndexRouteObject, NonIndexRouteObject, createBrowserRouter } from 'react-router-dom'
 
 type Router = ReturnType<typeof createBrowserRouter>
+export interface CrittersOptions {
+  path?: string
+  publicPath?: string
+  external?: boolean
+  inlineThreshold?: number
+  minimumExternalSize?: number
+  pruneSource?: boolean
+  mergeStylesheets?: boolean
+  additionalStylesheets?: string[]
+  preload?: 'body' | 'media' | 'swap' | 'js' | 'js-lazy'
+  noscriptFallback?: boolean
+  inlineFonts?: boolean
+  preloadFonts?: boolean
+  fonts?: boolean
+  keyframes?: string
+  compress?: boolean
+  logLevel?: 'info' | 'warn' | 'error' | 'trace' | 'debug' | 'silent'
+  reduceInlineStyles?: boolean
+  // logger?: Logger
+}
 
-export interface ViteReactSSGOptions {
+export interface ViteReactSSGOptions<Context = ViteReactSSGContext> {
   /**
    * Set the scripts' loading mode. Only works for `type="module"`.
    *
@@ -81,7 +100,7 @@ export interface ViteReactSSGOptions {
    * To do so, you can change the 'index.html' file contents (passed in through the `indexHTML` parameter), and return it.
    * The returned value will then be passed to renderer.
    */
-  onBeforePageRender?: (route: string, indexHTML: string, appCtx: ViteReactSSGContext<true>) => Promise<string | null | undefined> | string | null | undefined
+  onBeforePageRender?: (route: string, indexHTML: string, appCtx: Context) => Promise<string | null | undefined> | string | null | undefined
   /**
    * Callback to be called on every rendered page.
    *
@@ -90,7 +109,7 @@ export interface ViteReactSSGOptions {
    * To do so, you can transform the route's rendered HTML (passed in through the `renderedHTML` parameter), and return it.
    * The returned value will be used as the HTML of the route.
    */
-  onPageRendered?: (route: string, renderedHTML: string, appCtx: ViteReactSSGContext<true>) => Promise<string | null | undefined> | string | null | undefined
+  onPageRendered?: (route: string, renderedHTML: string, appCtx: Context) => Promise<string | null | undefined> | string | null | undefined
 
   onFinished?: () => Promise<void> | void
   /**
@@ -123,6 +142,8 @@ export interface ViteReactSSGContext<HasRouter extends boolean = true> {
   base: string
   getStyleCollector: (() => StyleCollector | Promise<StyleCollector>) | null
   app?: HasRouter extends true ? never : ReactNode
+
+  routerType: 'tanstack' | 'remix' | 'single-page'
 }
 
 export interface ViteReactSSGClientOptions {
@@ -182,6 +203,8 @@ export interface StyleCollector {
 }
 
 // extend vite.config.ts
+// eslint-disable-next-line ts/ban-ts-comment
+// @ts-ignore
 declare module 'vite' {
   interface UserConfig {
     ssgOptions?: ViteReactSSGOptions

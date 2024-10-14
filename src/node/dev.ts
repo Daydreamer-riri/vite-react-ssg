@@ -6,7 +6,7 @@ import { bgLightCyan, bold, cyan, dim, green, red, reset } from 'kolorist'
 import type { ViteReactSSGOptions } from '../types'
 import { detectEntry } from './html'
 import { resolveAlias, version } from './utils'
-import { ssrServerPlugin } from './vite-plugin/ssr-server'
+import { ssrServerPlugin } from './vite-plugin'
 
 export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteConfig: InlineConfig = {}, customOptions?: unknown) {
   const mode = process.env.MODE || process.env.NODE_ENV || ssgOptions.mode || 'development'

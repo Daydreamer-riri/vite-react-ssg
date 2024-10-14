@@ -1,12 +1,13 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import { RouterProvider, createRouter } from '@tanstack/react-router'
+import { createRouter } from '@tanstack/react-router'
+import { ViteReactSSG } from 'vite-react-ssg/tanstack'
 import { routeTree } from './routeTree.gen'
 
 // Set up a Router instance
+
 const router = createRouter({
   routeTree,
   defaultPreload: 'intent',
+  basepath: import.meta.env.BASE_URL,
 })
 
 // Register things for typesafety
@@ -16,9 +17,33 @@ declare module '@tanstack/react-router' {
   }
 }
 
-const rootElement = document.getElementById('app')!
+// const rootElement = document.getElementById('app')!
+// const OriginComponent = routeTree.options.component!
+// function component() {
+//   return (
+//     <Html>
+//       <Head>
+//         <Meta />
+//       </Head>
+//       <Body>
+//         {/* <div id="root"> */}
+//         <OriginComponent />
+//         {/* </div> */}
+//       </Body>
+//     </Html>
+//   )
+// }
+// routeTree.update({
+//   component,
+// })
 
-if (!rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement)
-  root.render(<RouterProvider router={router} />)
+export const createRoot = ViteReactSSG({
+  router,
+  routes: routeTree,
+  basename: import.meta.env.BASE_URL,
+}, () => {})
+
+if (false) {
+  // const root = ReactDOM.createRoot(rootElement)
+  // root.render(<RouterProvider router={router} />)
 }

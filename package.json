@@ -36,6 +36,11 @@
       "import": "./dist/client/single-page.mjs",
       "require": "./dist/client/single-page.cjs"
     },
+    "./tanstack": {
+      "types": "./dist/tanstack.d.ts",
+      "import": "./dist/tanstack.mjs",
+      "require": "./dist/tanstack.cjs"
+    },
     "./style-collectors/styled-components": {
       "types": "./dist/style-collectors/styled-components.d.ts",
       "import": "./dist/style-collectors/styled-components.mjs",
@@ -86,6 +91,12 @@
     "vite": "^2.0.0 || ^3.0.0 || ^4.0.0 || ^5.0.0"
   },
   "peerDependenciesMeta": {
+    "@tanstack/react-router": {
+      "optional": true
+    },
+    "@tanstack/start": {
+      "optional": true
+    },
     "critters": {
       "optional": true
     },
@@ -105,11 +116,14 @@
     "html5parser": "^2.0.2",
     "jsdom": "^24.1.3",
     "kolorist": "^1.8.0",
+    "p-queue": "^8.0.1",
     "react-helmet-async": "^1.3.0",
     "yargs": "^17.7.2"
   },
   "devDependencies": {
     "@ririd/eslint-config": "^1.3.4",
+    "@tanstack/react-router": "^1.57.15",
+    "@tanstack/start": "^1.57.15",
     "@types/fs-extra": "^11.0.4",
     "@types/jsdom": "^21.1.7",
     "@types/node": "^18.19.50",
@@ -117,11 +131,10 @@
     "@types/react-dom": "~18.2.6",
     "@types/yargs": "^17.0.33",
     "bumpp": "^9.5.2",
-    "critters": "^0.0.22",
+    "critters": "^0.0.24",
     "eslint": "^9.10.0",
     "esno": "^4.7.0",
     "fast-glob": "3.3.2",
-    "p-queue": "^8.0.1",
     "prettier": "^3.3.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

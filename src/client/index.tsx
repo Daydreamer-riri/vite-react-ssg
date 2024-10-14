@@ -22,7 +22,7 @@ export function ViteReactSSG(
     getStyleCollector = null,
   } = options
 
-  if (process.env.NODE_ENV === 'development' && ssrWhenDev !== undefined)
+  if (import.meta.env.DEV && ssrWhenDev !== undefined)
     console.warn('[vite-react-ssg] `ssrWhenDev` option is no longer needed. If you want to use csr, just replace `vite-react-ssg dev` with `vite`.')
 
   const isClient = typeof window !== 'undefined'
@@ -51,6 +51,7 @@ export function ViteReactSSG(
       routePath,
       base: BASE_URL,
       getStyleCollector,
+      routerType: 'remix',
     }
 
     if (client) {
@@ -109,7 +110,7 @@ export function ViteReactSSG(
         </HelmetProvider>
       )
       const isSSR = document.querySelector('[data-server-rendered=true]') !== null
-      if (!isSSR && process.env.NODE_ENV === 'development') {
+      if (!isSSR && import.meta.env.DEV) {
         const root = ReactDOMCreateRoot(container)
         React.startTransition(() => {
           root.render(app)
@@ -126,6 +127,10 @@ export function ViteReactSSG(
   return createRoot
 
   function transformStaticLoaderRoute(route: RouteRecord) {
+    const isSSR = document.querySelector('[data-server-rendered=true]') !== null
+    if (!isSSR) {
+      return route
+    }
     const loader: RouteRecord['loader'] = async ({ request }) => {
       if (import.meta.env.DEV) {
         const routeId = encodeURIComponent(route.id!)

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Link, Outlet, createRootRoute } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/router-devtools'
+import { Count } from '../count'
 
 export const Route = createRootRoute({
   component: RootComponent,
@@ -28,10 +28,37 @@ function RootComponent() {
         >
           About
         </Link>
+        <Link
+          to="/dynamic/$param"
+          params={{ param: 'path1' }}
+          activeProps={{
+            className: 'font-bold',
+          }}
+        >
+          path1
+        </Link>
+        <Link
+          to="/dynamic/$param"
+          params={{ param: 'path2' }}
+          activeProps={{
+            className: 'font-bold',
+          }}
+        >
+          path2
+        </Link>
+        <Link
+          to="/json"
+          search={{ query: 1 }}
+          activeProps={{
+            className: 'font-bold',
+          }}
+        >
+          json
+        </Link>
       </div>
       <hr />
       <Outlet />
-      <TanStackRouterDevtools position="bottom-right" />
+      <Count />
     </>
   )
 }

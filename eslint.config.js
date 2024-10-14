@@ -5,6 +5,7 @@ export default ririd({
   rules: {
     'ts/no-unsafe-function-type': 'off',
     'ts/no-unused-expressions': 'off',
+    'eslint-comments/no-unlimited-disable': 'off',
   },
 }, {
   files: ['**/*.md/**/*.html'],

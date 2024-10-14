@@ -10,10 +10,10 @@ import type { VitePluginPWAAPI } from 'vite-plugin-pwa'
 import { JSDOM } from 'jsdom'
 import type { RouteRecord, ViteReactSSGContext, ViteReactSSGOptions } from '../types'
 import { serializeState } from '../utils/state'
-import { removeLeadingSlash, withTrailingSlash } from '../utils/path'
-import { buildLog, createRequest, getSize, resolveAlias, routesToPaths } from './utils'
+import { removeLeadingSlash, withLeadingSlash, withTrailingSlash } from '../utils/path'
+import { buildLog, getSize, resolveAlias, routesToPaths } from './utils'
 import { getCritters } from './critial'
-import { render } from './server'
+import { serverRender } from './server'
 import { SCRIPT_COMMENT_PLACEHOLDER, detectEntry, renderHTML } from './html'
 import { renderPreloadLinks } from './preload-links'
 import { collectAssets } from './assets'
@@ -130,7 +130,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
       },
     },
     mode: config.mode,
-    ssr: { noExternal: ['vite-react-ssg'] },
+    ssr: { noExternal: ['vite-react-ssg', 'vite-react-ssg/tanstack'] },
   }))
 
   const prefix = (format === 'esm' && process.platform === 'win32') ? 'file://' : ''
@@ -170,25 +170,22 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
   const queue = new PQueue({ concurrency })
   const crittersQueue = new PQueue({ concurrency: 1 })
 
-  const staticLoaderDataManifest: StaticLoaderDataManifest = {}
+  const staticLoaderDataManifest: Record<string, unknown> = {}
 
   for (const path of routesPaths) {
     queue.add(async () => {
       try {
         const appCtx = await createRoot(false, path) as ViteReactSSGContext<true>
-        const { initialState, base, routes, triggerOnSSRAppRendered, transformState = serializeState, getStyleCollector, app } = appCtx
-
-        const styleCollector = getStyleCollector ? await getStyleCollector() : null
+        const { base, routes, triggerOnSSRAppRendered, transformState = serializeState, app, routerType } = appCtx
 
         const transformedIndexHTML = (await onBeforePageRender?.(path, indexHTML, appCtx)) || indexHTML
 
         const fetchUrl = `${withTrailingSlash(base)}${removeLeadingSlash(path)}`
-        const request = createRequest(fetchUrl)
 
-        const assets = !app ? collectAssets({ routes: [...routes], locationArg: fetchUrl, base, serverManifest, manifest, ssrManifest }) : new Set<string>()
+        const assets = (!app && routerType === 'remix') ? await collectAssets({ routes: [...routes], locationArg: fetchUrl, base, serverManifest, manifest, ssrManifest }) : new Set<string>()
 
-        const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag, routerContext } = await render(app ?? [...routes], request, styleCollector, base)
-        staticLoaderDataManifest[path] = routerContext?.loaderData
+        const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag, routerContext } = await serverRender(path, appCtx)
+        staticLoaderDataManifest[withLeadingSlash(path)] = routerContext?.loaderData
 
         await triggerOnSSRAppRendered?.(path, appHTML, appCtx)
 
