@@ -105,3 +105,20 @@ export function json(data: any, init?: ResponseInit | number) {
     headers,
   })
 }
+
+export function stripDataParam(request: Request) {
+  const url = new URL(request.url)
+  url.searchParams.delete('_data')
+  const init: RequestInit = {
+    method: request.method,
+    body: request.body,
+    headers: request.headers,
+    signal: request.signal,
+  }
+
+  if (init.body) {
+    (init as { duplex: 'half' }).duplex = 'half'
+  }
+
+  return new Request(url.href, init)
+}
