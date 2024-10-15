@@ -126,6 +126,12 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
               entryFileNames: '[name].cjs',
               format: 'cjs',
             },
+        // @ts-expect-error rollup type
+        onLog(level, log, handler) {
+          if (log.message.includes('react-helmet-async'))
+            return
+          handler(level, log)
+        },
       },
     },
     mode: config.mode,
