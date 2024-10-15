@@ -6,12 +6,14 @@
       "ESNext",
       "DOM"
     ],
+    "baseUrl": ".",
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "paths": {
       "vite-react-ssg": [
         "./src/index.ts"
-      ]
+      ],
+      "~/*": ["./src/*"]
     },
     "resolveJsonModule": true,
     "types": [

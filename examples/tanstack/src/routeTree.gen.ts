@@ -22,7 +22,7 @@ import { Route as DynamicParamImport } from './routes/dynamic/$param'
 const JsonRoute = JsonImport.update({
   path: '/json',
   getParentRoute: () => rootRoute,
-} as any)
+} as any).lazy(() => import('./routes/json.lazy').then((d) => d.Route))
 
 const DynamicRoute = DynamicImport.update({
   path: '/dynamic',

@@ -18,9 +18,10 @@ export interface RouterOptions {
   basename?: string
 }
 
-export type ViteReactSSGContext<HasRouter extends boolean = true> = Omit<BaseViteReactSSGContext, 'router'> & {
+export type ViteReactSSGContext<HasRouter extends boolean = true> = Omit<BaseViteReactSSGContext, 'router' | 'routerType'> & {
   router: HasRouter extends true ? AnyRouter : undefined
   routeTree?: AnyRouter['routeTree']
+  routerType: 'tanstack'
 }
 
 const HAS_ADD_META_FLAG_KEY = 'HAS_ADD_META_FLAG_KEY'

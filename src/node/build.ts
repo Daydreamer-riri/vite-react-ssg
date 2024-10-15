@@ -12,10 +12,10 @@ import { serializeState } from '../utils/state'
 import { removeLeadingSlash, withLeadingSlash, withTrailingSlash } from '../utils/path'
 import { buildLog, getSize, resolveAlias, routesToPaths } from './utils'
 import { getCritters } from './critial'
-import { serverRender } from './server'
 import { SCRIPT_COMMENT_PLACEHOLDER, detectEntry, renderHTML } from './html'
 import { renderPreloadLinks } from './preload-links'
 import { collectAssets } from './assets'
+import { getAdapter } from './router-adapter'
 
 const dotVitedir = Number.parseInt(viteVersion) >= 5 ? ['.vite'] : []
 export type SSRManifest = Record<string, string[]>
@@ -181,9 +181,10 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
 
         const fetchUrl = `${withTrailingSlash(base)}${removeLeadingSlash(path)}`
 
+        const adapter = getAdapter(appCtx)
         const assets = (!app && routerType === 'remix') ? await collectAssets({ routes: [...routes], locationArg: fetchUrl, base, serverManifest, manifest, ssrManifest }) : new Set<string>()
 
-        const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag, routerContext } = await serverRender(path, appCtx)
+        const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag, routerContext } = await adapter.render(path)
         staticLoaderDataManifest[withLeadingSlash(path)] = routerContext?.loaderData
 
         await triggerOnSSRAppRendered?.(path, appHTML, appCtx)

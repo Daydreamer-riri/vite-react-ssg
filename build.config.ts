@@ -1,3 +1,4 @@
+import path from 'node:path'
 import { defineBuildConfig } from 'unbuild'
 
 export default defineBuildConfig({
@@ -9,6 +10,7 @@ export default defineBuildConfig({
     { input: 'src/node', name: 'node' },
     { input: 'src/style-collectors/styled-components', name: 'style-collectors/styled-components' },
   ],
+  alias: { '~': path.resolve(__dirname, 'src') },
   declaration: true,
   clean: true,
   externals: [
@@ -25,5 +27,8 @@ export default defineBuildConfig({
   rollup: {
     emitCJS: true,
     inlineDependencies: true,
+    esbuild: {
+      jsx: 'automatic',
+    },
   },
 })

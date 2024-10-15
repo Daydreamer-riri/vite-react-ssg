@@ -15,7 +15,6 @@
     "styled-components": "6.0.5"
   },
   "devDependencies": {
-    "@vitejs/plugin-react-swc": "^3.5.0",
     "vite-plugin-pages": "^0.32.0",
     "vite-react-ssg": "workspace:*"
   }

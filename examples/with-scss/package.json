@@ -14,7 +14,6 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-react-swc": "^3.5.0",
     "sass": "1.77.8",
     "vite-plugin-pages": "^0.32.0",
     "vite-react-ssg": "workspace:*"

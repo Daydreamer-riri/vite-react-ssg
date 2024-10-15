@@ -17,7 +17,6 @@
   "devDependencies": {
     "@mdx-js/rollup": "3.0.1",
     "@types/mdx": "2.0.11",
-    "@vitejs/plugin-react-swc": "^3.5.0",
     "vite-react-ssg": "workspace:*"
   }
 }

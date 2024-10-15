@@ -1,3 +1,4 @@
+import type { PluginOption } from 'vite'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import mdx from '@mdx-js/rollup'
@@ -8,5 +9,5 @@ export default defineConfig({
   plugins: [
     mdx(),
     react(),
-  ],
+  ] as PluginOption[],
 })
