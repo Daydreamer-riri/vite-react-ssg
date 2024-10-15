@@ -1,6 +1,6 @@
 import { join } from 'node:path'
 import type { InlineConfig, ViteDevServer } from 'vite'
-import { createServer as createViteServer, resolveConfig, version as viteVersion } from 'vite'
+import { createServer as createViteServer, mergeConfig, resolveConfig, version as viteVersion } from 'vite'
 import fs from 'fs-extra'
 import { bgLightCyan, bold, cyan, dim, green, red, reset } from 'kolorist'
 import type { ViteReactSSGOptions } from '../types'
@@ -45,20 +45,27 @@ export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteCon
       jsdomGlobal()
     }
 
-    viteServer = await createViteServer({
-      ...viteConfig,
-      plugins: [
-        ...viteConfig.plugins ?? [],
-        ssrServerPlugin({
-          template,
-          ssrEntry,
-          onBeforePageRender,
-          onPageRendered,
-          entry,
-          rootContainerId,
-        }),
-      ],
-    })
+    viteServer = await createViteServer(
+      mergeConfig(
+        {
+          ...viteConfig,
+          plugins: [
+            ...viteConfig.plugins ?? [],
+            ssrServerPlugin({
+              template,
+              ssrEntry,
+              onBeforePageRender,
+              onPageRendered,
+              entry,
+              rootContainerId,
+            }),
+          ],
+        },
+        {
+          ssr: { noExternal: ['vite-react-ssg'] },
+        },
+      ),
+    )
     await viteServer.listen()
     printServerInfo(viteServer, !!customOptions)
     viteServer.bindCLIShortcuts({ print: true })
