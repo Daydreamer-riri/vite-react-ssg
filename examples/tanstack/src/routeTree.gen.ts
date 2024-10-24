@@ -42,7 +42,9 @@ const IndexRoute = IndexImport.update({
 const DynamicParamRoute = DynamicParamImport.update({
   path: '/$param',
   getParentRoute: () => DynamicRoute,
-} as any)
+} as any).lazy(() =>
+  import('./routes/dynamic/$param.lazy').then((d) => d.Route),
+)
 
 // Populate the FileRoutesByPath interface
 
