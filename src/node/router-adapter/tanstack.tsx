@@ -7,10 +7,10 @@ import type { Connect } from 'vite'
 import { renderStaticApp } from '../serverRenderer'
 import type { IRouterAdapter, RenderResult } from './interface'
 import { extractHelmet } from './utils'
-import { withLeadingSlash } from '~/utils/path'
 import type { ViteReactSSGContext } from '~/client/tanstack'
 import { META_CONTAINER_ID } from '~/utils/tanstack-router'
 import { fromNodeRequest, json, toNodeRequest } from '~/pollfill/node-adapter'
+import { removeLeadingSlash, withTrailingSlash } from '~/utils/path'
 
 export class TanstackAdapter implements IRouterAdapter<ViteReactSSGContext> {
   context: ViteReactSSGContext
@@ -19,9 +19,9 @@ export class TanstackAdapter implements IRouterAdapter<ViteReactSSGContext> {
   }
 
   render: (path: string) => Promise<RenderResult> = async path => {
-    const { getStyleCollector, router: _router } = this.context
+    const { getStyleCollector, router: _router, base } = this.context
     const styleCollector = getStyleCollector ? await getStyleCollector() : null
-    path = withLeadingSlash(path)
+    path = `${withTrailingSlash(base)}${removeLeadingSlash(path)}`
     const { createRouter, createMemoryHistory } = await import('@tanstack/react-router')
     const router = createRouter(_router.options)
     const { StartServer } = await import('@tanstack/start/server')
