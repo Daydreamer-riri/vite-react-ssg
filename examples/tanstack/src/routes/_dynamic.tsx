@@ -1,6 +1,6 @@
 import { Outlet, createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/dynamic')({
+export const Route = createFileRoute('/_dynamic')({
   component: DynamicComponent,
   loader: () => 'This is dynamic layout loader data',
 })

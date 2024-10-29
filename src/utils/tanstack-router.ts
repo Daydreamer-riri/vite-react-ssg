@@ -11,7 +11,7 @@ export async function convertRouteTreeToRouteOption(routeTree: RootRoute, client
   const routes: RouteRecord[] = []
 
   async function traverseRouteTree(node: RootRoute | Route) {
-    if (!client && node.path.includes('$') && node.lazyFn) {
+    if (!client && node.path?.includes('$') && node.lazyFn) {
       await node.lazyFn()
     }
 

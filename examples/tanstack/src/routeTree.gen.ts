@@ -12,8 +12,8 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as JsonImport } from './routes/json'
-import { Route as DynamicImport } from './routes/dynamic'
 import { Route as AboutImport } from './routes/about'
+import { Route as DynamicImport } from './routes/_dynamic'
 import { Route as IndexImport } from './routes/index'
 import { Route as DynamicParamImport } from './routes/dynamic/$param'
 
@@ -22,15 +22,15 @@ import { Route as DynamicParamImport } from './routes/dynamic/$param'
 const JsonRoute = JsonImport.update({
   path: '/json',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/json.lazy').then((d) => d.Route))
-
-const DynamicRoute = DynamicImport.update({
-  path: '/dynamic',
-  getParentRoute: () => rootRoute,
 } as any)
 
 const AboutRoute = AboutImport.update({
   path: '/about',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const DynamicRoute = DynamicImport.update({
+  id: '/_dynamic',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -40,11 +40,9 @@ const IndexRoute = IndexImport.update({
 } as any)
 
 const DynamicParamRoute = DynamicParamImport.update({
-  path: '/$param',
-  getParentRoute: () => DynamicRoute,
-} as any).lazy(() =>
-  import('./routes/dynamic/$param.lazy').then((d) => d.Route),
-)
+  path: '/dynamic/$param',
+  getParentRoute: () => rootRoute,
+} as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -57,18 +55,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/_dynamic': {
+      id: '/_dynamic'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof DynamicImport
+      parentRoute: typeof rootRoute
+    }
     '/about': {
       id: '/about'
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutImport
-      parentRoute: typeof rootRoute
-    }
-    '/dynamic': {
-      id: '/dynamic'
-      path: '/dynamic'
-      fullPath: '/dynamic'
-      preLoaderRoute: typeof DynamicImport
       parentRoute: typeof rootRoute
     }
     '/json': {
@@ -80,39 +78,28 @@ declare module '@tanstack/react-router' {
     }
     '/dynamic/$param': {
       id: '/dynamic/$param'
-      path: '/$param'
+      path: '/dynamic/$param'
       fullPath: '/dynamic/$param'
       preLoaderRoute: typeof DynamicParamImport
-      parentRoute: typeof DynamicImport
+      parentRoute: typeof rootRoute
     }
   }
 }
 
 // Create and export the route tree
 
-interface DynamicRouteChildren {
-  DynamicParamRoute: typeof DynamicParamRoute
-}
-
-const DynamicRouteChildren: DynamicRouteChildren = {
-  DynamicParamRoute: DynamicParamRoute,
-}
-
-const DynamicRouteWithChildren =
-  DynamicRoute._addFileChildren(DynamicRouteChildren)
-
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '': typeof DynamicRoute
   '/about': typeof AboutRoute
-  '/dynamic': typeof DynamicRouteWithChildren
   '/json': typeof JsonRoute
   '/dynamic/$param': typeof DynamicParamRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '': typeof DynamicRoute
   '/about': typeof AboutRoute
-  '/dynamic': typeof DynamicRouteWithChildren
   '/json': typeof JsonRoute
   '/dynamic/$param': typeof DynamicParamRoute
 }
@@ -120,33 +107,35 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/_dynamic': typeof DynamicRoute
   '/about': typeof AboutRoute
-  '/dynamic': typeof DynamicRouteWithChildren
   '/json': typeof JsonRoute
   '/dynamic/$param': typeof DynamicParamRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/dynamic' | '/json' | '/dynamic/$param'
+  fullPaths: '/' | '' | '/about' | '/json' | '/dynamic/$param'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/dynamic' | '/json' | '/dynamic/$param'
-  id: '__root__' | '/' | '/about' | '/dynamic' | '/json' | '/dynamic/$param'
+  to: '/' | '' | '/about' | '/json' | '/dynamic/$param'
+  id: '__root__' | '/' | '/_dynamic' | '/about' | '/json' | '/dynamic/$param'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DynamicRoute: typeof DynamicRoute
   AboutRoute: typeof AboutRoute
-  DynamicRoute: typeof DynamicRouteWithChildren
   JsonRoute: typeof JsonRoute
+  DynamicParamRoute: typeof DynamicParamRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DynamicRoute: DynamicRoute,
   AboutRoute: AboutRoute,
-  DynamicRoute: DynamicRouteWithChildren,
   JsonRoute: JsonRoute,
+  DynamicParamRoute: DynamicParamRoute,
 }
 
 export const routeTree = rootRoute
@@ -162,29 +151,26 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/_dynamic",
         "/about",
-        "/dynamic",
-        "/json"
+        "/json",
+        "/dynamic/$param"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
+    "/_dynamic": {
+      "filePath": "_dynamic.tsx"
+    },
     "/about": {
       "filePath": "about.tsx"
-    },
-    "/dynamic": {
-      "filePath": "dynamic.tsx",
-      "children": [
-        "/dynamic/$param"
-      ]
     },
     "/json": {
       "filePath": "json.tsx"
     },
     "/dynamic/$param": {
-      "filePath": "dynamic/$param.tsx",
-      "parent": "/dynamic"
+      "filePath": "dynamic/$param.tsx"
     }
   }
 }
