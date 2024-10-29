@@ -14,6 +14,6 @@ export default defineConfig({
       },
       importMode: 'async',
       routeStyle: 'remix',
-    }) as PluginOption,
-  ],
+    }),
+  ] as PluginOption[],
 })

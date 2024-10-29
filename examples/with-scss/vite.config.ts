@@ -1,4 +1,4 @@
-import type { PluginOption } from 'vite'
+import type { PluginOption, UserConfig } from 'vite'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import { } from 'vite-react-ssg'
@@ -19,4 +19,4 @@ export default defineConfig({
       'This-Is-A-Custom-Header': 'yes',
     },
   },
-})
+} as UserConfig)
