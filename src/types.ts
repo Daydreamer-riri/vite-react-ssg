@@ -1,5 +1,6 @@
 import type { ReactElement, ReactNode } from 'react'
 import type { IndexRouteObject, NonIndexRouteObject, createBrowserRouter } from 'react-router-dom'
+import type { Options as BeastiesOptions } from 'beasties'
 
 type Router = ReturnType<typeof createBrowserRouter>
 export interface CrittersOptions {
@@ -80,9 +81,16 @@ export interface ViteReactSSGOptions<Context = ViteReactSSGContext> {
   /**
    * Options for the critters packages.
    *
+   * @deprecated Use `beastiesOptions` instead.
    * @see https://github.com/GoogleChromeLabs/critters
    */
   crittersOptions?: CrittersOptions | false
+  /**
+   * Options for the beasties package.
+   *
+   * @see https://github.com/danielroe/beasties
+   */
+  beastiesOptions?: BeastiesOptions | false
   /**
    * Custom function to modify the routes to do the SSG.
    *

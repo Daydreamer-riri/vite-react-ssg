@@ -11,7 +11,7 @@ import type { RouteRecord, ViteReactSSGContext, ViteReactSSGOptions } from '../t
 import { serializeState } from '../utils/state'
 import { removeLeadingSlash, withLeadingSlash, withTrailingSlash } from '../utils/path'
 import { buildLog, getSize, resolveAlias, routesToPaths } from './utils'
-import { getCritters } from './critial'
+import { getBeastiesOrCritters } from './critial'
 import { SCRIPT_COMMENT_PLACEHOLDER, detectEntry, renderHTML } from './html'
 import { renderPreloadLinks } from './preload-links'
 import { collectAssets } from './assets'
@@ -49,12 +49,12 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
   const out = isAbsolute(outDir) ? outDir : join(root, outDir)
   const configBase = config.base
 
+  const mergedOptions = Object.assign({}, config.ssgOptions || {}, ssgOptions)
   const {
     script = 'sync',
     mock = false,
     entry = await detectEntry(root),
     formatting = 'none',
-    crittersOptions = {},
     includedRoutes: configIncludedRoutes = DefaultIncludedRoutes,
     onBeforePageRender,
     onPageRendered,
@@ -64,7 +64,9 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
     format = 'esm',
     concurrency = 20,
     rootContainerId = 'root',
-  }: ViteReactSSGOptions = Object.assign({}, config.ssgOptions || {}, ssgOptions)
+  }: ViteReactSSGOptions = mergedOptions
+
+  const beastiesOptions = mergedOptions.beastiesOptions ?? mergedOptions.crittersOptions ?? {}
 
   if (fs.existsSync(ssgOut))
     await fs.remove(ssgOut)
@@ -163,9 +165,9 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
 
   buildLog('Rendering Pages...', routesPaths.length)
 
-  const critters = crittersOptions !== false ? await getCritters(outDir, { publicPath: configBase, ...crittersOptions }) : undefined
-  if (critters)
-    console.log(`${gray('[vite-react-ssg]')} ${blue('Critical CSS generation enabled via `critters`')}`)
+  const beasties = beastiesOptions !== false ? await getBeastiesOrCritters(outDir, { publicPath: configBase, ...beastiesOptions }) : undefined
+  if (beasties)
+    console.log(`${gray('[vite-react-ssg]')} ${blue('Critical CSS generation enabled via `beasties`')}`)
 
   const ssrManifest: SSRManifest = JSON.parse(await fs.readFile(join(out, ...dotVitedir, 'ssr-manifest.json'), 'utf-8'))
   const manifest: Manifest = JSON.parse(await fs.readFile(join(out, ...dotVitedir, 'manifest.json'), 'utf-8'))
@@ -212,8 +214,8 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
         const html = jsdom.serialize()
         let transformed = (await onPageRendered?.(path, html, appCtx)) || html
         transformed = transformed.replace(SCRIPT_COMMENT_PLACEHOLDER, `window.__VITE_REACT_SSG_HASH__ = '${hash}'`)
-        if (critters) {
-          transformed = (await crittersQueue.add(() => critters.process(transformed)))!
+        if (beasties) {
+          transformed = (await crittersQueue.add(() => beasties.process(transformed)))!
           transformed = transformed.replace(/<link\srel="stylesheet"/g, '<link rel="stylesheet" crossorigin')
         }
 

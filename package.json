@@ -2,7 +2,7 @@
   "name": "vite-react-ssg",
   "type": "module",
   "version": "0.8.0-beta.3",
-  "packageManager": "pnpm@9.10.0",
+  "packageManager": "pnpm@9.12.3",
   "description": "Static-site generation for React on Vite.",
   "author": "Riri <Daydreamerriri@outlook.com>",
   "license": "MIT",
@@ -82,7 +82,8 @@
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
-    "critters": "^0.0.19",
+    "beasties": "^0.1.0",
+    "critters": "^0.0.24",
     "prettier": "*",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
@@ -95,6 +96,9 @@
       "optional": true
     },
     "@tanstack/start": {
+      "optional": true
+    },
+    "beasties": {
       "optional": true
     },
     "critters": {
@@ -131,10 +135,11 @@
     "@types/react-dom": "~18.2.6",
     "@types/yargs": "^17.0.33",
     "@vitejs/plugin-react-swc": "^3.7.1",
-    "bumpp": "^9.5.2",
+    "beasties": "^0.1.0",
+    "bumpp": "^9.8.0",
     "critters": "^0.0.24",
-    "eslint": "^9.10.0",
-    "esno": "^4.7.0",
+    "eslint": "^9.13.0",
+    "esno": "^4.8.0",
     "fast-glob": "3.3.2",
     "prettier": "^3.3.3",
     "react": "^18.2.0",
