@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "shiki": "^1.11.1",
+    "vite": "catalog:",
     "vite-react-ssg": "workspace:*"
   },
   "devDependencies": {

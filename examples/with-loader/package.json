@@ -12,7 +12,8 @@
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "shiki": "^1.11.1"
+    "shiki": "^1.11.1",
+    "vite": "catalog:"
   },
   "devDependencies": {
     "@mdx-js/rollup": "3.0.1",

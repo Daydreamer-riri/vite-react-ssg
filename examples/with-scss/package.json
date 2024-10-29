@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "sass": "1.77.8",
+    "vite": "catalog:",
     "vite-plugin-pages": "^0.32.0",
     "vite-react-ssg": "workspace:*"
   }
