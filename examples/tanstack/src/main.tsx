@@ -1,5 +1,5 @@
 import { createRouter } from '@tanstack/react-router'
-import { ViteReactSSG } from 'vite-react-ssg/tanstack'
+import { Experimental_ViteReactSSG as ViteReactSSG } from 'vite-react-ssg/tanstack'
 import { routeTree } from './routeTree.gen'
 
 // Set up a Router instance

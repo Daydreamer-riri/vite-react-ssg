@@ -26,7 +26,7 @@ export type ViteReactSSGContext<HasRouter extends boolean = true> = Omit<BaseVit
 
 const HAS_ADD_META_FLAG_KEY = 'HAS_ADD_META_FLAG_KEY'
 
-export function ViteReactSSG(
+export function Experimental_ViteReactSSG(
   routerOptions: RouterOptions,
   fn?: (context: ViteReactSSGContext<true>) => Promise<void> | void,
   options: ViteReactSSGClientOptions = {},
