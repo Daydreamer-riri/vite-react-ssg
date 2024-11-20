@@ -98,7 +98,6 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
     },
     customLogger: clientLogger,
     mode: config.mode,
-    ssr: { noExternal: ['vite-react-ssg'] },
   }))
 
   if (mock) {
@@ -137,7 +136,6 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
       },
     },
     mode: config.mode,
-    ssr: { noExternal: ['vite-react-ssg', 'vite-react-ssg/tanstack'] },
   }))
 
   const prefix = (format === 'esm' && process.platform === 'win32') ? 'file://' : ''

@@ -38,7 +38,7 @@ export function Experimental_ViteReactSSG(
     getStyleCollector = null,
   } = options
 
-  if (import.meta.env.DEV && ssrWhenDev !== undefined)
+  if (process.env.NODE_ENV === 'development' && ssrWhenDev !== undefined)
     console.warn('[vite-react-ssg] `ssrWhenDev` option is no longer needed. If you want to use csr, just replace `vite-react-ssg dev` with `vite`.')
 
   const isClient = typeof window !== 'undefined'
@@ -75,7 +75,7 @@ export function Experimental_ViteReactSSG(
           // eslint-disable-next-line ts/no-empty-object-type
           node.options.loader = async (ctx: LoaderFnContext<any, {}, {}, {}, AnyContext, AnyContext>) => {
             let pathname = ctx.location.pathname
-            if (import.meta.env.DEV) {
+            if (process.env.NODE_ENV === 'development') {
               const routeId = encodeURIComponent(node.id)
               const dataQuery = `_data=${routeId}`
               const href = ctx.location.href
@@ -171,7 +171,7 @@ export function Experimental_ViteReactSSG(
 
       const { router } = await createRoot(true)
       const isSSR = document.querySelector('[data-server-rendered=true]') !== null
-      if (!isSSR && import.meta.env.DEV) {
+      if (!isSSR && process.env.NODE_ENV === 'development') {
         const root = ReactDOMCreateRoot(container)
         React.startTransition(() => {
           root.render(

@@ -61,9 +61,7 @@ export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteCon
             }),
           ],
         },
-        {
-          ssr: { noExternal: ['vite-react-ssg'] },
-        },
+        {},
       ),
     )
     await viteServer.listen()
