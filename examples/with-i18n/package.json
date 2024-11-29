@@ -1,0 +1,23 @@
+{
+  "name": "with-i18n",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite-react-ssg dev",
+    "build": "vite-react-ssg build",
+    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "i18next": "^24.0.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-i18next": "^15.1.2"
+  },
+  "devDependencies": {
+    "vite": "catalog:",
+    "vite-plugin-pages": "^0.32.0",
+    "vite-react-ssg": "workspace:*"
+  }
+}
