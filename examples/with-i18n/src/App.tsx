@@ -1,5 +1,7 @@
 import type { RouteRecord } from 'vite-react-ssg'
 import './App.css'
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Layout from './Layout'
 import { resources } from './i18n'
 
@@ -22,6 +24,17 @@ export const routes: RouteRecord[] = [
         lazy: () => defaultToComponent(import('./pages/nest/[b]')),
       },
     ],
+  },
+  {
+    path: '/',
+    Component: () => {
+      const navigate = useNavigate()
+      useEffect(() => {
+        navigate('/en', { replace: true })
+      }, [navigate])
+
+      return null
+    },
   },
 ]
 
