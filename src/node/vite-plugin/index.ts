@@ -54,11 +54,12 @@ export function ssrServerPlugin({
           )
 
           const assetsUrls = new Set<string>()
+          const collectedMods = new Set<ModuleNode>()
 
           const collectAssets = async (mod: ModuleNode | undefined) => {
-            if (!mod || !mod?.ssrTransformResult)
+            if (!mod || !mod?.ssrTransformResult || collectedMods.has(mod))
               return
-
+            collectedMods.add(mod)
             const { deps = [], dynamicDeps = [] } = mod?.ssrTransformResult
             const allDeps = [...deps, ...dynamicDeps]
             for (const dep of allDeps) {
