@@ -7,7 +7,8 @@ const Layout = React.lazy(() => import('./Layout'))
 export const routes: RouteRecord[] = [
   {
     path: '/',
-    element: <Layout />,
+    Component: Layout,
+    HydrateFallback: Layout,
     children: [
       {
         path: 'a',
