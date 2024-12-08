@@ -20,7 +20,7 @@ export class RemixAdapter implements IRouterAdapter<ViteReactSSGContext> {
   }
 
   async render(path: string) {
-    const { base, routes, getStyleCollector } = this.context
+    const { base, routes, getStyleCollector, routerOptions } = this.context
     const fetchUrl = `${withTrailingSlash(base)}${removeLeadingSlash(path)}`
     const request = createRequest(fetchUrl)
     const styleCollector = getStyleCollector ? await getStyleCollector() : null
@@ -34,7 +34,7 @@ export class RemixAdapter implements IRouterAdapter<ViteReactSSGContext> {
       throw _context
 
     routerContext = _context
-    const router = createStaticRouter(dataRoutes, routerContext)
+    const router = createStaticRouter(dataRoutes, routerContext, { future: routerOptions.future })
     let app = (
       <HelmetProvider context={helmetContext}>
         <StaticRouterProvider router={router} context={routerContext} />

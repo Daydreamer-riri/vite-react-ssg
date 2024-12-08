@@ -1,5 +1,5 @@
 import type { ReactElement, ReactNode } from 'react'
-import type { IndexRouteObject, NonIndexRouteObject, createBrowserRouter } from 'react-router-dom'
+import type { FutureConfig as CompFutureConfig, IndexRouteObject, NonIndexRouteObject, createBrowserRouter } from 'react-router-dom'
 import type { Options as BeastiesOptions } from 'beasties'
 
 type Router = ReturnType<typeof createBrowserRouter>
@@ -198,10 +198,18 @@ export type IndexRouteRecord = IndexRouteObject & CommonRouteOptions
 
 export type RouteRecord = NonIndexRouteRecord | IndexRouteRecord
 
+export interface RouterFutureConfig {
+  v7_fetcherPersist?: boolean
+  v7_normalizeFormMethod?: boolean
+  v7_partialHydration?: boolean
+  v7_relativeSplatPath?: boolean
+  v7_skipActionErrorRevalidation?: boolean
+}
+
 export interface RouterOptions {
   routes: RouteRecord[]
-  createFetchRequest?: <T>(req: T) => Request
   basename?: string
+  future?: Partial<RouterFutureConfig & CompFutureConfig>
 }
 
 export interface StyleCollector {

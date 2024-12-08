@@ -28,9 +28,15 @@ export function ViteReactSSG(
   const isClient = typeof window !== 'undefined'
 
   const BASE_URL = routerOptions.basename ?? '/'
+  const { v7_startTransition, ...routerFeature } = routerOptions.future ?? {}
 
   async function createRoot(client = false, routePath?: string) {
-    const browserRouter = client ? createBrowserRouter(convertRoutesToDataRoutes(routerOptions.routes, transformStaticLoaderRoute), { basename: BASE_URL }) : undefined
+    const browserRouter = client
+      ? createBrowserRouter(
+        convertRoutesToDataRoutes(routerOptions.routes, transformStaticLoaderRoute),
+        { basename: BASE_URL, future: routerFeature },
+      )
+      : undefined
 
     const appRenderCallbacks: Function[] = []
     const onSSRAppRendered = client
@@ -106,7 +112,7 @@ export function ViteReactSSG(
       const { router } = await createRoot(true)
       const app = (
         <HelmetProvider>
-          <RouterProvider router={router!} />
+          <RouterProvider router={router!} future={{ v7_startTransition }} />
         </HelmetProvider>
       )
       const isSSR = document.querySelector('[data-server-rendered=true]') !== null
