@@ -42,6 +42,29 @@ See:
 
 [Example](https://github.com/Daydreamer-riri/vite-react-ssg/blob/main/examples/lazy-pages/vite.config.ts)
 
+## Future config
+
+```tsx
+export const createRoot = ViteReactSSG(
+  {
+    routes,
+    basename: import.meta.env.BASE_URL,
+    future: {
+      v7_normalizeFormMethod: true,
+      v7_startTransition: true,
+      v7_fetcherPersist: true,
+      v7_relativeSplatPath: true,
+      v7_skipActionErrorRevalidation: true,
+      v7_partialHydration: true,
+    },
+  },
+)
+```
+
+See: [react-router's optsfuture](https://reactrouter.com/6.28.0/routers/create-browser-router#optsfuture)
+
+[Example](https://github.com/Daydreamer-riri/vite-react-ssg/blob/main/examples/lazy-pages/src/main.tsx)
+
 ## `ssgOptions`
 
 You can pass options to Vite SSG in the `ssgOptions` field of your `vite.config.js`

@@ -374,6 +374,29 @@ See: [react-router's create-browser-router](https://reactrouter.com/en/main/rout
 
 [Example](./examples/lazy-pages/vite.config.ts)
 
+## Future config
+
+```tsx
+export const createRoot = ViteReactSSG(
+  {
+    routes,
+    basename: import.meta.env.BASE_URL,
+    future: {
+      v7_normalizeFormMethod: true,
+      v7_startTransition: true,
+      v7_fetcherPersist: true,
+      v7_relativeSplatPath: true,
+      v7_skipActionErrorRevalidation: true,
+      v7_partialHydration: true,
+    },
+  },
+)
+```
+
+See: [react-router's optsfuture](https://reactrouter.com/6.28.0/routers/create-browser-router#optsfuture)
+
+[Example](./examples/lazy-pages/src/main.tsx)
+
 ## CSS in JS
 
 Use the `getStyleCollector` option to specify an SSR/SSG style collector. Currently only supports `styled-components`.
