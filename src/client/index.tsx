@@ -1,5 +1,6 @@
 import React from 'react'
 import { createRoot as ReactDOMCreateRoot, hydrateRoot } from 'react-dom/client'
+import { hydrate, render } from 'react-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import { RouterProvider, createBrowserRouter, matchRoutes } from 'react-router-dom'
 import type { RouteRecord, RouterOptions, ViteReactSSGClientOptions, ViteReactSSGContext } from '../types'
@@ -117,15 +118,25 @@ export function ViteReactSSG(
       )
       const isSSR = document.querySelector('[data-server-rendered=true]') !== null
       if (!isSSR && process.env.NODE_ENV === 'development') {
-        const root = ReactDOMCreateRoot(container)
-        React.startTransition(() => {
-          root.render(app)
-        })
+        if (options.useReact17) {
+          render(app, container)
+        }
+        else {
+          const root = ReactDOMCreateRoot(container)
+          React.startTransition(() => {
+            root.render(app)
+          })
+        }
       }
       else {
-        React.startTransition(() => {
-          hydrateRoot(container, app)
-        })
+        if (options.useReact17) {
+          hydrate(app, container)
+        }
+        else {
+          React.startTransition(() => {
+            hydrateRoot(container, app)
+          })
+        }
       }
     })()
   }
