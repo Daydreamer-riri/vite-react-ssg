@@ -91,7 +91,7 @@ export function ViteReactSSG(
       ) as JSX.Element
       const isSSR = document.querySelector('[data-server-rendered=true]') !== null
       if (!isSSR && process.env.NODE_ENV === 'development') {
-        if (options.useReact17) {
+        if (options.useLegacyRender) {
           render(app, container)
         }
         else {
@@ -102,7 +102,7 @@ export function ViteReactSSG(
         }
       }
       else {
-        if (options.useReact17) {
+        if (options.useLegacyRender) {
           hydrate(app, container)
         }
         else {

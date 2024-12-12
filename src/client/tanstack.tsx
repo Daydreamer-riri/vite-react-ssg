@@ -173,7 +173,7 @@ export function Experimental_ViteReactSSG(
       const { router } = await createRoot(true)
       const isSSR = document.querySelector('[data-server-rendered=true]') !== null
       if (!isSSR && process.env.NODE_ENV === 'development') {
-        if (options.useReact17) {
+        if (options.useLegacyRender) {
           render(
             <HelmetProvider>
               <RouterProvider router={router} />
@@ -193,7 +193,7 @@ export function Experimental_ViteReactSSG(
         }
       }
       else {
-        if (options.useReact17) {
+        if (options.useLegacyRender) {
           hydrate(
             <HelmetProvider>
               <StartClient router={router} />

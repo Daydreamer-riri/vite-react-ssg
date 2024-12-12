@@ -611,7 +611,7 @@ export default defineConfig({
 
 ### React17 Support
 
-- for react18, with flag `useReact17: true`, it will use the legacy `render` and `hydrate` methods.
+- for react18, with flag `useLegacyRender: true`, it will use the legacy `render` and `hydrate` methods.
 - for react17, on top of above, you will need minor update to react and react-dom [example](https://github.com/jesse23/webpack-test-bed/blob/main/scripts/define-react-exports.js) to polyfill the mjs import and the `react-dom/client`.
 
 ## Roadmap
