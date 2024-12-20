@@ -7,15 +7,20 @@
 
 import { Writable } from 'node:stream'
 import type { ReactNode } from 'react'
-import { renderToPipeableStream } from 'react-dom/server'
+import * as ReactDomServer from 'react-dom/server'
 
 export async function renderStaticApp(app: ReactNode): Promise<string> {
+  // fallback to react17
+  if (!ReactDomServer.renderToPipeableStream) {
+    return ReactDomServer.renderToString(app)
+  };
+
   // Inspired from
   // https://react.dev/reference/react-dom/server/renderToPipeableStream#waiting-for-all-content-to-load-for-crawlers-and-static-generation
   // https://github.com/gatsbyjs/gatsby/blob/master/packages/gatsby/cache-dir/static-entry.js
   const writableStream = new WritableAsPromise()
 
-  const { pipe } = renderToPipeableStream(app, {
+  const { pipe } = ReactDomServer.renderToPipeableStream(app, {
     onError(error) {
       writableStream.destroy(error as Error)
     },
