@@ -1,8 +1,7 @@
 import React from 'react'
-import { createRoot as ReactDOMCreateRoot, hydrateRoot } from 'react-dom/client'
-import { hydrate, render } from 'react-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import { RouterProvider, createBrowserRouter, matchRoutes } from 'react-router-dom'
+import { hydrate, render } from '../pollfill/react-helper'
 import type { RouteRecord, RouterOptions, ViteReactSSGClientOptions, ViteReactSSGContext } from '../types'
 import { documentReady } from '../utils/document-ready'
 import { deserializeState } from '../utils/state'
@@ -118,25 +117,10 @@ export function ViteReactSSG(
       )
       const isSSR = document.querySelector('[data-server-rendered=true]') !== null
       if (!isSSR && process.env.NODE_ENV === 'development') {
-        if (options.useLegacyRender) {
-          render(app, container)
-        }
-        else {
-          const root = ReactDOMCreateRoot(container)
-          React.startTransition(() => {
-            root.render(app)
-          })
-        }
+        render(app, container, options)
       }
       else {
-        if (options.useLegacyRender) {
-          hydrate(app, container)
-        }
-        else {
-          React.startTransition(() => {
-            hydrateRoot(container, app)
-          })
-        }
+        hydrate(app, container, options)
       }
     })()
   }
