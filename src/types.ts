@@ -168,6 +168,8 @@ export interface ViteReactSSGClientOptions {
    */
   ssrWhenDev?: boolean
   getStyleCollector?: (() => StyleCollector | Promise<StyleCollector>) | null
+  // true if the app is based on react17 compatible API
+  useLegacyRender?: boolean
 }
 
 interface CommonRouteOptions {
