@@ -12,7 +12,7 @@ import * as ReactDomServer from 'react-dom/server'
 export async function renderStaticApp(app: ReactNode): Promise<string> {
   // fallback to react17
   if (!ReactDomServer.renderToPipeableStream) {
-    return ReactDomServer.renderToString(app)
+    return ReactDomServer.renderToString(<>{app}</>)
   };
 
   // Inspired from
