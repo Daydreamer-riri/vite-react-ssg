@@ -64,7 +64,7 @@ export async function renderHTML({
         const attributesStringified = [...node.attributes.map(({ name: { value: name }, value }) => `${name}="${value!.value}"`)].join(' ')
         const indexHTMLBefore = indexHTML.slice(0, node.start)
         const indexHTMLAfter = indexHTML.slice(node.end)
-        renderedOutput = `${indexHTMLBefore}<${node.name} ${attributesStringified} data-server-rendered="true">${appHTML}</${node.name}>${stateScript}${indexHTMLAfter}`
+        renderedOutput = `${indexHTMLBefore}<${node.name} ${attributesStringified} data-server-rendered="true">${appHTML}</${node.name}>${stateScript}${scriptPlaceHolder}${indexHTMLAfter}`
       }
     },
   })
