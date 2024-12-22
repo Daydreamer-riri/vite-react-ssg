@@ -18,6 +18,10 @@ const CopyReactDOM = {
 } as typeof ReactDOM & {
   createRoot: CreateRootFnType
   hydrateRoot: HydrateRootFnType
+} & {
+  __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED: {
+    usingClientEntryPoint: boolean
+  }
 }
 
 const { version, render: reactRender, hydrate: reactHydrate } = CopyReactDOM
@@ -35,11 +39,13 @@ export function render(app: JSX.Element, container: Element | DocumentFragment, 
     reactRender(app, container)
   }
   else {
+    CopyReactDOM.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.usingClientEntryPoint = true
     const { createRoot } = CopyReactDOM
     if (!createRoot) {
       throw new Error('createRoot not found')
     }
     const root = createRoot(container)
+    CopyReactDOM.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.usingClientEntryPoint = false
     React.startTransition(() => {
       root.render(app)
     })
@@ -53,12 +59,14 @@ export function hydrate(app: JSX.Element, container: Element | DocumentFragment,
     reactHydrate(app, container)
   }
   else {
+    CopyReactDOM.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.usingClientEntryPoint = true
     const { hydrateRoot } = CopyReactDOM
     if (!hydrateRoot) {
       throw new Error('hydrateRoot not found')
     }
     React.startTransition(() => {
       hydrateRoot(container, app)
+      CopyReactDOM.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.usingClientEntryPoint = false
     })
   }
 }
