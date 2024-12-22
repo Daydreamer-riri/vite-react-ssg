@@ -28,14 +28,14 @@ interface RenderOptions {
   useLegacyRender?: boolean
 }
 
-export function render(app: JSX.Element, container: Element | DocumentFragment, renderOptions: RenderOptions = {}) {
+export async function render(app: JSX.Element, container: Element | DocumentFragment, renderOptions: RenderOptions = {}) {
   const { useLegacyRender } = renderOptions
 
   if (useLegacyRender || !isReact18) {
     reactRender(app, container)
   }
   else {
-    const { createRoot } = CopyReactDOM
+    const { createRoot } = await import('react-dom/client')
     if (!createRoot) {
       throw new Error('createRoot not found')
     }
@@ -46,14 +46,14 @@ export function render(app: JSX.Element, container: Element | DocumentFragment, 
   }
 }
 
-export function hydrate(app: JSX.Element, container: Element | DocumentFragment, renderOptions: RenderOptions = {}) {
+export async function hydrate(app: JSX.Element, container: Element | Document, renderOptions: RenderOptions = {}) {
   const { useLegacyRender } = renderOptions
 
   if (useLegacyRender || !isReact18) {
     reactHydrate(app, container)
   }
   else {
-    const { hydrateRoot } = CopyReactDOM
+    const { hydrateRoot } = await import('react-dom/client')
     if (!hydrateRoot) {
       throw new Error('hydrateRoot not found')
     }
