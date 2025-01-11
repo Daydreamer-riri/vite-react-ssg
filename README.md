@@ -24,7 +24,9 @@ For usage examples, see: [`main`/examples/tanstack/src/main.tsx](https://github.
 - [`<ClientOnly/>`](#clientonly)
 - [Document head](#document-head)
   - [Reactive head](#reactive-head)
+- [Redirect](#redirect)
 - [Public Base Path](#public-base-path)
+- [Future config](#future-config)
 - [CSS in JS](#css-in-js)
 - [Critical CSS](#critical-css)
 - [Configuration](#configuration)
@@ -335,6 +337,36 @@ export default function MyHead() {
     </Head>
   )
 }
+```
+
+## Redirect
+
+You should not use redirect in the loader.
+In vite-react-ssg, the loader only executes during the build process for data fetching.
+If you need to perform a redirect in certain situations, you can use the following method to redirect on the client side:
+
+```tsx
+export const routes: RouteRecord[] = [
+  {
+    path: '/:lng',
+    Component: Layout,
+    getStaticPaths: () => Object.keys(resources),
+    children: [
+      // ... some routes
+    ],
+  },
+  {
+    path: '/',
+    Component: () => {
+      const navigate = useNavigate()
+      useEffect(() => {
+        navigate('/en', { replace: true })
+      }, [navigate])
+
+      return null
+    },
+  },
+]
 ```
 
 ## Public Base Path
