@@ -28,7 +28,7 @@ export function ViteReactSSG(
   const isClient = typeof window !== 'undefined'
 
   const BASE_URL = routerOptions.basename ?? '/'
-  const { v7_startTransition, ...routerFeature } = routerOptions.future ?? {}
+  const { v7_startTransition = true, ...routerFeature } = routerOptions.future ?? {}
 
   async function createRoot(client = false, routePath?: string) {
     const browserRouter = client
