@@ -3,6 +3,9 @@ import React, { forwardRef } from 'react'
 import { Link as RRLink, NavLink as RRNavLink, useLinkClickHandler } from 'react-router-dom'
 import type { LinkProps, NavLinkProps } from 'react-router-dom'
 
+/**
+ * @deprecated Please use `Link` from 'react-router-dom' instead.
+ */
 export const Link = forwardRef((props: LinkProps, ref: Ref<HTMLAnchorElement>) => {
   const {
     replace,
@@ -42,6 +45,9 @@ export const Link = forwardRef((props: LinkProps, ref: Ref<HTMLAnchorElement>) =
 
 Link.displayName = 'Link'
 
+/**
+ * @deprecated Please use `NavLink` from 'react-router-dom' instead.
+ */
 export const NavLink = forwardRef((props: NavLinkProps, ref: Ref<HTMLAnchorElement>) => {
   const {
     replace,
