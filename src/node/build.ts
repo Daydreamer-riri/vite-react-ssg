@@ -100,10 +100,11 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
     mode: config.mode,
   }))
 
+  let unmock = () => {}
   if (mock) {
     // @ts-expect-error allow js
-    const { jsdomGlobal }: { jsdomGlobal: () => void } = await import('./jsdomGlobal.mjs')
-    jsdomGlobal()
+    const { jsdomGlobal }: { jsdomGlobal: () => () => void } = await import('./jsdomGlobal.mjs')
+    unmock = jsdomGlobal()
   }
 
   // server
@@ -253,6 +254,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
 
   await fs.remove(join(root, '.vite-react-ssg-temp'))
 
+  unmock()
   const pwaPlugin: { disabled: boolean, generateSW: () => Promise<unknown> } = config.plugins.find(i => i.name === 'vite-plugin-pwa')?.api
   if (pwaPlugin && !pwaPlugin.disabled && pwaPlugin.generateSW) {
     buildLog('Regenerate PWA...')
