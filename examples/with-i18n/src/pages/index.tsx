@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { Link } from 'vite-react-ssg'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'vite-react-ssg'
 import reactLogo from '../assets/react.svg'
 import { useI18n } from '../i18n'
 

@@ -1,7 +1,7 @@
 import type { Ref } from 'react'
+import type { LinkProps, NavLinkProps } from 'react-router-dom'
 import React, { forwardRef } from 'react'
 import { Link as RRLink, NavLink as RRNavLink, useLinkClickHandler } from 'react-router-dom'
-import type { LinkProps, NavLinkProps } from 'react-router-dom'
 
 /**
  * @deprecated Please use `Link` from 'react-router-dom' instead.

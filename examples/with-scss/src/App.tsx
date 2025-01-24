@@ -1,5 +1,5 @@
-import React from 'react'
 import type { RouteRecord } from 'vite-react-ssg'
+import React from 'react'
 import './App.scss'
 
 const Layout = React.lazy(() => import('./Layout'))

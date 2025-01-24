@@ -1,9 +1,9 @@
 import type { RouteRecord } from 'vite-react-ssg'
 import Home from './pages'
-import Layout from './pages/Layout'
-import DocsLayout from './pages/docs/Layout'
-import GettingStarted from './pages/docs/Getting-Started.md'
 import NotFound from './pages/404.md'
+import GettingStarted from './pages/docs/Getting-Started.md'
+import DocsLayout from './pages/docs/Layout'
+import Layout from './pages/Layout'
 
 export const routes: RouteRecord[] = [
   {

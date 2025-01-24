@@ -1,7 +1,7 @@
 import { lazy } from 'react'
-import { ClientOnly, Link } from 'vite-react-ssg'
 import { Link as RRLink } from 'react-router-dom'
 import styled from 'styled-components'
+import { ClientOnly, Link } from 'vite-react-ssg'
 
 const H1 = styled.h1`
   background: #bbb;

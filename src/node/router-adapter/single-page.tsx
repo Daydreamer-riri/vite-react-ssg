@@ -1,9 +1,9 @@
 import type { FilledContext } from 'react-helmet-async'
+import type { IRouterAdapter, RenderResult } from './interface'
+import type { ViteReactSSGContext } from '~/types'
 import { HelmetProvider } from 'react-helmet-async'
 import { renderStaticApp } from '../serverRenderer'
-import type { IRouterAdapter, RenderResult } from './interface'
 import { extractHelmet } from './utils'
-import type { ViteReactSSGContext } from '~/types'
 
 export class SinglePageAdapter implements IRouterAdapter<ViteReactSSGContext> {
   context: ViteReactSSGContext<true>

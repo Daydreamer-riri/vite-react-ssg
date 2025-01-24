@@ -1,5 +1,5 @@
+import { createRootRoute, Link, Outlet } from '@tanstack/react-router'
 import * as React from 'react'
-import { Link, Outlet, createRootRoute } from '@tanstack/react-router'
 import { Count } from '../count'
 
 export const Route = createRootRoute({

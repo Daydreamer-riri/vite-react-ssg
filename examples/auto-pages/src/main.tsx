@@ -1,6 +1,6 @@
 import { ViteReactSSG } from 'vite-react-ssg'
-import Layout from './Layout'
 import autoRoutes from '~react-pages'
+import Layout from './Layout'
 import './index.css'
 
 const routesWithLayout = [{

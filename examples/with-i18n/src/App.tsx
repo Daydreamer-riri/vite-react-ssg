@@ -1,9 +1,9 @@
 import type { RouteRecord } from 'vite-react-ssg'
-import './App.css'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import Layout from './Layout'
 import { resources } from './i18n'
+import Layout from './Layout'
+import './App.css'
 
 export const routes: RouteRecord[] = [
   {

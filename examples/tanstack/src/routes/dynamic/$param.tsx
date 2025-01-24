@@ -1,5 +1,5 @@
-import * as React from 'react'
 import { createFileRoute } from '@tanstack/react-router'
+import * as React from 'react'
 import { registerPaths } from 'vite-react-ssg/tanstack'
 
 export const Route = createFileRoute('/dynamic/$param')({

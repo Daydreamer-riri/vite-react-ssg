@@ -1,8 +1,8 @@
 import { lazy } from 'react'
-import { ClientOnly, Link } from 'vite-react-ssg'
-import './a.css'
 import { useTranslation } from 'react-i18next'
+import { ClientOnly, Link } from 'vite-react-ssg'
 import { useI18n } from '../i18n'
+import './a.css'
 
 const ACount = lazy(() => import('../components/a-count'))
 

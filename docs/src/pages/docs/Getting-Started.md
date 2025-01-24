@@ -41,10 +41,10 @@ export const createRoot = ViteReactSSG(
 
 ```tsx
 // src/App.tsx
-import React from 'react'
 import type { RouteRecord } from 'vite-react-ssg'
-import './App.css'
+import React from 'react'
 import Layout from './Layout'
+import './App.css'
 
 export const routes: RouteRecord[] = [
   {

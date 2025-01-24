@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import './App.css'
 import reactLogo from './assets/react.svg'
+import './App.css'
 
 export default function Index() {
   const [count, setCount] = useState(0)

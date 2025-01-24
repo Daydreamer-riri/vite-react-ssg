@@ -1,9 +1,9 @@
 import {
+  fetch as nodeFetch,
   FormData as NodeFormData,
   Headers as NodeHeaders,
   Request as NodeRequest,
   Response as NodeResponse,
-  fetch as nodeFetch,
 } from '@remix-run/web-fetch'
 
 export function installGlobals() {

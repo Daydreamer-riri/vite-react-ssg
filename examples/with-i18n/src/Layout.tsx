@@ -1,9 +1,9 @@
 import { Suspense, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Outlet } from 'react-router-dom'
 import { Head } from 'vite-react-ssg'
-import './layout.css'
-import { useTranslation } from 'react-i18next'
 import { I18n, useI18n, useSyncLng } from './i18n'
+import './layout.css'
 
 export default function Layout() {
   return (

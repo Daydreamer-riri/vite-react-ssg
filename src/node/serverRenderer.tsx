@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { Writable } from 'node:stream'
 import type { ReactNode } from 'react'
+import { Writable } from 'node:stream'
 import * as ReactDomServer from 'react-dom/server'
 
 export async function renderStaticApp(app: ReactNode): Promise<string> {

@@ -1,16 +1,16 @@
+import type { LoaderFnContext } from '@tanstack/react-router'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import type { FilledContext } from 'react-helmet-async'
-import { HelmetProvider } from 'react-helmet-async'
-import { JSDOM } from 'jsdom'
-import type { LoaderFnContext } from '@tanstack/react-router'
 import type { Connect } from 'vite'
-import { renderStaticApp } from '../serverRenderer'
 import type { IRouterAdapter, RenderResult } from './interface'
-import { extractHelmet } from './utils'
 import type { ViteReactSSGContext } from '~/client/tanstack'
-import { META_CONTAINER_ID } from '~/utils/tanstack-router'
+import { JSDOM } from 'jsdom'
+import { HelmetProvider } from 'react-helmet-async'
 import { fromNodeRequest, json, toNodeRequest } from '~/pollfill/node-adapter'
 import { removeLeadingSlash, withTrailingSlash } from '~/utils/path'
+import { META_CONTAINER_ID } from '~/utils/tanstack-router'
+import { renderStaticApp } from '../serverRenderer'
+import { extractHelmet } from './utils'
 
 export class TanstackAdapter implements IRouterAdapter<ViteReactSSGContext> {
   context: ViteReactSSGContext

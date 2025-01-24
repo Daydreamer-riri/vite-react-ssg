@@ -1,12 +1,12 @@
+import type { RouteRecord, RouterOptions, ViteReactSSGClientOptions, ViteReactSSGContext } from '../types'
 import React from 'react'
 import { HelmetProvider } from 'react-helmet-async'
-import { RouterProvider, createBrowserRouter, matchRoutes } from 'react-router-dom'
+import { createBrowserRouter, matchRoutes, RouterProvider } from 'react-router-dom'
 import { hydrate, render } from '../pollfill/react-helper'
-import type { RouteRecord, RouterOptions, ViteReactSSGClientOptions, ViteReactSSGContext } from '../types'
 import { documentReady } from '../utils/document-ready'
-import { deserializeState } from '../utils/state'
 import { joinUrlSegments, stripBase, withLeadingSlash } from '../utils/path'
 import { convertRoutesToDataRoutes } from '../utils/remix-router'
+import { deserializeState } from '../utils/state'
 
 export * from '../types'
 
@@ -33,9 +33,9 @@ export function ViteReactSSG(
   async function createRoot(client = false, routePath?: string) {
     const browserRouter = client
       ? createBrowserRouter(
-        convertRoutesToDataRoutes(routerOptions.routes, transformStaticLoaderRoute),
-        { basename: BASE_URL, future: routerFeature },
-      )
+          convertRoutesToDataRoutes(routerOptions.routes, transformStaticLoaderRoute),
+          { basename: BASE_URL, future: routerFeature },
+        )
       : undefined
 
     const appRenderCallbacks: Function[] = []
@@ -171,6 +171,6 @@ declare global {
   }
 }
 
-export { default as Head } from './components/Head'
 export { default as ClientOnly } from './components/ClientOnly'
+export { default as Head } from './components/Head'
 export { Link, NavLink } from './components/Link'

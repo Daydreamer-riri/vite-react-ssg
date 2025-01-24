@@ -1,10 +1,10 @@
-import { I18nContext, I18nextProvider } from 'react-i18next'
-import './@types/i18next.d.ts'
-import { useLocation, useNavigate } from 'react-router-dom'
-import type { ReactNode } from 'react'
-import { useContext, useEffect, useRef } from 'react'
 import type { i18n } from 'i18next'
+import type { ReactNode } from 'react'
 import { createInstance } from 'i18next'
+import { useContext, useEffect, useRef } from 'react'
+import { I18nContext, I18nextProvider } from 'react-i18next'
+import { useLocation, useNavigate } from 'react-router-dom'
+import './@types/i18next.d.ts'
 
 export const resources = {
   en: {

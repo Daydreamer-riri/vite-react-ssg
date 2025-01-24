@@ -1,6 +1,6 @@
-import type { ReactElement, ReactNode } from 'react'
-import type { FutureConfig as CompFutureConfig, IndexRouteObject, NonIndexRouteObject, createBrowserRouter } from 'react-router-dom'
 import type { Options as BeastiesOptions } from 'beasties'
+import type { ReactElement, ReactNode } from 'react'
+import type { FutureConfig as CompFutureConfig, createBrowserRouter, IndexRouteObject, NonIndexRouteObject } from 'react-router-dom'
 
 type Router = ReturnType<typeof createBrowserRouter>
 export interface CrittersOptions {

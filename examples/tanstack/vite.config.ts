@@ -1,7 +1,7 @@
 import type { PluginOption } from 'vite'
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
+import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite'
 import {} from 'vite-react-ssg'
 
 // https://vitejs.dev/config/

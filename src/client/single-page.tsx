@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react'
-import { HelmetProvider } from 'react-helmet-async'
-import React from 'react'
-import { hydrate, render } from '../pollfill/react-helper'
 import type { ViteReactSSGClientOptions, ViteReactSSGContext } from '../types'
+import React from 'react'
+import { HelmetProvider } from 'react-helmet-async'
+import { hydrate, render } from '../pollfill/react-helper'
 import { documentReady } from '../utils/document-ready'
 import { deserializeState } from '../utils/state'
 
@@ -101,5 +101,5 @@ export function ViteReactSSG(
   return createRoot
 }
 
-export { default as Head } from './components/Head'
 export { default as ClientOnly } from './components/ClientOnly'
+export { default as Head } from './components/Head'

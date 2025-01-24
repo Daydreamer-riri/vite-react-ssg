@@ -1,7 +1,7 @@
 import type { IncomingHttpHeaders, ServerResponse } from 'node:http'
+import type * as Vite from 'vite'
 import { once } from 'node:events'
 import { Readable } from 'node:stream'
-import type * as Vite from 'vite'
 
 import invariant from '../invariant'
 

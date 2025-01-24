@@ -1,14 +1,14 @@
-import React from 'react'
-import { HelmetProvider } from 'react-helmet-async'
 import type { AnyContext, AnyRouter, LoaderFnContext } from '@tanstack/react-router'
+import type { ViteReactSSGContext as BaseViteReactSSGContext, ViteReactSSGClientOptions } from '../types'
 import { RouterProvider } from '@tanstack/react-router'
 import { Meta, StartClient } from '@tanstack/start'
+import React from 'react'
+import { HelmetProvider } from 'react-helmet-async'
 import { hydrate, render } from '../pollfill/react-helper'
-import type { ViteReactSSGContext as BaseViteReactSSGContext, ViteReactSSGClientOptions } from '../types'
 import { documentReady } from '../utils/document-ready'
-import { deserializeState } from '../utils/state'
-import { META_CONTAINER_ID, convertRouteTreeToRouteOption } from '../utils/tanstack-router'
 import { joinUrlSegments, stripBase, withLeadingSlash } from '../utils/path'
+import { deserializeState } from '../utils/state'
+import { convertRouteTreeToRouteOption, META_CONTAINER_ID } from '../utils/tanstack-router'
 
 export * from '../types'
 
@@ -202,6 +202,6 @@ declare global {
   }
 }
 
-export { default as Head } from './components/Head'
-export { default as ClientOnly } from './components/ClientOnly'
 export { registerPaths } from '../utils/tanstack-router'
+export { default as ClientOnly } from './components/ClientOnly'
+export { default as Head } from './components/Head'

@@ -1,10 +1,10 @@
-import { type Connect, type ModuleNode, type PluginOption, type ViteDevServer, send } from 'vite'
-import type { CreateRootFactory } from '../build'
-import type { ViteReactSSGContext, ViteReactSSGOptions } from '../../types'
 import type { ViteReactSSGContext as ViteReactSSGTanstackContext } from '../../client/tanstack'
-import { getAdapter } from '../router-adapter'
-import { createLink, renderHTML } from '../html'
+import type { ViteReactSSGContext, ViteReactSSGOptions } from '../../types'
+import type { CreateRootFactory } from '../build'
+import { type Connect, type ModuleNode, type PluginOption, send, type ViteDevServer } from 'vite'
 import { joinUrlSegments, stripBase } from '~/utils/path'
+import { createLink, renderHTML } from '../html'
+import { getAdapter } from '../router-adapter'
 
 export interface Options<Context = ViteReactSSGContext> extends ViteReactSSGOptions<Context> {
   template: string

@@ -1,8 +1,8 @@
+import type { ResolvedConfig } from 'vite'
+import type { RouteRecord } from '../types'
 import { join } from 'node:path'
 import { blue, gray, yellow } from 'kolorist'
-import type { ResolvedConfig } from 'vite'
 import { version } from '../../package.json'
-import type { RouteRecord } from '../types'
 
 export function buildLog(text: string, count?: number) {
   // eslint-disable-next-line no-console

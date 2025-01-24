@@ -1,6 +1,6 @@
 import type { PluginOption, UserConfig } from 'vite'
-import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
+import { defineConfig } from 'vite'
 import { } from 'vite-react-ssg'
 
 // https://vitejs.dev/config/

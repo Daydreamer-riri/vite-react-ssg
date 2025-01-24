@@ -73,10 +73,10 @@ export const createRoot = ViteReactSSG(
 
 ```tsx
 // src/App.tsx
-import React from 'react'
 import type { RouteRecord } from 'vite-react-ssg'
-import './App.css'
+import React from 'react'
 import Layout from './Layout'
+import './App.css'
 
 export const routes: RouteRecord[] = [
   {
@@ -374,9 +374,9 @@ export const routes: RouteRecord[] = [
 Just set `base` in vite.config.ts like:
 
 ```ts
+import react from '@vitejs/plugin-react-swc'
 // vite.config.ts
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react-swc'
 
 // https://vitejs.dev/config/
 export default defineConfig({
