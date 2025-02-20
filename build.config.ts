@@ -25,7 +25,7 @@ export default defineBuildConfig({
     '@tanstack/start',
   ],
   rollup: {
-    emitCJS: true,
+    // emitCJS: true,
     inlineDependencies: true,
     esbuild: {
       jsx: 'automatic',
