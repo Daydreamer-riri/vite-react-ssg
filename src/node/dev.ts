@@ -15,7 +15,8 @@ export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteCon
   const root = config.root || cwd
 
   const {
-    entry = await detectEntry(root),
+    htmlEntry = 'index.html',
+    entry = await detectEntry(root, htmlEntry),
     onBeforePageRender,
     onPageRendered,
     rootContainerId = 'root',
@@ -23,7 +24,7 @@ export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteCon
   }: ViteReactSSGOptions = Object.assign({}, config.ssgOptions || {}, ssgOptions)
 
   const ssrEntry = await resolveAlias(config, entry)
-  const template = await fs.readFile(join(root, 'index.html'), 'utf-8')
+  const template = await fs.readFile(join(root, htmlEntry), 'utf-8')
   let viteServer: ViteDevServer
 
   // @ts-expect-error global var

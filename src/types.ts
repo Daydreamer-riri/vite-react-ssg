@@ -44,6 +44,10 @@ export interface ViteReactSSGOptions<Context = ViteReactSSGContext> {
    */
   entry?: string
   /**
+   * The path of the index.html file (relative to the project root).
+   */
+  htmlEntry?: string
+  /**
    * Mock browser global variables (window, document, etc...) from SSG.
    *
    * @default false
