@@ -5,6 +5,6 @@ import { Helmet } from 'react-helmet-async'
 
 export type Props = HelmetProps & { children: ReactNode }
 
-export default function Head(props: Props): JSX.Element {
+export default function Head(props: Props): React.ReactNode {
   return <Helmet {...props} />
 }
