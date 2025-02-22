@@ -648,11 +648,8 @@ export default defineConfig({
 
 ## Roadmap
 
-- [x] Preload assets
-- [x] Document head
-- [x] SSR in dev environment
-- [x] More Client components, such as `<ClientOnly />`
-- [x] `getStaticPaths` for dynamic routes
+- [ ] Support `react19`
+- [ ] no index.html mode
 
 ## Credits
 
