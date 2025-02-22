@@ -45,6 +45,7 @@ export interface ViteReactSSGOptions<Context = ViteReactSSGContext> {
   entry?: string
   /**
    * The path of the index.html file (relative to the project root).
+   * @default 'index.html'
    */
   htmlEntry?: string
   /**

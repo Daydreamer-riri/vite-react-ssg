@@ -116,6 +116,18 @@ string
 
 The path of the main entry file (relative to the project root).
 
+### htmlEntry
+
+#### type
+
+```ts
+string
+```
+
+**default** `'index.html'`
+
+The path of the index.html file (relative to the project root).
+
 ### mock
 
 #### type
@@ -193,7 +205,7 @@ CrittersOptions | false
 
 Options for the critters packages.
 
-@see https://github.com/GoogleChromeLabs/critters
+@see <https://github.com/GoogleChromeLabs/critters>
 
 ### onBeforePageRender
 
