@@ -36,7 +36,8 @@ export function ssrServerPlugin({
           const appCtx = await createRoot(false, url) as (ViteReactSSGContext<true> | ViteReactSSGTanstackContext)
           const adapter = getAdapter(appCtx)
           const { app, base } = appCtx
-          const searchParams = new URLSearchParams(url.split('?')[1])
+          const [pathname, search] = url.split('?')
+          const searchParams = new URLSearchParams(search)
 
           if (!app && searchParams.has('_data')) {
             return adapter.handleLoader(req, res)
@@ -46,7 +47,7 @@ export function ssrServerPlugin({
           const transformedIndexHTML = (await onBeforePageRender?.(url, indexHTML, appCtx as any)) || indexHTML
 
           const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag }
-                    = await adapter.render(stripBase(url, base))
+                    = await adapter.render(stripBase(pathname, base))
 
           metaAttributes.push(styleTag)
           const mods = await Promise.all(
