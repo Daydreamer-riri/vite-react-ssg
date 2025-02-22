@@ -82,7 +82,8 @@ export function ViteReactSSG(
         return
       }
 
-      await createRoot(true)
+      const context = await createRoot(true)
+      window.__VITE_REACT_SSG_CONTEXT__ = context as any
       const app = (
         <HelmetProvider>
           {App}

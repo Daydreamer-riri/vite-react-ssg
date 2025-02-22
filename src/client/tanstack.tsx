@@ -169,7 +169,10 @@ export function Experimental_ViteReactSSG(
         return
       }
 
-      const { router } = await createRoot(true)
+      const context = await createRoot(true)
+      window.__VITE_REACT_SSG_CONTEXT__ = context as any
+
+      const { router } = context
       const isSSR = document.querySelector('[data-server-rendered=true]') !== null
       if (!isSSR && process.env.NODE_ENV === 'development') {
         render(
@@ -199,6 +202,8 @@ declare global {
   interface Window {
     __VITE_REACT_SSG_STATIC_LOADER_DATA__: any
     __VITE_REACT_SSG_HASH__: string
+    // @ts-expect-error global variable
+    __VITE_REACT_SSG_CONTEXT__: ViteReactSSGContext<true>
   }
 }
 

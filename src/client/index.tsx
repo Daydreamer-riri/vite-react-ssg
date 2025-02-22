@@ -109,7 +109,10 @@ export function ViteReactSSG(
         )
       }
 
-      const { router } = await createRoot(true)
+      const context = await createRoot(true)
+      window.__VITE_REACT_SSG_CONTEXT__ = context
+
+      const { router } = context
       const app = (
         <HelmetProvider>
           <RouterProvider router={router!} future={{ v7_startTransition }} />
@@ -168,6 +171,7 @@ declare global {
   interface Window {
     __VITE_REACT_SSG_STATIC_LOADER_DATA__: any
     __VITE_REACT_SSG_HASH__: string
+    __VITE_REACT_SSG_CONTEXT__: ViteReactSSGContext<true>
   }
 }
 
