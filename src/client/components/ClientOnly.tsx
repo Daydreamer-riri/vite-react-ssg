@@ -5,14 +5,14 @@ import useIsBrowser from '../hooks/useIsClient'
 // https://www.joshwcomeau.com/react/the-perils-of-rehydration/#abstractions
 
 export interface ClientOnlyProps {
-  children?: () => JSX.Element
-  fallback?: JSX.Element
+  children?: () => React.ReactNode
+  fallback?: React.ReactNode
 }
 
 export default function ClientOnly({
   children,
   fallback,
-}: ClientOnlyProps): JSX.Element | null {
+}: ClientOnlyProps): React.ReactNode | null {
   const isBrowser = useIsBrowser()
 
   if (isBrowser) {

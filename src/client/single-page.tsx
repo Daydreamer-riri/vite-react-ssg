@@ -87,7 +87,7 @@ export function ViteReactSSG(
         <HelmetProvider>
           {App}
         </HelmetProvider>
-      ) as JSX.Element
+      ) as React.ReactElement
       const isSSR = document.querySelector('[data-server-rendered=true]') !== null
       if (!isSSR && process.env.NODE_ENV === 'development') {
         render(app, container, options)

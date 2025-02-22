@@ -20,23 +20,33 @@ const CopyReactDOM = {
   hydrateRoot: HydrateRootFnType
 } & {
   __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED: {
-    usingClientEntryPoint: boolean
+    usingClientEntryPoint?: boolean
   }
 }
 
+// @ts-expect-error react19 has no render
 const { version, render: reactRender, hydrate: reactHydrate } = CopyReactDOM
 
 const isReact18 = Number((version || '').split('.')[0]) > 17
+const isReact19 = Number((version || '').split('.')[0]) > 18
 
 interface RenderOptions {
   useLegacyRender?: boolean
 }
 
-export function render(app: JSX.Element, container: Element | DocumentFragment, renderOptions: RenderOptions = {}) {
+export function render(app: React.ReactElement, container: Element | DocumentFragment, renderOptions: RenderOptions = {}) {
   const { useLegacyRender } = renderOptions
 
   if (useLegacyRender || !isReact18) {
     reactRender(app, container)
+  }
+  else if (isReact19) {
+    import('react-dom/client').then(({ createRoot }) => {
+      const root = createRoot(container)
+      React.startTransition(() => {
+        root.render(app)
+      })
+    })
   }
   else {
     CopyReactDOM.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.usingClientEntryPoint = true
@@ -52,11 +62,18 @@ export function render(app: JSX.Element, container: Element | DocumentFragment, 
   }
 }
 
-export function hydrate(app: JSX.Element, container: Element | DocumentFragment, renderOptions: RenderOptions = {}) {
+export function hydrate(app: React.ReactElement, container: Element | DocumentFragment, renderOptions: RenderOptions = {}) {
   const { useLegacyRender } = renderOptions
 
   if (useLegacyRender || !isReact18) {
     reactHydrate(app, container)
+  }
+  else if (isReact19) {
+    import('react-dom/client').then(({ hydrateRoot }) => {
+      React.startTransition(() => {
+        hydrateRoot(container as Element, app)
+      })
+    })
   }
   else {
     CopyReactDOM.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.usingClientEntryPoint = true
