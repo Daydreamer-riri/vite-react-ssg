@@ -141,7 +141,11 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
 
   const prefix = (format === 'esm' && process.platform === 'win32') ? 'file://' : ''
   const ext = format === 'esm' ? '.mjs' : '.cjs'
-  const serverEntry = join(prefix, ssgOut, parse(ssrEntry).name + ext)
+  /**
+   * `join('file://')` will be equal to `'file:\'`, which is not the correct file protocol and will fail to be parsed under bun.
+   * It is changed to '+' splicing here.
+   */
+  const serverEntry = prefix + join(ssgOut, parse(ssrEntry).name + ext).replace(/\\/g, '/')
   const serverManifest: Manifest = JSON.parse(await fs.readFile(join(ssgOut, ...dotVitedir, 'manifest.json'), 'utf-8'))
 
   const _require = createRequire(import.meta.url)
