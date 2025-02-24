@@ -202,7 +202,8 @@ declare global {
   interface Window {
     __VITE_REACT_SSG_STATIC_LOADER_DATA__: any
     __VITE_REACT_SSG_HASH__: string
-    // @ts-expect-error global variable
+    // eslint-disable-next-line ts/ban-ts-comment
+    // @ts-ignore
     __VITE_REACT_SSG_CONTEXT__: ViteReactSSGContext<true>
   }
 }
