@@ -75,11 +75,11 @@ export async function renderHTML({
   return renderedOutput
 }
 
-export async function detectEntry(root: string) {
+export async function detectEntry(root: string, htmlEntry: string = 'index.html') {
   // pick the first script tag of type module as the entry
   // eslint-disable-next-line regexp/no-super-linear-backtracking, regexp/no-useless-non-capturing-group, regexp/no-dupe-characters-character-class, regexp/no-useless-lazy, regexp/no-useless-flag, regexp/no-useless-escape, regexp/strict
   const scriptSrcReg = /<script(?:.*?)src=["'](.+?)["'](?!<)(?:.*)\>(?:[\n\r\s]*?)(?:<\/script>)/gim
-  const html = await fs.readFile(join(root, 'index.html'), 'utf-8')
+  const html = await fs.readFile(join(root, htmlEntry), 'utf-8')
   const scripts = [...html.matchAll(scriptSrcReg)]
   const [, entry] = scripts.find(matchResult => {
     const [script] = matchResult

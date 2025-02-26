@@ -53,7 +53,8 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
   const {
     script = 'sync',
     mock = false,
-    entry = await detectEntry(root),
+    htmlEntry = 'index.html',
+    entry = await detectEntry(root, htmlEntry),
     formatting = 'none',
     includedRoutes: configIncludedRoutes = DefaultIncludedRoutes,
     onBeforePageRender,
@@ -86,7 +87,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
       ssrManifest: true,
       rollupOptions: {
         input: {
-          app: join(root, './index.html'),
+          app: join(root, htmlEntry || './index.html'),
         },
         // @ts-expect-error rollup type
         onLog(level, log, handler) {
@@ -174,7 +175,8 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
 
   const ssrManifest: SSRManifest = JSON.parse(await fs.readFile(join(out, ...dotVitedir, 'ssr-manifest.json'), 'utf-8'))
   const manifest: Manifest = JSON.parse(await fs.readFile(join(out, ...dotVitedir, 'manifest.json'), 'utf-8'))
-  let indexHTML = await fs.readFile(join(out, 'index.html'), 'utf-8')
+  let indexHTML = await fs.readFile(join(out, htmlEntry), 'utf-8')
+  fs.rmSync(join(out, htmlEntry))
   indexHTML = rewriteScripts(indexHTML, script)
 
   const queue = new PQueue({ concurrency })
