@@ -10,6 +10,7 @@ and [`wouter`](https://github.com/molefrog/wouter) is in progress!**
 Support for the [`@tanstack/router`](https://tanstack.com/router/latest/docs/framework/react/overview) router is still experimental, and `pathname.lazy.tsx routes` are not yet supported.
 For usage examples, see: [`main`/examples/tanstack/src/main.tsx](https://github.com/Daydreamer-riri/vite-react-ssg/blob/main/examples/tanstack/src/main.tsx)
 
+[![Mentioned in Vite Awesome](https://awesome.re/mentioned-badge.svg)](https://github.com/vitejs/awesome-vite)
 [![NPM version](https://img.shields.io/npm/v/vite-react-ssg?color=a1b858&label=)](https://www.npmjs.com/package/vite-react-ssg)
 
 ## Table of contents
