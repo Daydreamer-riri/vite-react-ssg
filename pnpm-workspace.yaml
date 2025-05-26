@@ -2,7 +2,7 @@ packages:
   - examples/*
   - docs/
 catalog:
-  vite: ^5.4.14
+  vite: ^6.3.5
   react: ^19.0.0
   react-dom: ^19.0.0
   '@types/react': ~19.0.0
