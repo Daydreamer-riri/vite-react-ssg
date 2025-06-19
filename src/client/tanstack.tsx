@@ -73,7 +73,7 @@ export function Experimental_ViteReactSSG(
             return
 
           // eslint-disable-next-line ts/no-empty-object-type
-          node.options.loader = async (ctx: LoaderFnContext<any, {}, {}, {}, AnyContext, AnyContext>) => {
+          node.options.loader = async (ctx: LoaderFnContext<any, '__root__', {}, {}, AnyContext, AnyContext>) => {
             let pathname = ctx.location.pathname
             if (process.env.NODE_ENV === 'development') {
               const routeId = encodeURIComponent(node.id)

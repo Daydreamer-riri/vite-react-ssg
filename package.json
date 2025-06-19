@@ -2,7 +2,7 @@
   "name": "vite-react-ssg",
   "type": "module",
   "version": "0.8.6",
-  "packageManager": "pnpm@10.5.0",
+  "packageManager": "pnpm@10.12.1",
   "description": "Static-site generation for React on Vite.",
   "author": "Riri <Daydreamerriri@outlook.com>",
   "license": "MIT",
@@ -120,35 +120,35 @@
   },
   "devDependencies": {
     "@ririd/eslint-config": "^1.4.0",
-    "@tanstack/react-router": "^1.57.15",
-    "@tanstack/start": "^1.57.15",
+    "@tanstack/react-router": "^1.121.24",
+    "@tanstack/start": "^1.120.20",
     "@types/fs-extra": "^11.0.4",
     "@types/jsdom": "^21.1.7",
-    "@types/node": "^18.19.74",
+    "@types/node": "^18.19.112",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@types/yargs": "^17.0.33",
-    "@vitejs/plugin-react-swc": "^3.7.2",
-    "beasties": "^0.2.0",
-    "bumpp": "^9.11.1",
+    "@vitejs/plugin-react-swc": "^3.10.2",
+    "beasties": "^0.3.4",
+    "bumpp": "^10.2.0",
     "critters": "^0.0.25",
-    "eslint": "^9.21.0",
+    "eslint": "^9.29.0",
     "esno": "^4.8.0",
     "fast-glob": "3.3.2",
-    "prettier": "^3.5.2",
+    "prettier": "^3.5.3",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "react-router-dom": "^6.28.2",
+    "react-router-dom": "^6.30.1",
     "rimraf": "5.0.1",
     "styled-components": "6.0.5",
-    "typescript": "^5.7.3",
-    "unbuild": "^3.3.1",
+    "typescript": "^5.8.3",
+    "unbuild": "^3.5.0",
     "vite": "catalog:",
     "vitest": "1.6.1"
   },
   "pnpm": {
     "overrides": {
-      "@babel/traverse": "^7.26.7"
+      "@babel/traverse": "^7.27.4"
     }
   }
 }
