@@ -41,7 +41,7 @@ export function render(app: React.ReactElement, container: Element | DocumentFra
     reactRender(app, container)
   }
   else if (isReact19) {
-    import('react-dom/client').then(({ createRoot }) => {
+    import('react-dom/client').then(({ default: { createRoot } }) => {
       const root = createRoot(container)
       React.startTransition(() => {
         root.render(app)
@@ -69,7 +69,7 @@ export function hydrate(app: React.ReactElement, container: Element | DocumentFr
     reactHydrate(app, container)
   }
   else if (isReact19) {
-    import('react-dom/client').then(({ hydrateRoot }) => {
+    import('react-dom/client').then(({ default: { hydrateRoot } }) => {
       React.startTransition(() => {
         hydrateRoot(container as Element, app)
       })
