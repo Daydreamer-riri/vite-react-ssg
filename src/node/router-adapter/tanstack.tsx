@@ -52,7 +52,7 @@ export class TanstackAdapter implements IRouterAdapter<ViteReactSSGContext> {
     const jsdom = new JSDOM(appHTML)
     const headElements = jsdom.window.document.querySelector(`#${META_CONTAINER_ID}`)
 
-    const { htmlAttributes, bodyAttributes, metaAttributes, styleTag } = extractHelmet(helmetContext, styleCollector)
+    const { htmlAttributes, bodyAttributes, metaAttributes, styleTag } = extractHelmet(appHTML, helmetContext, styleCollector)
     if (headElements?.innerHTML) {
       metaAttributes.unshift(headElements.innerHTML)
       headElements.innerHTML = ''

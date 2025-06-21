@@ -46,7 +46,7 @@ export class RemixAdapter implements IRouterAdapter<ViteReactSSGContext> {
 
     const appHTML = await renderStaticApp(app)
 
-    const { htmlAttributes, bodyAttributes, metaAttributes, styleTag } = extractHelmet(helmetContext, styleCollector)
+    const { htmlAttributes, bodyAttributes, metaAttributes, styleTag } = extractHelmet(appHTML, helmetContext, styleCollector)
 
     return { appHTML, htmlAttributes, bodyAttributes, metaAttributes, styleTag, routerContext }
   }
