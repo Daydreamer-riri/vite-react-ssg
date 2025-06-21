@@ -93,6 +93,7 @@ export class TanstackAdapter implements IRouterAdapter<ViteReactSSGContext> {
         abortController,
         context,
         cause,
+        index,
       } = _match!
 
       const search = router.options.parseSearch(url.search)
@@ -108,10 +109,11 @@ export class TanstackAdapter implements IRouterAdapter<ViteReactSSGContext> {
           ...url,
           search,
           searchStr,
-          state: {},
+          state: { __TSR_index: index },
         },
         cause,
         route: matchRoute,
+        parentMatchPromise: null as any,
       }
     }
 
