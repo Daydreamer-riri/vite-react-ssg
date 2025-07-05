@@ -1,7 +1,7 @@
 {
   "name": "vite-react-ssg",
   "type": "module",
-  "version": "0.8.7",
+  "version": "0.8.8",
   "packageManager": "pnpm@10.12.1",
   "description": "Static-site generation for React on Vite.",
   "author": "Riri <Daydreamerriri@outlook.com>",
