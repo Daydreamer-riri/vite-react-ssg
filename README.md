@@ -654,7 +654,7 @@ export default defineConfig({
 
 ## Roadmap
 
-- [ ] Support `react19`
+- [x] Support `react19`
 - [ ] no index.html mode
 
 ## Credits
