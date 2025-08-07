@@ -1,1 +1,0 @@
-export { installGlobals } from './fetch'
