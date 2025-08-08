@@ -109,7 +109,6 @@
     }
   },
   "dependencies": {
-    "@remix-run/web-fetch": "^4.4.2",
     "fs-extra": "^11.3.0",
     "html5parser": "^2.0.2",
     "jsdom": "^24.1.3",
