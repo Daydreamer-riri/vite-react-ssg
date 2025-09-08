@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import type { InlineConfig } from 'vite'
+import type { InlineConfig, PluginOption } from 'vite'
 import type { RouteRecord, ViteReactSSGContext, ViteReactSSGOptions } from '../types'
 import { createRequire } from 'node:module'
 import { dirname, isAbsolute, join, parse } from 'node:path'
@@ -45,8 +45,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
   const root = config.root || cwd
   const hash = Math.random().toString(36).substring(2, 12)
   const ssgOut = join(root, '.vite-react-ssg-temp', hash)
-  const outDir = config.build.outDir || 'dist'
-  const out = isAbsolute(outDir) ? outDir : join(root, outDir)
+  let outDir = config.build.outDir || 'dist'
   const configBase = config.base
 
   const mergedOptions = Object.assign({}, config.ssgOptions || {}, ssgOptions)
@@ -99,6 +98,12 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
     },
     customLogger: clientLogger,
     mode: config.mode,
+    plugins: [{
+      name: 'vite-react-ssg:get-oup-dir',
+      configResolved(resolvedConfig) {
+        outDir = resolvedConfig.build.outDir || 'dist'
+      },
+    } as PluginOption],
   }))
 
   let unmock = () => {}
@@ -173,6 +178,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
   if (beasties)
     console.log(`${gray('[vite-react-ssg]')} ${blue('Critical CSS generation enabled via `beasties`')}`)
 
+  const out = isAbsolute(outDir) ? outDir : join(root, outDir)
   const ssrManifest: SSRManifest = JSON.parse(await fs.readFile(join(out, ...dotVitedir, 'ssr-manifest.json'), 'utf-8'))
   const manifest: Manifest = JSON.parse(await fs.readFile(join(out, ...dotVitedir, 'manifest.json'), 'utf-8'))
   let indexHTML = await fs.readFile(join(out, htmlEntry), 'utf-8')
