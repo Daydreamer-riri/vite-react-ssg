@@ -124,7 +124,7 @@ export interface ViteReactSSGOptions<Context = ViteReactSSGContext> {
    */
   onPageRendered?: (route: string, renderedHTML: string, appCtx: Context) => Promise<string | null | undefined> | string | null | undefined
 
-  onFinished?: () => Promise<void> | void
+  onFinished?: (dir: string) => Promise<void> | void
   /**
    * The application's root container `id`.
    *

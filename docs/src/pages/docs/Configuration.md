@@ -242,8 +242,14 @@ The returned value will be used as the HTML of the route.
 #### type
 
 ```ts
-() => Promise<void>
+(dir: string) => Promise<void>
 ```
+
+A function that is run after generation is complete.
+It receives the build output directory as a string.
+
+You can use this to add, edit, or delete files in the output
+directory that you don't want to manage in React.
 
 ### rootContainerId
 
