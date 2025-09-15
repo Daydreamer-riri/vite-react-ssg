@@ -275,7 +275,7 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
 
   console.log(`\n${gray('[vite-react-ssg]')} ${green('Build finished.')}`)
 
-  await onFinished?.()
+  await onFinished?.(outDir)
 
   const waitInSeconds = 15
   const timeout = setTimeout(() => {

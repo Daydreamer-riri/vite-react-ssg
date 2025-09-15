@@ -585,7 +585,14 @@ interface ViteReactSSGOptions {
    */
   onPageRendered?: (route: string, renderedHTML: string, appCtx: ViteReactSSGContext<true>) => Promise<string | null | undefined> | string | null | undefined
 
-  onFinished?: () => Promise<void> | void
+  /**
+   * A function that is run after generation is complete.
+   * It receives the build output directory as a string.
+   *
+   * You can use this to add, edit, or delete files in the output
+   directory that you don't want to manage in React.
+   */
+  onFinished?: (dir: string) => Promise<void> | void
   /**
    * The application's root container `id`.
    *
