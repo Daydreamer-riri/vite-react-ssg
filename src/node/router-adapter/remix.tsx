@@ -26,7 +26,7 @@ export class RemixAdapter implements IRouterAdapter<ViteReactSSGContext> {
     const styleCollector = getStyleCollector ? await getStyleCollector() : null
     const helmetContext = {} as FilledContext
     let routerContext: StaticHandlerContext | null = null
-    const { StaticRouterProvider, createStaticHandler, createStaticRouter } = await import('react-router-dom/server.js')
+    const { StaticRouterProvider, createStaticHandler, createStaticRouter } = await import('react-router-dom/server')
     const { dataRoutes, query } = createStaticHandler([...routes], { basename: base })
     const _context = await query(request)
 
