@@ -6,6 +6,7 @@ import type { Connect } from 'vite'
 import type { IRouterAdapter } from './interface'
 import type { ViteReactSSGContext } from '~/types'
 import { HelmetProvider } from 'react-helmet-async'
+import { createStaticHandler, createStaticRouter, StaticRouterProvider } from 'react-router-dom/server'
 import { fromNodeRequest, stripDataParam, toNodeRequest } from '~/pollfill/node-adapter'
 import { removeLeadingSlash, withTrailingSlash } from '~/utils/path'
 import { convertRoutesToDataRoutes } from '~/utils/remix-router'
@@ -26,7 +27,6 @@ export class RemixAdapter implements IRouterAdapter<ViteReactSSGContext> {
     const styleCollector = getStyleCollector ? await getStyleCollector() : null
     const helmetContext = {} as FilledContext
     let routerContext: StaticHandlerContext | null = null
-    const { StaticRouterProvider, createStaticHandler, createStaticRouter } = await import('react-router-dom/server')
     const { dataRoutes, query } = createStaticHandler([...routes], { basename: base })
     const _context = await query(request)
 
