@@ -18,7 +18,6 @@ export default defineBuildConfig({
     'react-dom',
     'react-dom/server',
     'react-router-dom',
-    'react-router-dom/server',
     '@tanstack/react-router',
     '@tanstack/start/client',
     '@tanstack/start/server',

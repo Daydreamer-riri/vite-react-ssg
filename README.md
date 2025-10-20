@@ -1,4 +1,4 @@
-# Vite React SSG
+# Vite React SSG (for personal use)
 
 Static-site generation for React on Vite.
 

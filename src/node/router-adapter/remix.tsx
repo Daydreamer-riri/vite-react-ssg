@@ -1,12 +1,10 @@
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import type { FilledContext } from 'react-helmet-async'
-import type { LoaderFunction, LoaderFunctionArgs } from 'react-router-dom'
-import type { StaticHandlerContext } from 'react-router-dom/server'
+import type { LoaderFunction, LoaderFunctionArgs, StaticHandlerContext } from 'react-router-dom'
 import type { Connect } from 'vite'
 import type { IRouterAdapter } from './interface'
 import type { ViteReactSSGContext } from '~/types'
 import { HelmetProvider } from 'react-helmet-async'
-import { createStaticHandler, createStaticRouter, StaticRouterProvider } from 'react-router-dom/server'
 import { fromNodeRequest, stripDataParam, toNodeRequest } from '~/pollfill/node-adapter'
 import { removeLeadingSlash, withTrailingSlash } from '~/utils/path'
 import { convertRoutesToDataRoutes } from '~/utils/remix-router'
@@ -27,6 +25,7 @@ export class RemixAdapter implements IRouterAdapter<ViteReactSSGContext> {
     const styleCollector = getStyleCollector ? await getStyleCollector() : null
     const helmetContext = {} as FilledContext
     let routerContext: StaticHandlerContext | null = null
+    const { StaticRouterProvider, createStaticHandler, createStaticRouter } = await import('react-router-dom')
     const { dataRoutes, query } = createStaticHandler([...routes], { basename: base })
     const _context = await query(request)
 
@@ -79,8 +78,10 @@ export class RemixAdapter implements IRouterAdapter<ViteReactSSGContext> {
       res.end(`Route not found: ${routeId}`)
       return
     }
-    const loader = match.route.loader ?? await match.route.lazy?.()
-      .then(m => m.loader)
+    let loader
+    if (typeof match.route.lazy === 'function') {
+      loader = await match.route.lazy().then(m => m.loader)
+    }
     if (!loader) {
       res.statusCode = 200
       res.end(`There is no loader for the route: ${routeId}`)
@@ -108,10 +109,10 @@ export async function callRouteLoader({
   params: LoaderFunctionArgs['params']
   routeId: string
 }) {
-  const { json } = await import('react-router-dom')
   const result = await loader({
     request: stripDataParam(stripIndexParam(request)),
     params,
+    context: {},
   })
 
   if (result === undefined) {
@@ -121,7 +122,7 @@ export async function callRouteLoader({
     )
   }
 
-  return isResponse(result) ? result : json(result)
+  return isResponse(result) ? result : Response.json(result)
 }
 
 function isResponse(value: any): value is Response {

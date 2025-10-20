@@ -17,6 +17,6 @@
   "devDependencies": {
     "vite": "catalog:",
     "vite-plugin-pages": "^0.32.0",
-    "vite-react-ssg": "workspace:*"
+    "@mikhailsdv/vite-react-ssg": "workspace:*"
   }
 }

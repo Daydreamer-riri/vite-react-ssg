@@ -14,7 +14,7 @@
   "dependencies": {
     "shiki": "^1.11.1",
     "vite": "catalog:",
-    "vite-react-ssg": "workspace:*"
+    "@mikhailsdv/vite-react-ssg": "workspace:*"
   },
   "devDependencies": {
     "@tanstack/router-plugin": "^1.57.15",
