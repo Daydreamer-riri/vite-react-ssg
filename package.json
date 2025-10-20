@@ -70,7 +70,7 @@
     "dev": "unbuild --stub",
     "lint": "eslint .",
     "test": "pnpm --filter \"./examples/*\" --filter=\"!./examples/tanstack\" build && vitest run",
-    "prepublishOnly": "nr build",
+    "prepublishOnly": "npm run build",
     "release": "bumpp && npm publish",
     "start": "esno src/index.ts",
     "test:unit": "vitest run --project unit",
