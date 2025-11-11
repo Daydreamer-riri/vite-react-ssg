@@ -4,6 +4,13 @@ Static-site generation for React on Vite.
 
 See demo(also document): [docs](https://vite-react-ssg.netlify.app/)
 
+> [!IMPORTANT]
+> **React Router v7 Notice**
+>
+> React Router v7 now has built-in SSG support. If you are using React Router v7, we recommend using its official SSG capabilities for better official support and integration.
+>
+> `vite-react-ssg` will continue to maintain SSG functionality for React Router v6 users.
+
 **🎈 Support for [`@tanstack/router`](https://tanstack.com/router/latest/docs/framework/react/overview)
 and [`wouter`](https://github.com/molefrog/wouter) is in progress!**
 
