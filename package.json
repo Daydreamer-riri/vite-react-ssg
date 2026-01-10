@@ -140,7 +140,7 @@
     "react-router-dom": "^6.30.1",
     "rimraf": "5.0.1",
     "styled-components": "6.0.5",
-    "typescript": "^5.8.3",
+    "typescript": "^5.9.3",
     "unbuild": "^3.5.0",
     "vite": "catalog:",
     "vitest": "1.6.1"
