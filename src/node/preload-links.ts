@@ -13,11 +13,11 @@ export function renderPreloadLinks(document: Document, assets: Set<string>) {
 
 function renderPreloadLink(document: Document, file: string) {
   if (file.endsWith('.js')) {
-    appendLink(document, {
-      rel: 'modulepreload',
-      crossOrigin: '',
-      href: file,
-    })
+    // appendLink(document, {
+    //   rel: 'modulepreload',
+    //   crossOrigin: '',
+    //   href: file,
+    // })
   }
   else if (file.endsWith('.css')) {
     appendLink(document, {

@@ -1,7 +1,16 @@
-import type { RouteRecord, RouterOptions, ViteReactSSGClientOptions, ViteReactSSGContext } from '../types'
+import type {
+  RouteRecord,
+  RouterOptions,
+  ViteReactSSGClientOptions,
+  ViteReactSSGContext,
+} from '../types'
 import React from 'react'
 import { HelmetProvider } from 'react-helmet-async'
-import { createBrowserRouter, matchRoutes, RouterProvider } from 'react-router-dom'
+import {
+  createBrowserRouter,
+  matchRoutes,
+  RouterProvider,
+} from 'react-router-dom'
 import { hydrate, render } from '../pollfill/react-helper'
 import { documentReady } from '../utils/document-ready'
 import { joinUrlSegments, stripBase, withLeadingSlash } from '../utils/path'
@@ -22,18 +31,25 @@ export function ViteReactSSG(
     getStyleCollector = null,
   } = options
 
-  if (process.env.NODE_ENV === 'development' && ssrWhenDev !== undefined)
-    console.warn('[vite-react-ssg] `ssrWhenDev` option is no longer needed. If you want to use csr, just replace `vite-react-ssg dev` with `vite`.')
+  if (process.env.NODE_ENV === 'development' && ssrWhenDev !== undefined) {
+    console.warn(
+      '[vite-react-ssg] `ssrWhenDev` option is no longer needed. If you want to use csr, just replace `vite-react-ssg dev` with `vite`.',
+    )
+  }
 
   const isClient = typeof window !== 'undefined'
 
   const BASE_URL = routerOptions.basename ?? '/'
-  const { v7_startTransition = true, ...routerFeature } = routerOptions.future ?? {}
+  const { v7_startTransition = true, ...routerFeature }
+    = routerOptions.future ?? {}
 
   async function createRoot(client = false, routePath?: string) {
     const browserRouter = client
       ? createBrowserRouter(
-          convertRoutesToDataRoutes(routerOptions.routes, transformStaticLoaderRoute),
+          convertRoutesToDataRoutes(
+            routerOptions.routes,
+            transformStaticLoaderRoute,
+          ),
           { basename: BASE_URL, future: routerFeature },
         )
       : undefined
@@ -83,9 +99,10 @@ export function ViteReactSSG(
 
   if (isClient) {
     (async () => {
-      const container = typeof rootContainer === 'string'
-        ? document.querySelector(rootContainer)
-        : rootContainer
+      const container
+        = typeof rootContainer === 'string'
+          ? document.querySelector(rootContainer)
+          : rootContainer
 
       if (!container) {
         // @ts-expect-error global variable
@@ -94,9 +111,11 @@ export function ViteReactSSG(
         return
       }
 
-      const lazeMatches = matchRoutes(routerOptions.routes, window.location, BASE_URL)?.filter(
-        m => m.route.lazy,
-      )
+      const lazeMatches = matchRoutes(
+        routerOptions.routes,
+        window.location,
+        BASE_URL,
+      )?.filter(m => m.route.lazy)
 
       // Load the lazy matches and update the routes before creating your router
       // so we can hydrate the SSR-rendered content synchronously
@@ -118,7 +137,8 @@ export function ViteReactSSG(
           <RouterProvider router={router!} future={{ v7_startTransition }} />
         </HelmetProvider>
       )
-      const isSSR = document.querySelector('[data-server-rendered=true]') !== null
+      const isSSR
+        = document.querySelector('[data-server-rendered=true]') !== null
       if (!isSSR && process.env.NODE_ENV === 'development') {
         render(app, container, options)
       }
@@ -131,7 +151,8 @@ export function ViteReactSSG(
   return createRoot
 
   function transformStaticLoaderRoute(route: RouteRecord) {
-    const isSSR = document.querySelector('[data-server-rendered=true]') !== null
+    const isSSR
+      = document.querySelector('[data-server-rendered=true]') !== null
     if (!isSSR) {
       return route
     }
@@ -139,18 +160,21 @@ export function ViteReactSSG(
       if (process.env.NODE_ENV === 'development') {
         const routeId = encodeURIComponent(route.id!)
         const dataQuery = `_data=${routeId}`
-        const url = request.url.includes('?') ? `${request.url}&${dataQuery}` : `${request.url}?${dataQuery}`
+        const url = request.url.includes('?')
+          ? `${request.url}&${dataQuery}`
+          : `${request.url}?${dataQuery}`
         return fetch(url)
       }
       else {
-        let staticLoadData: any
-        if (window.__VITE_REACT_SSG_STATIC_LOADER_DATA__) {
-          staticLoadData = window.__VITE_REACT_SSG_STATIC_LOADER_DATA__
-        }
-        else {
-          const manifestUrl = joinUrlSegments(BASE_URL, `static-loader-data-manifest-${window.__VITE_REACT_SSG_HASH__}.json`)
-          staticLoadData = await (await fetch(withLeadingSlash(manifestUrl))).json()
-          window.__VITE_REACT_SSG_STATIC_LOADER_DATA__ = staticLoadData
+        // Load manifest index if not cached
+        if (!window.__VITE_REACT_SSG_STATIC_LOADER_MANIFEST__) {
+          const manifestUrl = joinUrlSegments(
+            BASE_URL,
+            `static-loader-data-manifest-${window.__VITE_REACT_SSG_HASH__}.json`,
+          )
+          window.__VITE_REACT_SSG_STATIC_LOADER_MANIFEST__ = await (
+            await fetch(withLeadingSlash(manifestUrl))
+          ).json()
         }
 
         const { url } = request
@@ -158,7 +182,30 @@ export function ViteReactSSG(
         if (BASE_URL !== '/') {
           pathname = stripBase(pathname, BASE_URL)
         }
-        const routeData = staticLoadData?.[pathname]?.[route.id!]
+
+        const manifest = window.__VITE_REACT_SSG_STATIC_LOADER_MANIFEST__
+        const dataFilePath = manifest?.[pathname]
+
+        // No loader data for this route
+        if (!dataFilePath) {
+          return null
+        }
+
+        // Initialize data cache if needed
+        if (!window.__VITE_REACT_SSG_STATIC_LOADER_DATA__) {
+          window.__VITE_REACT_SSG_STATIC_LOADER_DATA__ = {}
+        }
+
+        // Load route data file if not cached
+        if (!window.__VITE_REACT_SSG_STATIC_LOADER_DATA__[pathname]) {
+          const dataUrl = joinUrlSegments(BASE_URL, dataFilePath)
+          window.__VITE_REACT_SSG_STATIC_LOADER_DATA__[pathname] = await (
+            await fetch(withLeadingSlash(dataUrl))
+          ).json()
+        }
+
+        const routeData
+          = window.__VITE_REACT_SSG_STATIC_LOADER_DATA__[pathname]?.[route.id!]
         return routeData ?? null
       }
     }
@@ -169,7 +216,13 @@ export function ViteReactSSG(
 
 declare global {
   interface Window {
-    __VITE_REACT_SSG_STATIC_LOADER_DATA__: any
+    /** Manifest index: route path -> data file path */
+    __VITE_REACT_SSG_STATIC_LOADER_MANIFEST__: Record<string, string>
+    /** Cached loader data: route path -> loader data */
+    __VITE_REACT_SSG_STATIC_LOADER_DATA__: Record<
+      string,
+      Record<string, unknown>
+    >
     __VITE_REACT_SSG_HASH__: string
     __VITE_REACT_SSG_CONTEXT__: ViteReactSSGContext<true>
   }

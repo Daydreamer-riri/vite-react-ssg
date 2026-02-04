@@ -1,5 +1,12 @@
-import type { AnyContext, AnyRouter, LoaderFnContext } from '@tanstack/react-router'
-import type { ViteReactSSGContext as BaseViteReactSSGContext, ViteReactSSGClientOptions } from '../types'
+import type {
+  AnyContext,
+  AnyRouter,
+  LoaderFnContext,
+} from '@tanstack/react-router'
+import type {
+  ViteReactSSGContext as BaseViteReactSSGContext,
+  ViteReactSSGClientOptions,
+} from '../types'
 import { RouterProvider } from '@tanstack/react-router'
 import { Meta } from '@tanstack/start'
 import React from 'react'
@@ -8,7 +15,10 @@ import { hydrate, render } from '../pollfill/react-helper'
 import { documentReady } from '../utils/document-ready'
 import { joinUrlSegments, stripBase, withLeadingSlash } from '../utils/path'
 import { deserializeState } from '../utils/state'
-import { convertRouteTreeToRouteOption, META_CONTAINER_ID } from '../utils/tanstack-router'
+import {
+  convertRouteTreeToRouteOption,
+  META_CONTAINER_ID,
+} from '../utils/tanstack-router'
 
 export * from '../types'
 
@@ -18,7 +28,10 @@ export interface RouterOptions {
   basename?: string
 }
 
-export type ViteReactSSGContext<HasRouter extends boolean = true> = Omit<BaseViteReactSSGContext, 'router' | 'routerType'> & {
+export type ViteReactSSGContext<HasRouter extends boolean = true> = Omit<
+  BaseViteReactSSGContext,
+  'router' | 'routerType'
+> & {
   router: HasRouter extends true ? AnyRouter : undefined
   routeTree?: AnyRouter['routeTree']
   routerType: 'tanstack'
@@ -31,7 +44,9 @@ export function Experimental_ViteReactSSG(
   fn?: (context: ViteReactSSGContext<true>) => Promise<void> | void,
   options: ViteReactSSGClientOptions = {},
 ) {
-  throw new Error('[vite-react-ssg] Sorry, this Version has no support for tanstack router. Please contact me via GitHub issue if you need this feature.')
+  throw new Error(
+    '[vite-react-ssg] Sorry, this Version has no support for tanstack router. Please contact me via GitHub issue if you need this feature.',
+  )
   const {
     transformState,
     rootContainer = '#root',
@@ -39,8 +54,11 @@ export function Experimental_ViteReactSSG(
     getStyleCollector = null,
   } = options
 
-  if (process.env.NODE_ENV === 'development' && ssrWhenDev !== undefined)
-    console.warn('[vite-react-ssg] `ssrWhenDev` option is no longer needed. If you want to use csr, just replace `vite-react-ssg dev` with `vite`.')
+  if (process.env.NODE_ENV === 'development' && ssrWhenDev !== undefined) {
+    console.warn(
+      '[vite-react-ssg] `ssrWhenDev` option is no longer needed. If you want to use csr, just replace `vite-react-ssg dev` with `vite`.',
+    )
+  }
 
   const isClient = typeof window !== 'undefined'
 
@@ -69,18 +87,29 @@ export function Experimental_ViteReactSSG(
       client,
       client
         ? node => {
-          const isSSR = document.querySelector('[data-server-rendered=true]') !== null
+          const isSSR
+            = document.querySelector('[data-server-rendered=true]') !== null
           if (!isSSR)
             return
 
-          // eslint-disable-next-line ts/no-empty-object-type
-          node.options.loader = async (ctx: LoaderFnContext<any, '__root__', {}, {}, AnyContext, AnyContext>) => {
+          node.options.loader = async (
+            ctx: LoaderFnContext<
+                any,
+                '__root__',
+                {},
+                {},
+                AnyContext,
+                AnyContext
+              >,
+          ) => {
             let pathname = ctx.location.pathname
             if (process.env.NODE_ENV === 'development') {
               const routeId = encodeURIComponent(node.id)
               const dataQuery = `_data=${routeId}`
               const href = ctx.location.href
-              const url = href.includes('?') ? `${href}&${dataQuery}` : `${href}?${dataQuery}`
+              const url = href.includes('?')
+                ? `${href}&${dataQuery}`
+                : `${href}?${dataQuery}`
               const res = await fetch(url)
               const header = res.headers
               const contentType = header.get('content-type')
@@ -93,14 +122,21 @@ export function Experimental_ViteReactSSG(
               staticLoadData = window.__VITE_REACT_SSG_STATIC_LOADER_DATA__
             }
             else {
-              const manifestUrl = joinUrlSegments(BASE_URL, `static-loader-data-manifest-${window.__VITE_REACT_SSG_HASH__}.json`)
-              staticLoadData = await (await fetch(withLeadingSlash(manifestUrl))).json()
+              const manifestUrl = joinUrlSegments(
+                BASE_URL,
+                  `static-loader-data-manifest-${window.__VITE_REACT_SSG_HASH__}.json`,
+              )
+              staticLoadData = await (
+                await fetch(withLeadingSlash(manifestUrl))
+              ).json()
               window.__VITE_REACT_SSG_STATIC_LOADER_DATA__ = staticLoadData
             }
             if (BASE_URL !== '/') {
               pathname = stripBase(pathname, BASE_URL)
             }
-            const routeData = staticLoadData?.[pathname]?.find((item: { id: string }) => item.id === node.id)
+            const routeData = staticLoadData?.[pathname]?.find(
+              (item: { id: string }) => item.id === node.id,
+            )
             return routeData?.loaderData ?? null
           }
         }
@@ -139,7 +175,9 @@ export function Experimental_ViteReactSSG(
     if (client) {
       await documentReady()
       // @ts-expect-error global variable
-      context.initialState = transformState?.(window.__INITIAL_STATE__ || {}) || deserializeState(window.__INITIAL_STATE__)
+      context.initialState
+        = transformState?.(window.__INITIAL_STATE__ || {})
+          || deserializeState(window.__INITIAL_STATE__)
     }
 
     await fn?.(context)
@@ -159,9 +197,10 @@ export function Experimental_ViteReactSSG(
 
   if (isClient) {
     (async () => {
-      const container = typeof rootContainer === 'string'
-        ? document.querySelector(rootContainer)
-        : rootContainer
+      const container
+        = typeof rootContainer === 'string'
+          ? document.querySelector(rootContainer)
+          : rootContainer
 
       if (!container) {
         // @ts-expect-error global variable
@@ -174,7 +213,8 @@ export function Experimental_ViteReactSSG(
       window.__VITE_REACT_SSG_CONTEXT__ = context as any
 
       const { router } = context
-      const isSSR = document.querySelector('[data-server-rendered=true]') !== null
+      const isSSR
+        = document.querySelector('[data-server-rendered=true]') !== null
       if (!isSSR && process.env.NODE_ENV === 'development') {
         render(
           <HelmetProvider>
@@ -201,7 +241,13 @@ export function Experimental_ViteReactSSG(
 
 declare global {
   interface Window {
-    __VITE_REACT_SSG_STATIC_LOADER_DATA__: any
+    /** Manifest index: route path -> data file path */
+    __VITE_REACT_SSG_STATIC_LOADER_MANIFEST__: Record<string, string>
+    /** Cached loader data: route path -> loader data */
+    __VITE_REACT_SSG_STATIC_LOADER_DATA__: Record<
+      string,
+      Record<string, unknown>
+    >
     __VITE_REACT_SSG_HASH__: string
     // eslint-disable-next-line ts/ban-ts-comment
     // @ts-ignore

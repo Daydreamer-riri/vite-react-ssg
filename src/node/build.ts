@@ -1,14 +1,28 @@
 /* eslint-disable no-console */
 import type { InlineConfig, PluginOption } from 'vite'
-import type { RouteRecord, ViteReactSSGContext, ViteReactSSGOptions } from '../types'
+import type {
+  RouteRecord,
+  ViteReactSSGContext,
+  ViteReactSSGOptions,
+} from '../types'
 import { createRequire } from 'node:module'
 import { dirname, isAbsolute, join, parse } from 'node:path'
 import fs from 'fs-extra'
 import { JSDOM } from 'jsdom'
 import { blue, cyan, dim, gray, green, red, yellow } from 'kolorist'
 import PQueue from 'p-queue'
-import { createLogger, mergeConfig, resolveConfig, build as viteBuild, version as viteVersion } from 'vite'
-import { removeLeadingSlash, withLeadingSlash, withTrailingSlash } from '../utils/path'
+import {
+  createLogger,
+  mergeConfig,
+  resolveConfig,
+  build as viteBuild,
+  version as viteVersion,
+} from 'vite'
+import {
+  removeLeadingSlash,
+  withLeadingSlash,
+  withTrailingSlash,
+} from '../utils/path'
 import { serializeState } from '../utils/state'
 import { collectAssets } from './assets'
 import { getBeastiesOrCritters } from './critial'
@@ -29,17 +43,44 @@ export interface ManifestItem {
 
 export type Manifest = Record<string, ManifestItem>
 
-export type StaticLoaderDataManifest = Record<string, Record<string, unknown> | undefined>
+export type StaticLoaderDataManifest = Record<string, string>
 
-export type CreateRootFactory = (client: boolean, routePath?: string) => Promise<ViteReactSSGContext<true> | ViteReactSSGContext<false>>
+export type CreateRootFactory = (
+  client: boolean,
+  routePath?: string,
+) => Promise<ViteReactSSGContext<true> | ViteReactSSGContext<false>>
 
-function DefaultIncludedRoutes(paths: string[], _routes: Readonly<RouteRecord[]>) {
+/**
+ * Convert route path to loader data file path
+ * @example '/' -> 'static-loader-data/index.json'
+ * @example '/about' -> 'static-loader-data/about.json'
+ * @example '/docs/api' -> 'static-loader-data/docs/api.json'
+ * @example '/docs/' -> 'static-loader-data/docs/index.json'
+ */
+function getLoaderDataFilePath(routePath: string): string {
+  const normalized
+    = routePath === '/'
+      ? '/index'
+      : routePath.endsWith('/')
+        ? `${routePath}index`
+        : routePath
+  return `static-loader-data${normalized}.json`
+}
+
+function DefaultIncludedRoutes(
+  paths: string[],
+  _routes: Readonly<RouteRecord[]>,
+) {
   // ignore dynamic routes
   return paths.filter(i => !i.includes(':') && !i.includes('*'))
 }
 
-export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteConfig: InlineConfig = {}) {
-  const mode = process.env.MODE || process.env.NODE_ENV || ssgOptions.mode || 'production'
+export async function build(
+  ssgOptions: Partial<ViteReactSSGOptions> = {},
+  viteConfig: InlineConfig = {},
+) {
+  const mode
+    = process.env.MODE || process.env.NODE_ENV || ssgOptions.mode || 'production'
   const config = await resolveConfig(viteConfig, 'build', mode, mode)
   const cwd = process.cwd()
   const root = config.root || cwd
@@ -66,7 +107,8 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
     rootContainerId = 'root',
   }: ViteReactSSGOptions = mergedOptions
 
-  const beastiesOptions = mergedOptions.beastiesOptions ?? mergedOptions.crittersOptions ?? {}
+  const beastiesOptions
+    = mergedOptions.beastiesOptions ?? mergedOptions.crittersOptions ?? {}
 
   if (fs.existsSync(ssgOut))
     await fs.remove(ssgOut)
@@ -74,37 +116,45 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
   const clientLogger = createLogger()
   const loggerWarn = clientLogger.warn
   clientLogger.warn = (msg: string, options) => {
-    if (msg.includes('vite:resolve') && msg.includes('externalized for browser compatibility'))
+    if (
+      msg.includes('vite:resolve')
+      && msg.includes('externalized for browser compatibility')
+    ) {
       return
+    }
     loggerWarn(msg, options)
   }
   // client
   buildLog('Build for client...')
-  await viteBuild(mergeConfig(viteConfig, {
-    build: {
-      manifest: true,
-      ssrManifest: true,
-      rollupOptions: {
-        input: {
-          app: join(root, htmlEntry || './index.html'),
-        },
-        // @ts-expect-error rollup type
-        onLog(level, log, handler) {
-          if (log.message.includes('react-helmet-async'))
-            return
-          handler(level, log)
+  await viteBuild(
+    mergeConfig(viteConfig, {
+      build: {
+        manifest: true,
+        ssrManifest: true,
+        rollupOptions: {
+          input: {
+            app: join(root, htmlEntry || './index.html'),
+          },
+          // @ts-expect-error rollup type
+          onLog(level, log, handler) {
+            if (log.message.includes('react-helmet-async'))
+              return
+            handler(level, log)
+          },
         },
       },
-    },
-    customLogger: clientLogger,
-    mode: config.mode,
-    plugins: [{
-      name: 'vite-react-ssg:get-oup-dir',
-      configResolved(resolvedConfig) {
-        outDir = resolvedConfig.build.outDir || 'dist'
-      },
-    } as PluginOption],
-  }))
+      customLogger: clientLogger,
+      mode: config.mode,
+      plugins: [
+        {
+          name: 'vite-react-ssg:get-oup-dir',
+          configResolved(resolvedConfig) {
+            outDir = resolvedConfig.build.outDir || 'dist'
+          },
+        } as PluginOption,
+      ],
+    }),
+  )
 
   let unmock = () => {}
   if (mock) {
@@ -117,48 +167,59 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
   buildLog('Build for server...')
   process.env.VITE_SSG = 'true'
   const ssrEntry = await resolveAlias(config, entry)
-  await viteBuild(mergeConfig(viteConfig, {
-    build: {
-      ssr: ssrEntry,
-      manifest: true,
-      outDir: ssgOut,
-      minify: false,
-      cssCodeSplit: false,
-      rollupOptions: {
-        output: format === 'esm'
-          ? {
-              entryFileNames: '[name].mjs',
-              format: 'esm',
-            }
-          : {
-              entryFileNames: '[name].cjs',
-              format: 'cjs',
-            },
-        // @ts-expect-error rollup type
-        onLog(level, log, handler) {
-          if (log.message.includes('react-helmet-async'))
-            return
-          handler(level, log)
+  await viteBuild(
+    mergeConfig(viteConfig, {
+      build: {
+        ssr: ssrEntry,
+        manifest: true,
+        outDir: ssgOut,
+        minify: false,
+        cssCodeSplit: false,
+        rollupOptions: {
+          output:
+            format === 'esm'
+              ? {
+                  entryFileNames: '[name].mjs',
+                  format: 'esm',
+                }
+              : {
+                  entryFileNames: '[name].cjs',
+                  format: 'cjs',
+                },
+          // @ts-expect-error rollup type
+          onLog(level, log, handler) {
+            if (log.message.includes('react-helmet-async'))
+              return
+            handler(level, log)
+          },
         },
       },
-    },
-    mode: config.mode,
-  }))
+      mode: config.mode,
+    }),
+  )
 
-  const prefix = (format === 'esm' && process.platform === 'win32') ? 'file://' : ''
+  const prefix
+    = format === 'esm' && process.platform === 'win32' ? 'file://' : ''
   const ext = format === 'esm' ? '.mjs' : '.cjs'
   /**
    * `join('file://')` will be equal to `'file:\'`, which is not the correct file protocol and will fail to be parsed under bun.
    * It is changed to '+' splicing here.
    */
-  const serverEntry = prefix + join(ssgOut, parse(ssrEntry).name + ext).replace(/\\/g, '/')
-  const serverManifest: Manifest = JSON.parse(await fs.readFile(join(ssgOut, ...dotVitedir, 'manifest.json'), 'utf-8'))
+  const serverEntry
+    = prefix + join(ssgOut, parse(ssrEntry).name + ext).replace(/\\/g, '/')
+  const serverManifest: Manifest = JSON.parse(
+    await fs.readFile(join(ssgOut, ...dotVitedir, 'manifest.json'), 'utf-8'),
+  )
 
   const _require = createRequire(import.meta.url)
 
-  const { createRoot, includedRoutes: serverEntryIncludedRoutes }: { createRoot: CreateRootFactory, includedRoutes: ViteReactSSGOptions['includedRoutes'] } = format === 'esm'
-    ? await import(serverEntry)
-    : _require(serverEntry)
+  const {
+    createRoot,
+    includedRoutes: serverEntryIncludedRoutes,
+  }: {
+    createRoot: CreateRootFactory
+    includedRoutes: ViteReactSSGOptions['includedRoutes']
+  } = format === 'esm' ? await import(serverEntry) : _require(serverEntry)
   const includedRoutes = serverEntryIncludedRoutes || configIncludedRoutes
   const { routes } = await createRoot(false)
 
@@ -174,13 +235,26 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
 
   buildLog('Rendering Pages...', routesPaths.length)
 
-  const beasties = beastiesOptions !== false ? await getBeastiesOrCritters(outDir, { publicPath: configBase, ...beastiesOptions }) : undefined
-  if (beasties)
-    console.log(`${gray('[vite-react-ssg]')} ${blue('Critical CSS generation enabled via `beasties`')}`)
+  const beasties
+    = beastiesOptions !== false
+      ? await getBeastiesOrCritters(outDir, {
+          publicPath: configBase,
+          ...beastiesOptions,
+        })
+      : undefined
+  if (beasties) {
+    console.log(
+      `${gray('[vite-react-ssg]')} ${blue('Critical CSS generation enabled via `beasties`')}`,
+    )
+  }
 
   const out = isAbsolute(outDir) ? outDir : join(root, outDir)
-  const ssrManifest: SSRManifest = JSON.parse(await fs.readFile(join(out, ...dotVitedir, 'ssr-manifest.json'), 'utf-8'))
-  const manifest: Manifest = JSON.parse(await fs.readFile(join(out, ...dotVitedir, 'manifest.json'), 'utf-8'))
+  const ssrManifest: SSRManifest = JSON.parse(
+    await fs.readFile(join(out, ...dotVitedir, 'ssr-manifest.json'), 'utf-8'),
+  )
+  const manifest: Manifest = JSON.parse(
+    await fs.readFile(join(out, ...dotVitedir, 'manifest.json'), 'utf-8'),
+  )
   let indexHTML = await fs.readFile(join(out, htmlEntry), 'utf-8')
   fs.rmSync(join(out, htmlEntry))
   indexHTML = rewriteScripts(indexHTML, script)
@@ -188,23 +262,66 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
   const queue = new PQueue({ concurrency })
   const crittersQueue = new PQueue({ concurrency: 1 })
 
-  const staticLoaderDataManifest: Record<string, unknown> = {}
+  const staticLoaderDataManifest: StaticLoaderDataManifest = {}
+  let loaderDataFileCount = 0
 
   for (const path of routesPaths) {
     queue.add(async () => {
       try {
-        const appCtx = await createRoot(false, path) as ViteReactSSGContext<true>
-        const { base, routes, triggerOnSSRAppRendered, transformState = serializeState, app, routerType } = appCtx
+        const appCtx = (await createRoot(
+          false,
+          path,
+        )) as ViteReactSSGContext<true>
+        const {
+          base,
+          routes,
+          triggerOnSSRAppRendered,
+          transformState = serializeState,
+          app,
+          routerType,
+        } = appCtx
 
-        const transformedIndexHTML = (await onBeforePageRender?.(path, indexHTML, appCtx)) || indexHTML
+        const transformedIndexHTML
+          = (await onBeforePageRender?.(path, indexHTML, appCtx)) || indexHTML
 
         const fetchUrl = `${withTrailingSlash(base)}${removeLeadingSlash(path)}`
 
         const adapter = getAdapter(appCtx)
-        const assets = (!app && routerType === 'remix') ? await collectAssets({ routes: [...routes], locationArg: fetchUrl, base, serverManifest, manifest, ssrManifest }) : new Set<string>()
+        const assets
+          = !app && routerType === 'remix'
+            ? await collectAssets({
+                routes: [...routes],
+                locationArg: fetchUrl,
+                base,
+                serverManifest,
+                manifest,
+                ssrManifest,
+              })
+            : new Set<string>()
 
-        const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag, routerContext } = await adapter.render(path)
-        staticLoaderDataManifest[withLeadingSlash(path)] = routerContext?.loaderData
+        const {
+          appHTML,
+          bodyAttributes,
+          htmlAttributes,
+          metaAttributes,
+          styleTag,
+          routerContext,
+        } = await adapter.render(path)
+
+        // Write loader data to separate file if exists
+        const loaderData = routerContext?.loaderData as
+          | Record<string, unknown>
+          | undefined
+        if (loaderData && Object.keys(loaderData).length > 0) {
+          const loaderDataFilePath = getLoaderDataFilePath(path)
+          await fs.ensureDir(join(out, dirname(loaderDataFilePath)))
+          await fs.writeFile(
+            join(out, loaderDataFilePath),
+            JSON.stringify(loaderData),
+          )
+          staticLoaderDataManifest[withLeadingSlash(path)] = loaderDataFilePath
+          loaderDataFileCount++
+        }
 
         await triggerOnSSRAppRendered?.(path, appHTML, appCtx)
 
@@ -224,10 +341,18 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
 
         const html = jsdom.serialize()
         let transformed = (await onPageRendered?.(path, html, appCtx)) || html
-        transformed = transformed.replace(SCRIPT_COMMENT_PLACEHOLDER, `window.__VITE_REACT_SSG_HASH__ = '${hash}'`)
+        transformed = transformed.replace(
+          SCRIPT_COMMENT_PLACEHOLDER,
+          `window.__VITE_REACT_SSG_HASH__ = '${hash}'`,
+        )
         if (beasties) {
-          transformed = (await crittersQueue.add(() => beasties.process(transformed)))!
-          transformed = transformed.replace(/<link\srel="stylesheet"/g, '<link rel="stylesheet" crossorigin')
+          transformed = (await crittersQueue.add(() =>
+            beasties.process(transformed),
+          ))!
+          transformed = transformed.replace(
+            /<link\srel="stylesheet"/g,
+            '<link rel="stylesheet" crossorigin',
+          )
         }
 
         if (styleTag)
@@ -237,11 +362,13 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
 
         const relativeRouteFile = `${(path.endsWith('/')
           ? `${path}index`
-          : path).replace(/^\//g, '')}.html`
+          : path
+        ).replace(/^\//g, '')}.html`
 
-        const filename = dirStyle === 'nested'
-          ? join(path.replace(/^\//g, ''), 'index.html')
-          : relativeRouteFile
+        const filename
+          = dirStyle === 'nested'
+            ? join(path.replace(/^\//g, ''), 'index.html')
+            : relativeRouteFile
 
         await fs.ensureDir(join(out, dirname(filename)))
         await fs.writeFile(join(out, filename), formatted, 'utf-8')
@@ -250,16 +377,25 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
         )
       }
       catch (err: any) {
-        throw new Error(`${gray('[vite-react-ssg]')} ${red(`Error on page: ${cyan(path)}`)}\n${err.stack}`)
+        throw new Error(
+          `${gray('[vite-react-ssg]')} ${red(`Error on page: ${cyan(path)}`)}\n${err.stack}`,
+        )
       }
     })
   }
 
   await queue.start().onIdle()
 
-  buildLog('Generating static loader data manifest...')
-  const staticLoaderDataManifestString = JSON.stringify(staticLoaderDataManifest, null, 0)
-  await fs.writeFile(join(out, `static-loader-data-manifest-${hash}.json`), staticLoaderDataManifestString)
+  buildLog('Generating static loader data...', loaderDataFileCount)
+  const staticLoaderDataManifestString = JSON.stringify(
+    staticLoaderDataManifest,
+    null,
+    0,
+  )
+  await fs.writeFile(
+    join(out, `static-loader-data-manifest-${hash}.json`),
+    staticLoaderDataManifestString,
+  )
   config.logger.info(
     `${dim(`${outDir}/`)}${cyan(`static-loader-data-manifest-${hash}.json`.padEnd(15, ' '))}  ${dim(getSize(staticLoaderDataManifestString))}`,
   )
@@ -267,7 +403,8 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
   await fs.remove(join(root, '.vite-react-ssg-temp'))
 
   unmock()
-  const pwaPlugin: { disabled: boolean, generateSW: () => Promise<unknown> } = config.plugins.find(i => i.name === 'vite-plugin-pwa')?.api
+  const pwaPlugin: { disabled: boolean, generateSW: () => Promise<unknown> }
+    = config.plugins.find(i => i.name === 'vite-plugin-pwa')?.api
   if (pwaPlugin && !pwaPlugin.disabled && pwaPlugin.generateSW) {
     buildLog('Regenerate PWA...')
     await pwaPlugin.generateSW()
@@ -279,7 +416,9 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
 
   const waitInSeconds = 15
   const timeout = setTimeout(() => {
-    console.log(`${gray('[vite-react-ssg]')} ${yellow(`Build process still running after ${waitInSeconds}s`)}.  There might be something misconfigured in your setup. Force exit.`)
+    console.log(
+      `${gray('[vite-react-ssg]')} ${yellow(`Build process still running after ${waitInSeconds}s`)}.  There might be something misconfigured in your setup. Force exit.`,
+    )
     process.exit(0)
   }, waitInSeconds * 1000)
   timeout.unref()
@@ -288,10 +427,16 @@ export async function build(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteC
 function rewriteScripts(indexHTML: string, mode?: string) {
   if (!mode || mode === 'sync')
     return indexHTML
-  return indexHTML.replace(/<script type="module" /g, `<script type="module" ${mode} `)
+  return indexHTML.replace(
+    /<script type="module" /g,
+    `<script type="module" ${mode} `,
+  )
 }
 
-async function formatHtml(html: string, formatting: ViteReactSSGOptions['formatting']) {
+async function formatHtml(
+  html: string,
+  formatting: ViteReactSSGOptions['formatting'],
+) {
   if (formatting === 'prettify') {
     try {
       // @ts-expect-error dynamic import
@@ -299,10 +444,16 @@ async function formatHtml(html: string, formatting: ViteReactSSGOptions['formatt
       // @ts-expect-error dynamic import
       const parserHTML = (await import('prettier/esm/parser-html.mjs')).default
 
-      return prettier.format(html, { semi: false, parser: 'html', plugins: [parserHTML] })
+      return prettier.format(html, {
+        semi: false,
+        parser: 'html',
+        plugins: [parserHTML],
+      })
     }
     catch (e: any) {
-      console.error(`${gray('[vite-react-ssg]')} ${red(`Error formatting html: ${e?.message}`)}`)
+      console.error(
+        `${gray('[vite-react-ssg]')} ${red(`Error formatting html: ${e?.message}`)}`,
+      )
       return html
     }
   }
