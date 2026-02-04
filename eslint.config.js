@@ -8,6 +8,7 @@ export default ririd({
     'eslint-comments/no-unlimited-disable': 'off',
     'pnpm/json-enforce-catalog': 'off',
     'pnpm/json-prefer-workspace-settings': 'off',
+    'react/prefer-namespace-import': 'off',
   },
 }, {
   files: ['**/*.md/**/*.html'],

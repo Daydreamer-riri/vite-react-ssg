@@ -31,6 +31,7 @@ export function Experimental_ViteReactSSG(
   fn?: (context: ViteReactSSGContext<true>) => Promise<void> | void,
   options: ViteReactSSGClientOptions = {},
 ) {
+  throw new Error('[vite-react-ssg] Sorry, this Version has no support for tanstack router. Please contact me via GitHub issue if you need this feature.')
   const {
     transformState,
     rootContainer = '#root',
@@ -186,7 +187,7 @@ export function Experimental_ViteReactSSG(
       else {
         hydrate(
           <HelmetProvider>
-            <StartClient router={router} />
+            <RouterClient router={router} />
           </HelmetProvider>,
           container,
           options,

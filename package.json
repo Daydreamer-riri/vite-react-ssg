@@ -69,7 +69,7 @@
     "build": "unbuild",
     "dev": "unbuild --stub",
     "lint": "eslint .",
-    "test": "pnpm -r --filter=./examples/* build && vitest run",
+    "test": "pnpm -r build && vitest run",
     "prepublishOnly": "nr build",
     "release": "bumpp && npm publish",
     "start": "esno src/index.ts",
