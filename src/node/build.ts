@@ -64,7 +64,7 @@ function getLoaderDataFilePath(routePath: string): string {
       : routePath.endsWith('/')
         ? `${routePath}index`
         : routePath
-  return `static-loader-data${normalized}.json`
+  return `static-loader-data${withLeadingSlash(normalized)}.json`
 }
 
 function DefaultIncludedRoutes(
