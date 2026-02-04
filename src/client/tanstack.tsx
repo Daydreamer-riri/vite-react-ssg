@@ -1,7 +1,7 @@
 import type { AnyContext, AnyRouter, LoaderFnContext } from '@tanstack/react-router'
 import type { ViteReactSSGContext as BaseViteReactSSGContext, ViteReactSSGClientOptions } from '../types'
 import { RouterProvider } from '@tanstack/react-router'
-import { Meta, StartClient } from '@tanstack/start'
+import { Meta } from '@tanstack/start'
 import React from 'react'
 import { HelmetProvider } from 'react-helmet-async'
 import { hydrate, render } from '../pollfill/react-helper'

@@ -83,7 +83,7 @@ export async function printServerInfo(server: ViteDevServer, onlyUrl = false) {
   // @ts-expect-error global var
   if (globalThis.__ssr_start_time) {
     ssrReadyMessage
-        += ` ready in ${reset(bold(`${Math.round(
+      += ` ready in ${reset(bold(`${Math.round(
           // @ts-expect-error global var
           performance.now() - globalThis.__ssr_start_time,
         )}ms`))}`

@@ -1,7 +1,8 @@
+import type { Connect, ModuleNode, PluginOption, ViteDevServer } from 'vite'
 import type { ViteReactSSGContext as ViteReactSSGTanstackContext } from '../../client/tanstack'
 import type { ViteReactSSGContext, ViteReactSSGOptions } from '../../types'
 import type { CreateRootFactory } from '../build'
-import { type Connect, type ModuleNode, type PluginOption, send, type ViteDevServer } from 'vite'
+import { send } from 'vite'
 import { joinUrlSegments, stripBase } from '~/utils/path'
 import { createLink, renderHTML } from '../html'
 import { getAdapter } from '../router-adapter'
@@ -47,7 +48,7 @@ export function ssrServerPlugin({
           const transformedIndexHTML = (await onBeforePageRender?.(url, indexHTML, appCtx as any)) || indexHTML
 
           const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag }
-                    = await adapter.render(stripBase(pathname, base))
+            = await adapter.render(stripBase(pathname, base))
 
           metaAttributes.push(styleTag)
           const mods = await Promise.all(

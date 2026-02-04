@@ -1,7 +1,7 @@
 import type { i18n } from 'i18next'
 import type { ReactNode } from 'react'
 import { createInstance } from 'i18next'
-import { useContext, useEffect, useRef } from 'react'
+import { use, useEffect, useRef } from 'react'
 import { I18nContext, I18nextProvider } from 'react-i18next'
 import { useLocation, useNavigate } from 'react-router-dom'
 import './@types/i18next.d.ts'
@@ -58,7 +58,7 @@ const lngs = Object.keys(resources)
 export function useSyncLng() {
   const { pathname } = useLocation()
   const currentLng = pathname.split('/')[1]
-  const { i18n } = useContext(I18nContext)
+  const { i18n } = use(I18nContext)
 
   const nav = useNavigate()
   useEffect(() => {
@@ -95,7 +95,7 @@ export function useI18n() {
     nav({ pathname: pathname.replace(`/${originLng}`, `/${lng}`), search }, { replace: true })
   }
 
-  const { i18n } = useContext(I18nContext)
+  const { i18n } = use(I18nContext)
 
   return {
     withLngBase,

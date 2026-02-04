@@ -7,7 +7,7 @@ import invariant from '../invariant'
 
 export type NodeRequestHandler = (
   req: Vite.Connect.IncomingMessage,
-  res: ServerResponse
+  res: ServerResponse,
 ) => Promise<void>
 
 function fromNodeHeaders(nodeHeaders: IncomingHttpHeaders): Headers {
