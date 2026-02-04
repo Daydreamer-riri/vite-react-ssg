@@ -6,6 +6,8 @@ export default ririd({
     'ts/no-unsafe-function-type': 'off',
     'ts/no-unused-expressions': 'off',
     'eslint-comments/no-unlimited-disable': 'off',
+    'pnpm/json-enforce-catalog': 'off',
+    'pnpm/json-prefer-workspace-settings': 'off',
   },
 }, {
   files: ['**/*.md/**/*.html'],
