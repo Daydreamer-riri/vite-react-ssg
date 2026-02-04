@@ -5,9 +5,9 @@ export default function Docs() {
 
   return (
     <>
-      <div>{data.key}</div>
+      <div>{data?.key}</div>
       {/* eslint-disable-next-line react-dom/no-dangerously-set-innerhtml */}
-      <div dangerouslySetInnerHTML={{ __html: data.packageCodeHtml }} style={{ textAlign: 'start' }}></div>
+      <div dangerouslySetInnerHTML={{ __html: data?.packageCodeHtml ?? '' }} style={{ textAlign: 'start' }}></div>
     </>
   )
 }
@@ -17,6 +17,9 @@ export const Component = Docs
 export const entry = 'src/pages/json.tsx'
 
 export async function loader() {
+  if (!import.meta.env.SSR) {
+    return null
+  }
   // The code here will not be executed on the client side, and the modules imported will not be sent to the client.
   const fs = (await import('node:fs'))
   const cwd = process.cwd()

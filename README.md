@@ -236,6 +236,10 @@ export const Component = Docs
 export const entry = 'src/pages/json.tsx'
 
 export async function loader() {
+  // This code will avoid `shiki` and `node:fs` being mark as 'modulepreload' and sent to the client.
+  if (!import.meta.ssr) {
+    return null
+  }
   // The code here will not be executed on the client side, and the modules imported will not be sent to the client.
   const fs = (await import('node:fs'))
   const cwd = process.cwd()
