@@ -51,20 +51,20 @@ export type CreateRootFactory = (
 ) => Promise<ViteReactSSGContext<true> | ViteReactSSGContext<false>>
 
 /**
- * Convert route path to loader data file path
- * @example '/' -> 'static-loader-data/index.json'
- * @example '/about' -> 'static-loader-data/about.json'
- * @example '/docs/api' -> 'static-loader-data/docs/api.json'
- * @example '/docs/' -> 'static-loader-data/docs/index.json'
+ * Convert route path to loader data file path with hash
+ * @example '/', 'abc123' -> 'static-loader-data/index.abc123.json'
+ * @example '/about', 'abc123' -> 'static-loader-data/about.abc123.json'
+ * @example '/docs/api', 'abc123' -> 'static-loader-data/docs/api.abc123.json'
+ * @example '/docs/', 'abc123' -> 'static-loader-data/docs/index.abc123.json'
  */
-function getLoaderDataFilePath(routePath: string): string {
+function getLoaderDataFilePath(routePath: string, hash: string): string {
   const normalized
     = routePath === '/'
       ? '/index'
       : routePath.endsWith('/')
         ? `${routePath}index`
         : routePath
-  return `static-loader-data${withLeadingSlash(normalized)}.json`
+  return `static-loader-data${withLeadingSlash(normalized)}.${hash}.json`
 }
 
 function DefaultIncludedRoutes(
@@ -158,8 +158,9 @@ export async function build(
 
   let unmock = () => {}
   if (mock) {
+    const { jsdomGlobal }: { jsdomGlobal: () => () => void }
     // @ts-expect-error allow js
-    const { jsdomGlobal }: { jsdomGlobal: () => () => void } = await import('./jsdomGlobal.mjs')
+      = await import('./jsdomGlobal.mjs')
     unmock = jsdomGlobal()
   }
 
@@ -313,7 +314,7 @@ export async function build(
           | Record<string, unknown>
           | undefined
         if (loaderData && Object.keys(loaderData).length > 0) {
-          const loaderDataFilePath = getLoaderDataFilePath(path)
+          const loaderDataFilePath = getLoaderDataFilePath(path, hash)
           await fs.ensureDir(join(out, dirname(loaderDataFilePath)))
           await fs.writeFile(
             join(out, loaderDataFilePath),
