@@ -1,6 +1,7 @@
 import { lazy } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ClientOnly, Link } from 'vite-react-ssg'
+import { Link } from 'react-router-dom'
+import { ClientOnly } from 'vite-react-ssg'
 import { useI18n } from '../i18n'
 import './a.css'
 

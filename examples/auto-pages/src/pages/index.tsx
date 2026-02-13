@@ -1,5 +1,5 @@
 import { startTransition, useState } from 'react'
-import { Link } from 'vite-react-ssg'
+import { Link } from 'react-router-dom'
 import reactLogo from '../assets/react.svg'
 
 // import { Link, useNavigate } from 'react-router-dom'

@@ -1,5 +1,6 @@
 import { lazy, useState } from 'react'
-import { ClientOnly, Link } from 'vite-react-ssg'
+import { Link } from 'react-router-dom'
+import { ClientOnly } from 'vite-react-ssg'
 import './a.css'
 
 const ACount = lazy(() => import('../components/a-count'))

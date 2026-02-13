@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'vite-react-ssg'
+import { Link } from 'react-router-dom'
 import reactLogo from '../assets/react.svg'
 import { useI18n } from '../i18n'
 

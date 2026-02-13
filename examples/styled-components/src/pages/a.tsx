@@ -1,7 +1,7 @@
 import { lazy } from 'react'
-import { Link as RRLink } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import { ClientOnly, Link } from 'vite-react-ssg'
+import { ClientOnly } from 'vite-react-ssg'
 
 const H1 = styled.h1`
   background: #bbb;
@@ -15,7 +15,6 @@ export default function A() {
     <>
       <H1>Page A</H1>
       <Link to="/">to index</Link>
-      <RRLink to="/">to index by RRLink</RRLink>
       <ACount />
       <ClientOnly>
         {() => {

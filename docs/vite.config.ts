@@ -26,7 +26,7 @@ export default defineConfig({
         // @ts-expect-error ignore
         [rehypeShiki, { themes: { light: 'vitesse-light', dark: 'vitesse-dark' } }],
       ],
-    }),
+    }) as PluginOption,
     UnoCSS() as PluginOption,
     react(),
   ],

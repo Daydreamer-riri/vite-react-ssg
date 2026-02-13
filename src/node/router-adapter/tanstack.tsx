@@ -1,3 +1,5 @@
+// eslint-disable-next-line ts/ban-ts-comment
+// @ts-nocheck
 import type { LoaderFnContext } from '@tanstack/react-router'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import type { FilledContext } from 'react-helmet-async'

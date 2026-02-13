@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import styles from './style.module.css'
 
 console.log(styles.abc)

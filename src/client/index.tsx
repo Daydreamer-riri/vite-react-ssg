@@ -231,4 +231,3 @@ declare global {
 
 export { default as ClientOnly } from './components/ClientOnly'
 export { default as Head } from './components/Head'
-export { Link, NavLink } from './components/Link'

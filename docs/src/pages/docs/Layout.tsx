@@ -1,5 +1,4 @@
-import { Outlet, ScrollRestoration } from 'react-router-dom'
-import { NavLink } from 'vite-react-ssg'
+import { NavLink, Outlet, ScrollRestoration } from 'react-router-dom'
 
 const docsList = ['Getting-Started', 'API', 'Components', 'Integration', 'Configuration']
 

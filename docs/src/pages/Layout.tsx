@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import { useState } from 'react'
-import { Outlet, useLocation } from 'react-router-dom'
-import { Head, Link, NavLink } from 'vite-react-ssg'
+import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
+import { Head } from 'vite-react-ssg'
 
 export default function Layout() {
   const [menuOpen, setMenuOpen] = useState(false)
