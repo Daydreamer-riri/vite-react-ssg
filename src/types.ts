@@ -217,6 +217,7 @@ export interface RouterOptions {
   routes: RouteRecord[]
   basename?: string
   future?: Partial<RouterFutureConfig & CompFutureConfig>
+  customCreateRouter?: typeof createBrowserRouter
 }
 
 export interface StyleCollector {

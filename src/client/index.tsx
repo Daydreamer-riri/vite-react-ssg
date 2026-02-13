@@ -44,8 +44,9 @@ export function ViteReactSSG(
     = routerOptions.future ?? {}
 
   async function createRoot(client = false, routePath?: string) {
+    const createRouter = routerOptions.customCreateRouter ?? createBrowserRouter
     const browserRouter = client
-      ? createBrowserRouter(
+      ? createRouter(
           convertRoutesToDataRoutes(
             routerOptions.routes,
             transformStaticLoaderRoute,
