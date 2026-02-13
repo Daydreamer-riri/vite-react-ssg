@@ -441,6 +441,39 @@ See: [react-router's optsfuture](https://reactrouter.com/6.28.0/routers/create-b
 
 [Example](./examples/lazy-pages/src/main.tsx)
 
+## Custom Router Factory
+
+You can provide a custom router factory function via `customCreateRouter` option.
+This is useful if you want to use a different router implementation or wrap the default `createBrowserRouter`.
+
+```ts
+import { createBrowserRouter } from 'react-router-dom'
+
+export const createRoot = ViteReactSSG(
+  {
+    routes,
+    customCreateRouter: (routes, options) => {
+      // Custom logic here
+      return createBrowserRouter(routes, options)
+    },
+  },
+)
+```
+
+eg. [sentry](https://docs.sentry.io/platforms/javascript/guides/react/features/react-router/v6/)
+
+```ts
+import * as Sentry from '@sentry/react'
+import { createBrowserRouter } from 'react-router-dom'
+
+export const createRoot = ViteReactSSG(
+  {
+    routes,
+    customCreateRouter: Sentry.wrapCreateBrowserRouterV6(createBrowserRouter),
+  },
+)
+```
+
 ## CSS in JS
 
 Use the `getStyleCollector` option to specify an SSR/SSG style collector. Currently only supports `styled-components`.
