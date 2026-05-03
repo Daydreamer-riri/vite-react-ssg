@@ -218,7 +218,10 @@ export function Experimental_ViteReactSSG(
       const { router } = context
       const isSSR
         = document.querySelector('[data-server-rendered=true]') !== null
-      if (!isSSR && process.env.NODE_ENV === 'development') {
+      // See `src/client/index.tsx` for the rationale — hydrating an SPA
+      // shell against a non-empty client tree throws React #418 in prod,
+      // and the `data-server-rendered` marker is enough to distinguish.
+      if (!isSSR) {
         render(
           <HelmetProvider>
             <RouterProvider router={router} />

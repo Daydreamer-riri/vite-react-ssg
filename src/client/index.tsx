@@ -140,7 +140,14 @@ export function ViteReactSSG(
       )
       const isSSR
         = document.querySelector('[data-server-rendered=true]') !== null
-      if (!isSSR && process.env.NODE_ENV === 'development') {
+      // Use render() whenever the served HTML isn't a real prerender for
+      // this route. The `data-server-rendered` marker is the source of
+      // truth — checking NODE_ENV in addition was actively harmful in
+      // production: hosts that serve a SPA shell as the fallback for
+      // unmatched URLs would always hit the `else` branch and try to
+      // hydrate an empty `<div id="root">` against a non-empty client
+      // tree, throwing React #418/#422 for every non-prerendered visit.
+      if (!isSSR) {
         render(app, container, options)
       }
       else {
