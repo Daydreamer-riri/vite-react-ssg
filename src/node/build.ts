@@ -31,7 +31,7 @@ import { renderPreloadLinks } from './preload-links'
 import { getAdapter } from './router-adapter'
 import { buildLog, getSize, resolveAlias, routesToPaths } from './utils'
 
-const dotVitedir = Number.parseInt(viteVersion) >= 5 ? ['.vite'] : []
+const dotVitedir = ['.vite'] as const
 function buildBundlerOptions<T extends Record<string, unknown>>(options: T) {
   return Number.parseInt(viteVersion) >= 8
     ? { rolldownOptions: options }
