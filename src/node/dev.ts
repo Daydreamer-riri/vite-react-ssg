@@ -6,69 +6,52 @@ import { bgLightCyan, bold, cyan, dim, green, red, reset } from 'kolorist'
 import { createServer as createViteServer, mergeConfig, resolveConfig, version as viteVersion } from 'vite'
 import { detectEntry } from './html'
 import { resolveAlias, version } from './utils'
-import { ssrServerPlugin } from './vite-plugin'
+import { ssgPlugin } from './vite-plugin'
 
 export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteConfig: InlineConfig = {}, customOptions?: unknown) {
   const mode = process.env.MODE || process.env.NODE_ENV || ssgOptions.mode || 'development'
   const config = await resolveConfig(viteConfig, 'serve', mode, mode)
-  const cwd = process.cwd()
-  const root = config.root || cwd
-
-  const {
-    htmlEntry = 'index.html',
-    entry = await detectEntry(root, htmlEntry),
-    onBeforePageRender,
-    onPageRendered,
-    rootContainerId = 'root',
-    mock = false,
-  }: ViteReactSSGOptions = Object.assign({}, config.ssgOptions || {}, ssgOptions)
-
+  const mergedOptions = Object.assign({}, config.ssgOptions || {}, ssgOptions)
+  const htmlEntry = mergedOptions.htmlEntry || 'index.html'
+  const entry = mergedOptions.entry ?? await detectEntry(config.root, htmlEntry)
   const ssrEntry = await resolveAlias(config, entry)
-  const template = await fs.readFile(join(root, htmlEntry), 'utf-8')
-  let viteServer: ViteDevServer
+  const template = await fs.readFile(join(config.root, htmlEntry), 'utf-8')
 
   // @ts-expect-error global var
   globalThis.__ssr_start_time = performance.now()
 
-  createServer().catch(err => {
-    console.error(
-      `${red(`failed to start server. error:`)}\n${err.stack}`,
-    )
-    process.exit(1)
-  })
-
-  async function createServer() {
+  let viteServer: ViteDevServer
+  try {
     process.env.__DEV_MODE_SSR = 'true'
 
-    if (mock) {
+    if (mergedOptions.mock) {
       // @ts-expect-error allow js
       const { jsdomGlobal }: { jsdomGlobal: () => void } = await import('./jsdomGlobal.mjs')
       jsdomGlobal()
     }
 
     viteServer = await createViteServer(
-      mergeConfig(
-        {
-          ...viteConfig,
-          plugins: [
-            ...viteConfig.plugins ?? [],
-            ssrServerPlugin({
-              template,
-              ssrEntry,
-              onBeforePageRender,
-              onPageRendered,
-              entry,
-              rootContainerId,
-            }),
-          ],
-        },
-        {},
-      ),
+      mergeConfig(viteConfig, {
+        plugins: [
+          ssgPlugin({
+            ...mergedOptions,
+            entry,
+            ssrEntry,
+            htmlEntry,
+            template,
+          }),
+        ],
+      }),
     )
     await viteServer.listen()
     printServerInfo(viteServer, !!customOptions)
     viteServer.bindCLIShortcuts({ print: true })
-    return viteServer
+  }
+  catch (err: any) {
+    console.error(
+      `${red('failed to start server. error:')}\n${err.stack}`,
+    )
+    process.exit(1)
   }
 }
 
