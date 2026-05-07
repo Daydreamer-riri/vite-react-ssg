@@ -1,8 +1,8 @@
-import type { Connect, ModuleNode, PluginOption, ViteDevServer } from 'vite'
+import type { Connect, EnvironmentModuleNode, PluginOption, ViteDevServer } from 'vite'
 import type { ViteReactSSGContext as ViteReactSSGTanstackContext } from '../../client/tanstack'
 import type { ViteReactSSGContext, ViteReactSSGOptions } from '../../types'
 import type { CreateRootFactory } from '../build'
-import { send } from 'vite'
+import { createServerModuleRunner, isRunnableDevEnvironment, send } from 'vite'
 import { joinUrlSegments, stripBase } from '~/utils/path'
 import { createLink, renderHTML } from '../html'
 import { getAdapter } from '../router-adapter'
@@ -30,10 +30,15 @@ export function ssrServerPlugin({
   return {
     name: 'vite-react-ssg:dev-server',
     configureServer(server) {
+      const ssrEnv = server.environments.ssr
+      const runner = isRunnableDevEnvironment(ssrEnv)
+        ? ssrEnv.runner
+        : createServerModuleRunner(ssrEnv)
+
       const renderMiddleware: Connect.NextHandleFunction = async (req, res, next) => {
         try {
           const url = req.originalUrl!
-          const createRoot: CreateRootFactory = await server.ssrLoadModule(ssrEntry).then(m => m.createRoot)
+          const createRoot = (await runner.import(ssrEntry)).createRoot as CreateRootFactory
           const appCtx = await createRoot(false, url) as (ViteReactSSGContext<true> | ViteReactSSGTanstackContext)
           const adapter = getAdapter(appCtx)
           const { app, base } = appCtx
@@ -52,17 +57,17 @@ export function ssrServerPlugin({
 
           metaAttributes.push(styleTag)
           const mods = await Promise.all(
-            [ssrEntry, entry].map(async entry => await server.moduleGraph.getModuleByUrl(entry)),
+            [ssrEntry, entry].map(async entry => await ssrEnv.moduleGraph.getModuleByUrl(entry)),
           )
 
           const assetsUrls = new Set<string>()
-          const collectedMods = new Set<ModuleNode>()
+          const collectedMods = new Set<EnvironmentModuleNode>()
 
-          const collectAssets = async (mod: ModuleNode | undefined) => {
-            if (!mod || !mod?.ssrTransformResult || collectedMods.has(mod))
+          const collectAssets = async (mod: EnvironmentModuleNode | undefined) => {
+            if (!mod || !mod.transformResult || collectedMods.has(mod))
               return
             collectedMods.add(mod)
-            const { deps = [], dynamicDeps = [] } = mod?.ssrTransformResult
+            const { deps = [], dynamicDeps = [] } = mod.transformResult
             const allDeps = [...deps, ...dynamicDeps]
             for (const dep of allDeps) {
               if (
@@ -74,7 +79,7 @@ export function ssrServerPlugin({
                 assetsUrls.add(dep)
               }
               else if (dep.endsWith('.ts') || dep.endsWith('.tsx')) {
-                const depModule = await server.moduleGraph.getModuleByUrl(dep)
+                const depModule = await ssrEnv.moduleGraph.getModuleByUrl(dep)
                 depModule && await collectAssets(depModule)
               }
             }
