@@ -69,10 +69,11 @@
     "build": "unbuild",
     "dev": "unbuild --stub",
     "lint": "eslint .",
-    "test": "pnpm -r build && vitest run",
+    "test": "pnpm --filter \"./examples/*\" --filter=\"!./examples/tanstack\" build && vitest run",
     "prepublishOnly": "nr build",
     "release": "bumpp && npm publish",
     "start": "esno src/index.ts",
+    "test:unit": "vitest run --project unit",
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
@@ -123,7 +124,7 @@
     "@tanstack/start": "^1.120.20",
     "@types/fs-extra": "^11.0.4",
     "@types/jsdom": "^21.1.7",
-    "@types/node": "^18.19.130",
+    "@types/node": "^24.10.0",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@types/yargs": "^17.0.35",
@@ -143,7 +144,7 @@
     "typescript": "^5.9.3",
     "unbuild": "^3.6.1",
     "vite": "catalog:",
-    "vitest": "1.6.1"
+    "vitest": "^4.1.5"
   },
   "pnpm": {
     "overrides": {
