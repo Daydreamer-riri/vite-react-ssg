@@ -8,6 +8,7 @@ export default defineBuildConfig({
     { input: 'src/client/tanstack', name: 'tanstack' },
     { input: 'src/node/cli', name: 'node/cli' },
     { input: 'src/node', name: 'node' },
+    { input: 'src/plugin', name: 'plugin' },
     { input: 'src/style-collectors/styled-components', name: 'style-collectors/styled-components' },
   ],
   alias: { '~': path.resolve(__dirname, 'src') },

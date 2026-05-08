@@ -1,21 +1,14 @@
 import type { InlineConfig, ViteDevServer } from 'vite'
 import type { ViteReactSSGOptions } from '../types'
-import { join } from 'node:path'
-import fs from 'fs-extra'
 import { bgLightCyan, bold, cyan, dim, green, red, reset } from 'kolorist'
 import { createServer as createViteServer, mergeConfig, resolveConfig, version as viteVersion } from 'vite'
-import { detectEntry } from './html'
-import { resolveAlias, version } from './utils'
+import { version } from './utils'
 import { ssgPlugin } from './vite-plugin'
 
 export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteConfig: InlineConfig = {}, customOptions?: unknown) {
   const mode = process.env.MODE || process.env.NODE_ENV || ssgOptions.mode || 'development'
   const config = await resolveConfig(viteConfig, 'serve', mode, mode)
   const mergedOptions = Object.assign({}, config.ssgOptions || {}, ssgOptions)
-  const htmlEntry = mergedOptions.htmlEntry || 'index.html'
-  const entry = mergedOptions.entry ?? await detectEntry(config.root, htmlEntry)
-  const ssrEntry = await resolveAlias(config, entry)
-  const template = await fs.readFile(join(config.root, htmlEntry), 'utf-8')
 
   // @ts-expect-error global var
   globalThis.__ssr_start_time = performance.now()
@@ -33,13 +26,7 @@ export async function dev(ssgOptions: Partial<ViteReactSSGOptions> = {}, viteCon
     viteServer = await createViteServer(
       mergeConfig(viteConfig, {
         plugins: [
-          ssgPlugin({
-            ...mergedOptions,
-            entry,
-            ssrEntry,
-            htmlEntry,
-            template,
-          }),
+          ssgPlugin(mergedOptions),
         ],
       }),
     )

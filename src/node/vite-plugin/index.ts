@@ -28,12 +28,14 @@ import { joinUrlSegments, removeLeadingSlash, stripBase, withLeadingSlash, withT
 import { serializeState } from '../../utils/state'
 import { collectAssets } from '../assets'
 import { getBeastiesOrCritters } from '../critial'
-import { createLink, renderHTML, SCRIPT_COMMENT_PLACEHOLDER } from '../html'
+import { createLink, detectEntryFromHtml, renderHTML, SCRIPT_COMMENT_PLACEHOLDER } from '../html'
 import { renderPreloadLinks } from '../preload-links'
 import { getAdapter } from '../router-adapter'
-import { buildLog, getSize, routesToPaths } from '../utils'
+import { buildLog, getSize, resolveAlias, routesToPaths } from '../utils'
 
 const DOT_VITE_DIR = '.vite'
+const SSG_TEMP_DIR = '.vite-react-ssg-temp'
+const DEFAULT_HTML_ENTRY = 'index.html'
 
 function buildBundlerOptions<T extends Record<string, unknown>>(options: T) {
   return Number.parseInt(viteVersion) >= 8
@@ -56,11 +58,11 @@ function getLoaderDataFilePath(routePath: string, hash: string): string {
 }
 
 export interface SsgPluginOptions extends Partial<ViteReactSSGOptions> {
-  /** Resolved path to the SSR entry module. */
-  ssrEntry: string
-  /** Original (unresolved) entry value, used for module-graph lookups in dev. */
-  entry: string
-  /** HTML template contents, required for the dev middleware. */
+  /** Resolved path to the SSR entry module. Auto-resolved from `entry` if omitted. */
+  ssrEntry?: string
+  /** Original (unresolved) entry value. Auto-detected from the HTML template if omitted. */
+  entry?: string
+  /** HTML template contents. Read from disk lazily if omitted. */
   template?: string
   htmlEntry?: string
   rootContainerId?: string
@@ -90,12 +92,9 @@ export interface HandlerCreaterOptions<Context> extends Options<Context> {
  *   `builder.buildApp`, which orchestrates client build → optional jsdom
  *   mock → ssr build → per-route HTML rendering → static-loader-data emission.
  */
-export function ssgPlugin(options: SsgPluginOptions): PluginOption {
+export function ssgPlugin(options: SsgPluginOptions = {}): PluginOption {
   const {
-    ssrEntry,
-    entry,
-    template,
-    htmlEntry = 'index.html',
+    htmlEntry = DEFAULT_HTML_ENTRY,
     rootContainerId = 'root',
     script = 'sync',
     mock = false,
@@ -112,24 +111,34 @@ export function ssgPlugin(options: SsgPluginOptions): PluginOption {
     crittersOptions,
   } = options
 
+  let entry = options.entry
+  let ssrEntry = options.ssrEntry
+  let template = options.template
+
   const resolvedBeastiesOptions = beastiesOptions ?? crittersOptions ?? {}
 
   let resolvedConfig: ResolvedConfig | undefined
-  const hash = Math.random().toString(36).substring(2, 12)
-  let ssgOutDir: string | undefined
 
   return {
     name: 'vite-react-ssg',
 
-    config(userConfig, env) {
-      if (env.command !== 'build')
-        return
-
+    async config(userConfig, env) {
       const root = userConfig.root
         ? (isAbsolute(userConfig.root) ? userConfig.root : join(process.cwd(), userConfig.root))
         : process.cwd()
+
+      // Read the template once here so we can both detect the entry and
+      // serve the dev middleware without a second disk read in `configResolved`.
+      if (!template || !entry) {
+        const html = await fs.readFile(join(root, htmlEntry), 'utf-8')
+        template ??= html
+        entry ??= detectEntryFromHtml(html)
+      }
+
+      if (env.command !== 'build')
+        return
+
       const htmlInput = join(root, htmlEntry)
-      ssgOutDir = join(root, '.vite-react-ssg-temp', hash)
 
       const clientEnv: EnvironmentOptions = {
         build: {
@@ -153,9 +162,12 @@ export function ssgPlugin(options: SsgPluginOptions): PluginOption {
 
       const ssrEnv: EnvironmentOptions = {
         build: {
-          ssr: ssrEntry,
+          // `ssrEntry` is still unresolved here (resolver needs the
+          // ResolvedConfig); Vite accepts the unresolved path and runs it
+          // through its own resolver.
+          ssr: ssrEntry ?? entry,
           manifest: true,
-          outDir: ssgOutDir,
+          outDir: join(root, SSG_TEMP_DIR),
           minify: false,
           cssCodeSplit: false,
           ...buildBundlerOptions({
@@ -183,14 +195,13 @@ export function ssgPlugin(options: SsgPluginOptions): PluginOption {
       return updated
     },
 
-    configResolved(config) {
+    async configResolved(config) {
       resolvedConfig = config
+      if (!ssrEntry)
+        ssrEntry = await resolveAlias(config, entry!)
     },
 
     configureServer(server) {
-      if (!template)
-        return
-
       const ssrEnv = server.environments.ssr
       const runner = isRunnableDevEnvironment(ssrEnv)
         ? ssrEnv.runner
@@ -199,7 +210,7 @@ export function ssgPlugin(options: SsgPluginOptions): PluginOption {
       const renderMiddleware: Connect.NextHandleFunction = async (req, res, _next) => {
         try {
           const url = req.originalUrl!
-          const createRoot = (await runner.import(ssrEntry)).createRoot as CreateRootFactory
+          const createRoot = (await runner.import(ssrEntry!)).createRoot as CreateRootFactory
           const appCtx = await createRoot(false, url) as (ViteReactSSGContext<true> | ViteReactSSGTanstackContext)
           const adapter = getAdapter(appCtx)
           const { app, base } = appCtx
@@ -210,7 +221,7 @@ export function ssgPlugin(options: SsgPluginOptions): PluginOption {
             return adapter.handleLoader(req, res)
           }
 
-          const indexHTML = await server.transformIndexHtml(url, template)
+          const indexHTML = await server.transformIndexHtml(url, template!)
           const transformedIndexHTML = (await onBeforePageRender?.(url, indexHTML, appCtx as any)) || indexHTML
 
           const { appHTML, bodyAttributes, htmlAttributes, metaAttributes, styleTag }
@@ -218,7 +229,7 @@ export function ssgPlugin(options: SsgPluginOptions): PluginOption {
 
           metaAttributes.push(styleTag)
           const mods = await Promise.all(
-            [ssrEntry, entry].map(async e => await ssrEnv.moduleGraph.getModuleByUrl(e)),
+            [ssrEntry!, entry!].map(async e => await ssrEnv.moduleGraph.getModuleByUrl(e)),
           )
 
           const assetsUrls = new Set<string>()
@@ -287,7 +298,8 @@ export function ssgPlugin(options: SsgPluginOptions): PluginOption {
     const config = resolvedConfig ?? builder.config
     const root = config.root
     const configBase = config.base
-    const ssgOut = ssgOutDir ?? join(root, '.vite-react-ssg-temp', hash)
+    const ssgOut = join(root, SSG_TEMP_DIR)
+    const hash = Math.random().toString(36).substring(2, 12)
 
     if (fs.existsSync(ssgOut))
       await fs.remove(ssgOut)
@@ -313,7 +325,7 @@ export function ssgPlugin(options: SsgPluginOptions): PluginOption {
     const prefix = format === 'esm' && process.platform === 'win32' ? 'file://' : ''
     const ext = format === 'esm' ? '.mjs' : '.cjs'
     const serverEntry
-      = prefix + join(ssgOut, parse(ssrEntry).name + ext).replace(/\\/g, '/')
+      = prefix + join(ssgOut, parse(ssrEntry!).name + ext).replace(/\\/g, '/')
     const serverManifest: Manifest = JSON.parse(
       await fs.readFile(join(ssgOut, DOT_VITE_DIR, 'manifest.json'), 'utf-8'),
     )
@@ -500,7 +512,7 @@ export function ssgPlugin(options: SsgPluginOptions): PluginOption {
       `${dim(`${outDir}/`)}${cyan(`static-loader-data-manifest-${hash}.json`.padEnd(15, ' '))}  ${dim(getSize(staticLoaderDataManifestString))}`,
     )
 
-    await fs.remove(join(root, '.vite-react-ssg-temp'))
+    await fs.remove(join(root, SSG_TEMP_DIR))
 
     unmock()
     const pwaPlugin: { disabled: boolean, generateSW: () => Promise<unknown> }

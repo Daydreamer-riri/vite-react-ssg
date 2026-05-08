@@ -28,6 +28,10 @@
     "./node": {
       "import": "./dist/node.mjs"
     },
+    "./plugin": {
+      "types": "./dist/plugin.d.ts",
+      "import": "./dist/plugin.mjs"
+    },
     "./single-page": {
       "types": "./dist/client/single-page.d.ts",
       "import": "./dist/client/single-page.mjs"
@@ -48,6 +52,9 @@
     "*": {
       "node": [
         "./dist/node.d.ts"
+      ],
+      "plugin": [
+        "./dist/plugin.d.ts"
       ],
       "single-page": [
         "dist/client/single-page.d.ts"
