@@ -4,7 +4,7 @@ Guide for AI coding agents working in this repository.
 
 ## Project Overview
 
-**vite-react-ssg** is an npm package providing Static Site Generation (SSG) for React applications using Vite. It supports React 17-19, Vite 2-7, and React Router DOM v6.
+**vite-react-ssg** is an npm package providing Static Site Generation (SSG) for React applications using Vite. It supports React 17-19, maintained Vite versions (currently Vite 6.4, 7.3, and 8.x), and React Router DOM v6.
 
 - **Language**: TypeScript (strict mode)
 - **Package Manager**: pnpm (v10.28.2)

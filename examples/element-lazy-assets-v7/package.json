@@ -1,0 +1,22 @@
+{
+  "name": "element-lazy-assets-v7",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "vite-react-ssg build"
+  },
+  "dependencies": {
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "devDependencies": {
+    "vite": "~7.3.0",
+    "vite-react-ssg": "workspace:*"
+  },
+  "dependenciesMeta": {
+    "vite-react-ssg": {
+      "injected": true
+    }
+  }
+}

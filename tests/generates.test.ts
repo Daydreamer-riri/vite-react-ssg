@@ -54,16 +54,28 @@ describe('lazy-pages', () => {
 
 describe('element-lazy-assets', () => {
   it('links css for element lazy routes without route entry', async () => {
-    const pageA = await fs.readFile('examples/element-lazy-assets/dist/a.html', 'utf-8')
-    const pageB = await fs.readFile('examples/element-lazy-assets/dist/b.html', 'utf-8')
-    expect(pageA).toContain('Element Lazy Page A')
-    expect(pageA).toMatch(/<link[^>]*rel="stylesheet"[^>]*href="\/assets\/[^"]+\.css"/)
-    expect(pageA).toMatch(/<link[^>]*href="\/assets\/a-[^"]+\.js"/)
-    expect(pageA).not.toMatch(/<link[^>]*href="\/assets\/b-[^"]+\.js"/)
-    expect(pageB).toMatch(/<link[^>]*href="\/assets\/b-[^"]+\.js"/)
-    expect(pageB).not.toMatch(/<link[^>]*href="\/assets\/a-[^"]+\.js"/)
+    await expectElementLazyAssets('examples/element-lazy-assets/dist')
+  })
+
+  it('links css for element lazy routes with Vite 6', async () => {
+    await expectElementLazyAssets('examples/element-lazy-assets-v6/dist')
+  })
+
+  it('links css for element lazy routes with Vite 7', async () => {
+    await expectElementLazyAssets('examples/element-lazy-assets-v7/dist')
   })
 })
+
+async function expectElementLazyAssets(cwd: string) {
+  const pageA = await fs.readFile(`${cwd}/a.html`, 'utf-8')
+  const pageB = await fs.readFile(`${cwd}/b.html`, 'utf-8')
+  expect(pageA).toContain('Element Lazy Page A')
+  expect(pageA).toMatch(/<link[^>]*rel="stylesheet"[^>]*href="\/assets\/[^"]+\.css"/)
+  expect(pageA).toMatch(/<link[^>]*href="\/assets\/a-[^"]+\.js"/)
+  expect(pageA).not.toMatch(/<link[^>]*href="\/assets\/b-[^"]+\.js"/)
+  expect(pageB).toMatch(/<link[^>]*href="\/assets\/b-[^"]+\.js"/)
+  expect(pageB).not.toMatch(/<link[^>]*href="\/assets\/a-[^"]+\.js"/)
+}
 
 describe('single-page', () => {
   it('generates', async () => {
