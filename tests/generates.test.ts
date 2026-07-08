@@ -2,11 +2,19 @@ import fs from 'node:fs/promises'
 import fg from 'fast-glob'
 import { describe, expect, it } from 'vitest'
 
+async function findGeneratedHtml(cwd: string) {
+  const files = await fg('**/*.html', {
+    cwd,
+  })
+  return files.sort((a, b) => {
+    const depth = a.split('/').length - b.split('/').length
+    return depth || a.localeCompare(b)
+  })
+}
+
 describe('multiple-pages', () => {
   it('generates', async () => {
-    const files = await fg('**/*.html', {
-      cwd: 'examples/multiple-pages/dist',
-    })
+    const files = await findGeneratedHtml('examples/multiple-pages/dist')
     expect(files).toMatchInlineSnapshot(`
       [
         "a.html",
@@ -25,9 +33,7 @@ describe('multiple-pages', () => {
 
 describe('lazy-pages', () => {
   it('generates', async () => {
-    const files = await fg('**/*.html', {
-      cwd: 'examples/lazy-pages/dist',
-    })
+    const files = await findGeneratedHtml('examples/lazy-pages/dist')
     expect(files).toMatchInlineSnapshot(`
       [
         "a.html",
@@ -48,9 +54,7 @@ describe('lazy-pages', () => {
 
 describe('single-page', () => {
   it('generates', async () => {
-    const files = await fg('**/*.html', {
-      cwd: 'examples/single-page/dist',
-    })
+    const files = await findGeneratedHtml('examples/single-page/dist')
     expect(files).toMatchInlineSnapshot(`
       [
         "index.html",
@@ -66,9 +70,7 @@ describe('single-page', () => {
 
 describe('with-loader', () => {
   it('generates', async () => {
-    const files = await fg('**/*.html', {
-      cwd: 'examples/with-loader/dist',
-    })
+    const files = await findGeneratedHtml('examples/with-loader/dist')
     expect(files).toMatchInlineSnapshot(`
       [
         "index.html",
@@ -87,9 +89,7 @@ describe('with-loader', () => {
 
 describe('auto-pages', () => {
   it('generates', async () => {
-    const files = await fg('**/*.html', {
-      cwd: 'examples/auto-pages/dist',
-    })
+    const files = await findGeneratedHtml('examples/auto-pages/dist')
     expect(files).toMatchInlineSnapshot(`
       [
         "a.html",
@@ -107,9 +107,7 @@ describe('auto-pages', () => {
 
 describe('styled-components', () => {
   it('generates', async () => {
-    const files = await fg('**/*.html', {
-      cwd: 'examples/styled-components/dist',
-    })
+    const files = await findGeneratedHtml('examples/styled-components/dist')
     expect(files).toMatchInlineSnapshot(`
       [
         "a.html",
@@ -127,9 +125,7 @@ describe('styled-components', () => {
 
 describe('with-i18n', () => {
   it('generates localized routes', async () => {
-    const files = await fg('**/*.html', {
-      cwd: 'examples/with-i18n/dist',
-    })
+    const files = await findGeneratedHtml('examples/with-i18n/dist')
     expect(files).toMatchInlineSnapshot(`
       [
         "en.html",
@@ -155,9 +151,7 @@ describe('with-i18n', () => {
 
 describe('with-scss', () => {
   it('generates', async () => {
-    const files = await fg('**/*.html', {
-      cwd: 'examples/with-scss/dist',
-    })
+    const files = await findGeneratedHtml('examples/with-scss/dist')
     expect(files).toMatchInlineSnapshot(`
       [
         "a.html",
