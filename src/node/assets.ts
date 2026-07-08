@@ -1,5 +1,6 @@
 import type { RouteRecord } from '../types'
 import type { Manifest, SSRManifest } from './build'
+import { joinUrlSegments } from '../utils/path'
 
 export const DYNAMIC_IMPORT_REGEX = /import\("([^)]+)"\)/g
 export enum AssetType {
@@ -58,6 +59,10 @@ export async function collectAssets({
   const modules = collectModulesForEntries(manifest, entries)
   const assets = new Set<string>()
   Array.from(modules).forEach(id => {
+    const manifestAssets = collectManifestItemAssets(manifest[id], base)
+    manifestAssets.forEach(file => {
+      assets.add(file)
+    })
     const files = ssrManifest[id] || []
     files.forEach(file => {
       assets.add(file)
@@ -81,10 +86,34 @@ function collectModules(manifest: Manifest, entry: string | undefined, mods = ne
   if (!entry)
     return mods
 
+  if (mods.has(entry))
+    return mods
+
   mods.add(entry)
-  manifest[entry]?.dynamicImports?.forEach(item => {
-    collectModules(manifest, item, mods)
+  const manifestItem = manifest[entry]
+  const imports = [
+    ...(manifestItem?.imports ?? []),
+    ...(manifestItem?.dynamicImports ?? []),
+  ]
+  imports.forEach(item => {
+    if (!isHtmlEntry(item))
+      collectModules(manifest, item, mods)
   })
 
   return mods
+}
+
+function collectManifestItemAssets(item: Manifest[string] | undefined, base: string) {
+  if (!item)
+    return []
+
+  return [
+    item.file,
+    ...(item.css ?? []),
+    ...(item.assets ?? []),
+  ].map(file => joinUrlSegments(base, file))
+}
+
+function isHtmlEntry(entry: string) {
+  return entry.endsWith('.html')
 }

@@ -52,6 +52,14 @@ describe('lazy-pages', () => {
   })
 })
 
+describe('element-lazy-assets', () => {
+  it('links css discovered through route entry imports', async () => {
+    const pageA = await fs.readFile('examples/element-lazy-assets/dist/a.html', 'utf-8')
+    expect(pageA).toContain('Element Lazy Page A')
+    expect(pageA).toMatch(/<link[^>]*rel="stylesheet"[^>]*href="\/assets\/[^"]+\.css"/)
+  })
+})
+
 describe('single-page', () => {
   it('generates', async () => {
     const files = await findGeneratedHtml('examples/single-page/dist')

@@ -56,7 +56,7 @@ function setAttrs(el: Element, attrs: Record<string, any>) {
 }
 
 function appendLink(document: Document, attrs: Record<string, any>) {
-  const exits = document.head.querySelector(`link[href='${attrs.file}']`)
+  const exits = document.head.querySelector(`link[href='${attrs.href}']`)
   if (exits)
     return
   const link = createLink(document)

@@ -59,6 +59,17 @@ describe('renderPreloadLinks', () => {
     expect(getLinks()).toHaveLength(1)
   })
 
+  it('does not duplicate links that already exist in the document head', () => {
+    const link = document.createElement('link')
+    link.setAttribute('rel', 'modulepreload')
+    link.setAttribute('href', '/assets/app.js')
+    document.head.appendChild(link)
+
+    renderPreloadLinks(document, new Set(['/assets/app.js']))
+
+    expect(getLinks()).toHaveLength(1)
+  })
+
   it('handles a mix of asset types', () => {
     const assets = new Set([
       '/assets/app.js',

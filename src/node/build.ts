@@ -41,6 +41,7 @@ export type SSRManifest = Record<string, string[]>
 export interface ManifestItem {
   css?: string[]
   file: string
+  imports?: string[]
   dynamicImports?: string[]
   src: string
   assets?: string[]
