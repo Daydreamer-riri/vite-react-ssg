@@ -29,6 +29,7 @@ import { getBeastiesOrCritters } from './critial'
 import { detectEntry, renderHTML, SCRIPT_COMMENT_PLACEHOLDER } from './html'
 import { renderPreloadLinks } from './preload-links'
 import { getAdapter } from './router-adapter'
+import { createSsrModuleTrackingPlugin, SsrModuleTracker } from './ssr-module-tracker'
 import { buildLog, getSize, resolveAlias, routesToPaths } from './utils'
 
 const dotVitedir = Number.parseInt(viteVersion) >= 5 ? ['.vite'] : []
@@ -202,6 +203,9 @@ export async function build(
         }),
       },
       mode: config.mode,
+      plugins: [
+        createSsrModuleTrackingPlugin(root),
+      ],
     }),
   )
 
@@ -268,6 +272,8 @@ export async function build(
 
   const queue = new PQueue({ concurrency })
   const crittersQueue = new PQueue({ concurrency: 1 })
+  const ssrModuleTracker = new SsrModuleTracker()
+  ssrModuleTracker.install()
 
   const staticLoaderDataManifest: StaticLoaderDataManifest = {}
   let loaderDataFileCount = 0
@@ -294,6 +300,18 @@ export async function build(
         const fetchUrl = `${withTrailingSlash(base)}${removeLeadingSlash(path)}`
 
         const adapter = getAdapter(appCtx)
+        const {
+          moduleIds: renderedModuleIds,
+          result: {
+            appHTML,
+            bodyAttributes,
+            htmlAttributes,
+            metaAttributes,
+            styleTag,
+            routerContext,
+          },
+        } = await ssrModuleTracker.track(() => adapter.render(path))
+
         const assets
           = !app && routerType === 'remix'
             ? await collectAssets({
@@ -303,17 +321,9 @@ export async function build(
                 serverManifest,
                 manifest,
                 ssrManifest,
+                renderedModuleIds,
               })
             : new Set<string>()
-
-        const {
-          appHTML,
-          bodyAttributes,
-          htmlAttributes,
-          metaAttributes,
-          styleTag,
-          routerContext,
-        } = await adapter.render(path)
 
         // Write loader data to separate file if exists
         const loaderData = routerContext?.loaderData as
@@ -391,7 +401,12 @@ export async function build(
     })
   }
 
-  await queue.start().onIdle()
+  try {
+    await queue.start().onIdle()
+  }
+  finally {
+    ssrModuleTracker.uninstall()
+  }
 
   buildLog('Generating static loader data...', loaderDataFileCount)
   const staticLoaderDataManifestString = JSON.stringify(

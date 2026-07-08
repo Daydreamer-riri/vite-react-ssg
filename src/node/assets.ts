@@ -17,6 +17,7 @@ interface CollectAssetsOpts {
   serverManifest: Manifest
   manifest: Manifest
   ssrManifest: SSRManifest
+  renderedModuleIds?: Set<string>
 }
 
 export async function collectAssets({
@@ -26,6 +27,7 @@ export async function collectAssets({
   serverManifest,
   manifest,
   ssrManifest,
+  renderedModuleIds,
 }: CollectAssetsOpts) {
   const { matchRoutes } = await import('react-router-dom')
   const matches = matchRoutes([...routes], locationArg, base)
@@ -37,7 +39,7 @@ export async function collectAssets({
       lazyStr += item.route.lazy.toString()
     }
     // @ts-expect-error lazy
-    if (item.route.Component?._payload?._result) {
+    if (typeof item.route.Component?._payload?._result === 'function') {
       // @ts-expect-error lazy
       lazyStr += item.route.Component._payload._result.toString()
     }
@@ -47,6 +49,7 @@ export async function collectAssets({
     }
   })
   const entries = new Set<string>()
+  renderedModuleIds?.forEach(e => entries.add(e))
   routeEntries.forEach(e => entries.add(e))
   const manifestEntries = [...Object.entries(serverManifest)]
   dynamicImports.forEach(name => {

@@ -23,12 +23,10 @@ export const routes: RouteRecord[] = [
       {
         path: 'a',
         element: suspense(<PageA />),
-        entry: 'src/pages/a.tsx',
       },
       {
         path: 'b',
         element: suspense(<PageB />),
-        entry: 'src/pages/b.tsx',
       },
     ],
   },
