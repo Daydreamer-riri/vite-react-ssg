@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises'
 import fg from 'fast-glob'
+import { JSDOM } from 'jsdom'
 import { describe, expect, it } from 'vitest'
 
 async function findGeneratedHtml(cwd: string) {
@@ -66,15 +67,53 @@ describe('element-lazy-assets', () => {
   })
 })
 
+interface AssetManifestItem {
+  file: string
+  css?: string[]
+}
+
 async function expectElementLazyAssets(cwd: string) {
-  const pageA = await fs.readFile(`${cwd}/a.html`, 'utf-8')
-  const pageB = await fs.readFile(`${cwd}/b.html`, 'utf-8')
-  expect(pageA).toContain('Element Lazy Page A')
-  expect(pageA).toMatch(/<link[^>]*rel="stylesheet"[^>]*href="\/assets\/[^"]+\.css"/)
-  expect(pageA).toMatch(/<link[^>]*href="\/assets\/a-[^"]+\.js"/)
-  expect(pageA).not.toMatch(/<link[^>]*href="\/assets\/b-[^"]+\.js"/)
-  expect(pageB).toMatch(/<link[^>]*href="\/assets\/b-[^"]+\.js"/)
-  expect(pageB).not.toMatch(/<link[^>]*href="\/assets\/a-[^"]+\.js"/)
+  const manifest: Record<string, AssetManifestItem> = JSON.parse(
+    await fs.readFile(`${cwd}/.vite/manifest.json`, 'utf-8'),
+  )
+  const cssFor = (src: string) => {
+    const entry = manifest[src]
+    if (!entry?.css?.length)
+      throw new Error(`Expected manifest entry ${src} to declare css`)
+    return entry.css.map(file => `/${file}`)
+  }
+
+  const pageACss = cssFor('src/pages/a.tsx')
+  const pageBCss = cssFor('src/pages/b.tsx')
+  const pageCCss = cssFor('src/pages/c.tsx')
+
+  const pageALinks = await stylesheets(`${cwd}/a.html`)
+  const pageBLinks = await stylesheets(`${cwd}/b.html`)
+  const pageCLinks = await stylesheets(`${cwd}/c.html`)
+  const sharedLinks = pageALinks
+    .filter(href => pageBLinks.includes(href))
+    .filter(href => pageCLinks.includes(href))
+
+  expect(sharedLinks.length).toBeGreaterThan(0)
+  expect(new Set(pageALinks)).toEqual(new Set([...pageACss, ...sharedLinks]))
+  expect(new Set(pageBLinks)).toEqual(new Set([...pageBCss, ...sharedLinks]))
+  expect(new Set(pageCLinks)).toEqual(new Set([...pageCCss, ...sharedLinks]))
+  for (const [own, others] of [
+    [pageALinks, [pageBCss, pageCCss]],
+    [pageBLinks, [pageACss, pageCCss]],
+    [pageCLinks, [pageACss, pageBCss]],
+  ] as const) {
+    for (const foreign of others)
+      expect(own).not.toEqual(expect.arrayContaining(foreign))
+  }
+}
+
+async function stylesheets(path: string) {
+  const html = await fs.readFile(path, 'utf-8')
+  const doc = new JSDOM(html).window.document
+  return Array.from(doc.querySelectorAll('link[rel="stylesheet"]'))
+    .map(link => link.getAttribute('href'))
+    .filter((href): href is string => href !== null)
 }
 
 describe('single-page', () => {
