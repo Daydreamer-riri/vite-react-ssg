@@ -29,7 +29,7 @@ export async function getBeastiesOrCritters(outDir: string, options: Options = {
       ...options,
     })
   }
-  catch (e) {
+  catch {
     return undefined
   }
 }

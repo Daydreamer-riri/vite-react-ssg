@@ -38,9 +38,9 @@ describe('serializeState', () => {
   })
 
   it('escapes U+2028 and U+2029 line separators', () => {
-    const out = serializeState({ s: '  ' })!
-    expect(out).not.toContain(' ')
-    expect(out).not.toContain(' ')
+    const out = serializeState({ s: '\u2028\u2029' })!
+    expect(out).not.toContain('\u2028')
+    expect(out).not.toContain('\u2029')
     expect(out).toContain('\\u2028')
     expect(out).toContain('\\u2029')
   })

@@ -30,7 +30,7 @@ export function ssrServerPlugin({
   return {
     name: 'vite-react-ssg:dev-server',
     configureServer(server) {
-      const renderMiddleware: Connect.NextHandleFunction = async (req, res, next) => {
+      const renderMiddleware: Connect.NextHandleFunction = async (req, res, _next) => {
         try {
           const url = req.originalUrl!
           const createRoot: CreateRootFactory = await server.ssrLoadModule(ssrEntry).then(m => m.createRoot)

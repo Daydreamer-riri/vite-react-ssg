@@ -23,7 +23,6 @@ import {
   withLeadingSlash,
   withTrailingSlash,
 } from '../utils/path'
-import { serializeState } from '../utils/state'
 import { collectAssets } from './assets'
 import { getBeastiesOrCritters } from './critial'
 import { detectEntry, renderHTML, SCRIPT_COMMENT_PLACEHOLDER } from './html'
@@ -289,7 +288,6 @@ export async function build(
           base,
           routes,
           triggerOnSSRAppRendered,
-          transformState = serializeState,
           app,
           routerType,
         } = appCtx

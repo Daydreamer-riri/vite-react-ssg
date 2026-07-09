@@ -8,4 +8,4 @@ console.log(styles.abc)
  *   - It is used to demonstrate how to import CSS modules in a TypeScript file.
  *
  */
-const a = 1
+const _a = 1
