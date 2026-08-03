@@ -358,7 +358,7 @@ export async function build(
         let transformed = (await onPageRendered?.(path, html, appCtx)) || html
         transformed = transformed.replace(
           SCRIPT_COMMENT_PLACEHOLDER,
-          `window.__VITE_REACT_SSG_HASH__ = '${hash}'`,
+          () => `window.__VITE_REACT_SSG_HASH__ = '${hash}'`,
         )
         if (beasties) {
           transformed = (await crittersQueue.add(() =>
@@ -371,7 +371,7 @@ export async function build(
         }
 
         if (styleTag)
-          transformed = transformed.replace('<head>', `<head>${styleTag}`)
+          transformed = transformed.replace('<head>', () => `<head>${styleTag}`)
 
         const formatted = await formatHtml(transformed, formatting)
 

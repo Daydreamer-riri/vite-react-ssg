@@ -29,22 +29,22 @@ export async function renderHTML({
   // add head
   const headStartTag = '<head>'
   const metaTags = metaAttributes.join('')
-  indexHTML = indexHTML.replace(headStartTag, headStartTag + metaTags)
+  indexHTML = indexHTML.replace(headStartTag, () => headStartTag + metaTags)
 
   // add body attributes
   const bodyStartTag = '<body'
-  indexHTML = indexHTML.replace(bodyStartTag, `${bodyStartTag} ${bodyAttributes}`)
+  indexHTML = indexHTML.replace(bodyStartTag, () => `${bodyStartTag} ${bodyAttributes}`)
 
   // add html attributes
   const htmlStartTag = '<html'
-  indexHTML = indexHTML.replace(htmlStartTag, `${htmlStartTag} ${htmlAttributes}`)
+  indexHTML = indexHTML.replace(htmlStartTag, () => `${htmlStartTag} ${htmlAttributes}`)
 
   const container = `<div id="${rootContainerId}"></div>`
   if (indexHTML.includes(container)) {
     return indexHTML
       .replace(
         container,
-        `<div id="${rootContainerId}" data-server-rendered="true">${appHTML}</div>${stateScript}${scriptPlaceHolder}`,
+        () => `<div id="${rootContainerId}" data-server-rendered="true">${appHTML}</div>${stateScript}${scriptPlaceHolder}`,
       )
   }
 

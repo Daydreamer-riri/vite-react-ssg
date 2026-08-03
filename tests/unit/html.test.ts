@@ -68,6 +68,81 @@ describe('renderHTML', () => {
       }),
     ).rejects.toThrow(/root/)
   })
+
+  describe('dollar sign sequences in replacement strings', () => {
+    it('preserves $$ in appHTML without collapsing', async () => {
+      const out = await renderHTML({
+        ...baseArgs,
+        indexHTML,
+        appHTML: '<span>$$ level 2</span>',
+        initialState: null,
+      })
+      expect(out).toContain('<span>$$ level 2</span>')
+    })
+
+    it('preserves $$$$ in appHTML', async () => {
+      const out = await renderHTML({
+        ...baseArgs,
+        indexHTML,
+        appHTML: '<span>$$$$ level 4</span>',
+        initialState: null,
+      })
+      expect(out).toContain('<span>$$$$ level 4</span>')
+    })
+
+    it('preserves $& in appHTML without inserting matched text', async () => {
+      const out = await renderHTML({
+        ...baseArgs,
+        indexHTML,
+        appHTML: '<span>$& test</span>',
+        initialState: null,
+      })
+      expect(out).toContain('<span>$& test</span>')
+    })
+
+    it('preserves $` and $\' in appHTML', async () => {
+      const out = await renderHTML({
+        ...baseArgs,
+        indexHTML,
+        appHTML: '<span>$` before $\' after</span>',
+        initialState: null,
+      })
+      expect(out).toContain('<span>$` before $\' after</span>')
+    })
+
+    it('preserves $$ in metaAttributes', async () => {
+      const out = await renderHTML({
+        ...baseArgs,
+        metaAttributes: ['<meta name="description" content="Price: $$">'],
+        indexHTML,
+        appHTML: '<p>hi</p>',
+        initialState: null,
+      })
+      expect(out).toContain('<meta name="description" content="Price: $$">')
+    })
+
+    it('preserves $$ in bodyAttributes', async () => {
+      const out = await renderHTML({
+        ...baseArgs,
+        bodyAttributes: 'data-price="$$"',
+        indexHTML,
+        appHTML: '<p>hi</p>',
+        initialState: null,
+      })
+      expect(out).toContain('data-price="$$"')
+    })
+
+    it('preserves $$ in htmlAttributes', async () => {
+      const out = await renderHTML({
+        ...baseArgs,
+        htmlAttributes: 'data-info="$$"',
+        indexHTML,
+        appHTML: '<p>hi</p>',
+        initialState: null,
+      })
+      expect(out).toContain('data-info="$$"')
+    })
+  })
 })
 
 describe('detectEntry', () => {
