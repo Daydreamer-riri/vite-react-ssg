@@ -88,5 +88,8 @@ jobs:
       - name: Build
         run: nr build
 
+      - name: Sync injected workspace dependencies
+        run: pnpm install
+
       - name: Test
         run: nr test
