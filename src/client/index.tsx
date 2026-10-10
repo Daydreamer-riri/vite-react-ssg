@@ -161,7 +161,10 @@ export function ViteReactSSG(
   function transformStaticLoaderRoute(route: RouteRecord) {
     const isSSR
       = document.querySelector('[data-server-rendered=true]') !== null
-    if (!isSSR) {
+    // A route without a loader has no entry in the hydration data, so giving it one
+    // makes react-router run it on hydration: render HydrateFallback instead of the
+    // SSR markup (hydration mismatch) and fetch the loader data manifest
+    if (!isSSR || (!route.loader && !route.lazy)) {
       return route
     }
     const loader: RouteRecord['loader'] = async ({ request }) => {
