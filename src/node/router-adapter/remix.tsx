@@ -78,8 +78,8 @@ export class RemixAdapter implements IRouterAdapter<ViteReactSSGContext> {
       res.end(`Route not found: ${routeId}`)
       return
     }
-    let loader
-    if (typeof match.route.lazy === 'function') {
+    let loader = match.route.loader
+    if (!loader && typeof match.route.lazy === 'function') {
       loader = await match.route.lazy().then(m => m.loader)
     }
     if (!loader) {
