@@ -12,6 +12,6 @@
   },
   "devDependencies": {
     "vite": "catalog:",
-    "vite-react-ssg": "workspace:*"
+    "vite-react-ssg": "workspace:@mikhailsdv/vite-react-ssg@*"
   }
 }

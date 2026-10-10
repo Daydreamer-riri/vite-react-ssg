@@ -12,7 +12,7 @@
   },
   "devDependencies": {
     "vite": "~6.4.3",
-    "vite-react-ssg": "workspace:*"
+    "vite-react-ssg": "workspace:@mikhailsdv/vite-react-ssg@*"
   },
   "dependenciesMeta": {
     "vite-react-ssg": {
