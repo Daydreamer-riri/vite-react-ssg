@@ -9,3 +9,5 @@ lib-cov
 logs
 node_modules
 temp
+# pi coding agent
+.pi
