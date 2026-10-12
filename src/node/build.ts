@@ -323,11 +323,15 @@ export async function build(
               })
             : new Set<string>()
 
-        // Write loader data to separate file if exists
+        // Write loader data to separate file if exists.
+        // React Router reports matched routes that have no loader as `null` or
+        // `undefined` (seen for lazy routes). A page whose loader data is all
+        // empty carries nothing worth fetching; the client already resolves
+        // pages missing from the manifest to `null`.
         const loaderData = routerContext?.loaderData as
           | Record<string, unknown>
           | undefined
-        if (loaderData && Object.keys(loaderData).length > 0) {
+        if (loaderData && Object.values(loaderData).some(value => value != null)) {
           const loaderDataFilePath = getLoaderDataFilePath(path, hash)
           await fs.ensureDir(join(out, dirname(loaderDataFilePath)))
           await fs.writeFile(

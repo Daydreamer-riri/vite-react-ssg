@@ -149,6 +149,22 @@ describe('with-loader', () => {
     const index = await fs.readFile('examples/with-loader/dist/docs/a.html', 'utf-8')
     expect(index).toContain('<li>A</li>')
   })
+
+  // https://github.com/Daydreamer-riri/vite-react-ssg/issues/94
+  it('only writes loader data for pages with non-null loader data', async () => {
+    const [manifestFile] = await fg('static-loader-data-manifest-*.json', {
+      cwd: 'examples/with-loader/dist',
+    })
+    const manifest = JSON.parse(
+      await fs.readFile(`examples/with-loader/dist/${manifestFile}`, 'utf-8'),
+    ) as Record<string, string>
+    expect(Object.keys(manifest).sort()).toEqual(['/docs/a', '/docs/b', '/json'])
+
+    const dataFiles = await fg('static-loader-data/**/*.json', {
+      cwd: 'examples/with-loader/dist',
+    })
+    expect(dataFiles.sort()).toEqual(Object.values(manifest).sort())
+  })
 })
 
 describe('auto-pages', () => {
