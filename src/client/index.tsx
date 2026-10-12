@@ -16,6 +16,7 @@ import { documentReady } from '../utils/document-ready'
 import { joinUrlSegments, stripBase, withLeadingSlash } from '../utils/path'
 import { convertRoutesToDataRoutes } from '../utils/remix-router'
 import { deserializeState } from '../utils/state'
+import { fetchStaticLoaderData, loadDocument } from '../utils/static-loader-data'
 
 export * from '../types'
 
@@ -174,15 +175,24 @@ export function ViteReactSSG(
         return fetch(url)
       }
       else {
+        // The manifest and data files are named after a per-build hash. When
+        // they can't be loaded, this page most likely belongs to a build that
+        // has since been replaced by a new deploy, so fall back to a full page
+        // load of the target URL instead of failing in the error boundary.
+        // https://github.com/Daydreamer-riri/vite-react-ssg/issues/93
+
         // Load manifest index if not cached
         if (!window.__VITE_REACT_SSG_STATIC_LOADER_MANIFEST__) {
           const manifestUrl = joinUrlSegments(
             BASE_URL,
             `static-loader-data-manifest-${window.__VITE_REACT_SSG_HASH__}.json`,
           )
-          window.__VITE_REACT_SSG_STATIC_LOADER_MANIFEST__ = await (
-            await fetch(withLeadingSlash(manifestUrl))
-          ).json()
+          const manifest = await fetchStaticLoaderData<Record<string, string>>(
+            withLeadingSlash(manifestUrl),
+          )
+          if (!manifest)
+            return loadDocument(request.url)
+          window.__VITE_REACT_SSG_STATIC_LOADER_MANIFEST__ = manifest
         }
 
         const { url } = request
@@ -207,9 +217,12 @@ export function ViteReactSSG(
         // Load route data file if not cached
         if (!window.__VITE_REACT_SSG_STATIC_LOADER_DATA__[pathname]) {
           const dataUrl = joinUrlSegments(BASE_URL, dataFilePath)
-          window.__VITE_REACT_SSG_STATIC_LOADER_DATA__[pathname] = await (
-            await fetch(withLeadingSlash(dataUrl))
-          ).json()
+          const data = await fetchStaticLoaderData<Record<string, unknown>>(
+            withLeadingSlash(dataUrl),
+          )
+          if (!data)
+            return loadDocument(request.url)
+          window.__VITE_REACT_SSG_STATIC_LOADER_DATA__[pathname] = data
         }
 
         const routeData
